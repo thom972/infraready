@@ -1,0 +1,137 @@
+=== Réception ops01 — 2026-10-20 08:19:59 UTC ===
+
+### hostnamectl
+ Static hostname: ops01
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: 00111867ed4f48808979ca26fe5f4c7f
+         Boot ID: ce5fd05176b0474cac950e88abb08063
+  Virtualization: kvm
+Operating System: Ubuntu 26.04.1 LTS
+          Kernel: Linux 7.0.0-38-generic
+    Architecture: x86-64
+ Hardware Vendor: QEMU
+  Hardware Model: Standard PC _Q35 + ICH9, 2009_
+Hardware Version: pc-q35-11.1
+Firmware Version: Arch Linux 1.17.0-2-2
+   Firmware Date: Tue 2014-04-01
+    Firmware Age: 12y 6month 2w 5d
+[code retour : 0]
+
+### lsb_release -a
+Distributor ID:	Ubuntu
+Description:	Ubuntu 26.04.1 LTS
+Release:	26.04
+Codename:	resolute
+[code retour : 0]
+
+### ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+enp1s0           UP             52:54:00:8d:f8:17 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+[code retour : 0]
+
+### ip -br address
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp1s0           UP             192.168.50.30/24 fe80::5054:ff:fe8d:f817/64 
+[code retour : 0]
+
+### ip route
+default via 192.168.50.1 dev enp1s0 proto static 
+192.168.50.0/24 dev enp1s0 proto kernel scope link src 192.168.50.30 
+[code retour : 0]
+
+### resolvectl status
+Global
+         Protocols: -LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
+  resolv.conf mode: stub
+
+Link 2 (enp1s0)
+    Current Scopes: DNS
+         Protocols: +DefaultRoute -LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
+Current DNS Server: 192.168.50.1
+       DNS Servers: 192.168.50.1
+     Default Route: yes
+[code retour : 0]
+
+### ping -c 3 -W 2 192.168.50.1
+PING 192.168.50.1 (192.168.50.1) 56(84) bytes of data.
+64 bytes from 192.168.50.1: icmp_seq=1 ttl=64 time=0.066 ms
+64 bytes from 192.168.50.1: icmp_seq=2 ttl=64 time=0.320 ms
+64 bytes from 192.168.50.1: icmp_seq=3 ttl=64 time=0.235 ms
+
+--- 192.168.50.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2028ms
+rtt min/avg/max/mdev = 0.066/0.207/0.320/0.105 ms
+[code retour : 0]
+
+### ping -c 3 -W 2 192.168.50.10
+PING 192.168.50.10 (192.168.50.10) 56(84) bytes of data.
+64 bytes from 192.168.50.10: icmp_seq=1 ttl=128 time=0.539 ms
+64 bytes from 192.168.50.10: icmp_seq=2 ttl=128 time=0.933 ms
+64 bytes from 192.168.50.10: icmp_seq=3 ttl=128 time=0.928 ms
+
+--- 192.168.50.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2022ms
+rtt min/avg/max/mdev = 0.539/0.800/0.933/0.184 ms
+[code retour : 0]
+
+### ping -c 3 -W 2 192.168.50.20
+PING 192.168.50.20 (192.168.50.20) 56(84) bytes of data.
+64 bytes from 192.168.50.20: icmp_seq=1 ttl=64 time=0.514 ms
+64 bytes from 192.168.50.20: icmp_seq=2 ttl=64 time=0.545 ms
+64 bytes from 192.168.50.20: icmp_seq=3 ttl=64 time=0.573 ms
+
+--- 192.168.50.20 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2066ms
+rtt min/avg/max/mdev = 0.514/0.544/0.573/0.024 ms
+[code retour : 0]
+
+### getent hosts ubuntu.com
+2620:2d:4000:1::27 ubuntu.com
+2001:67c:1562::20 ubuntu.com
+2620:2d:4000:1::28 ubuntu.com
+2001:67c:1562::1f ubuntu.com
+2620:2d:4000:1::26 ubuntu.com
+2620:2d:4000:1::21 ubuntu.com
+2620:2d:4000:1::20 ubuntu.com
+[code retour : 0]
+
+### getent hosts WIN-DC01.infraready.test
+[code retour : 2]
+
+### systemctl is-active ssh
+active
+[code retour : 0]
+
+### ss -lnt
+State  Recv-Q Send-Q Local Address:Port Peer Address:Port
+LISTEN 0      4096   127.0.0.53%lo:53        0.0.0.0:*   
+LISTEN 0      4096         0.0.0.0:22        0.0.0.0:*   
+LISTEN 0      4096      127.0.0.54:53        0.0.0.0:*   
+LISTEN 0      4096            [::]:22           [::]:*   
+[code retour : 0]
+
+### systemctl --failed --no-pager
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+[code retour : 0]
+
+### apt list --upgradable
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+En train de lister…
+libnss-systemd/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+libpam-systemd/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+libsystemd-shared/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+libsystemd0/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+libudev1/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+systemd-cryptsetup/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+systemd-resolved/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+systemd-sysv/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+systemd/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+udev/resolute-updates 259.9-0ubuntu0.1 amd64 [pouvant être mis à jour depuis : 259.5-0ubuntu3.4]
+[code retour : 0]
+
+### Redémarrage requis : non

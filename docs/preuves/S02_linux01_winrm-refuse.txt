@@ -1,0 +1,1 @@
+nc: connect to 192.168.50.10 port 5985 (tcp) timed out: Operation now in progress
