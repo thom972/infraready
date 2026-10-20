@@ -1,0 +1,64 @@
+---
+- name: Structure AD InfraReady (unites d'organisation, groupes, comptes de test)
+  hosts: windows
+  gather_facts: false
+  tasks:
+    - name: Unite d'organisation racine InfraReady
+      microsoft.ad.ou:
+        name: InfraReady
+        path: "{{ ad_base_dn }}"
+        state: present
+
+    - name: Unites d'organisation Utilisateurs et Groupes
+      microsoft.ad.ou:
+        name: "{{ item }}"
+        path: "{{ ad_ou_racine }}"
+        state: present
+      loop: [Utilisateurs, Groupes]
+
+    - name: Groupes de securite globaux
+      microsoft.ad.group:
+        name: "{{ item.nom }}"
+        description: "{{ item.description }}"
+        scope: global
+        category: security
+        path: "OU=Groupes,{{ ad_ou_racine }}"
+        state: present
+      loop: "{{ ad_groupes }}"
+      loop_control:
+        label: "{{ item.nom }}"
+
+    - name: Comptes de test (mot de passe initial a changer a la premiere connexion)
+      microsoft.ad.user:
+        name: "{{ item.sam }}"
+        sam_account_name: "{{ item.sam }}"
+        upn: "{{ item.sam }}@infraready.test"
+        firstname: "{{ item.prenom }}"
+        surname: "{{ item.nom }}"
+        path: "OU=Utilisateurs,{{ ad_ou_racine }}"
+        password: "{{ lab_user_initial_password }}"
+        update_password: on_create       # ne reinitialise pas le mot de passe aux executions suivantes
+        password_expired: true           # changement impose a la premiere connexion
+        enabled: true
+        groups:
+          add: "{{ item.groupes }}"
+        state: present
+      loop: "{{ ad_utilisateurs }}"
+      loop_control:
+        label: "{{ item.sam }}"
+      no_log: true                       # empeche l'affichage du mot de passe dans la sortie
+
+    # Verification apres execution (exigence D du sujet)
+    - name: Lire les comptes de l'unite Utilisateurs
+      microsoft.ad.object_info:
+        ldap_filter: "(&(objectCategory=person)(objectClass=user))"
+        search_base: "OU=Utilisateurs,{{ ad_ou_racine }}"
+        properties: [sAMAccountName, memberOf]
+      register: comptes_ad
+
+    - name: Verifier que tous les comptes attendus existent
+      ansible.builtin.assert:
+        that:
+          - comptes_ad.objects | map(attribute='sAMAccountName') | list | sort == ad_utilisateurs | map(attribute='sam') | list | sort
+        success_msg: "Les {{ ad_utilisateurs | length }} comptes de test sont presents."
+        fail_msg: "Comptes manquants ou inattendus dans OU=Utilisateurs."

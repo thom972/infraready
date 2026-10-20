@@ -1,0 +1,7 @@
+---
+# Connexion WinRM vers WIN-DC01 - le mot de passe est dans vault.yml (chiffre)
+ansible_connection: winrm
+ansible_port: 5985
+ansible_winrm_scheme: http
+ansible_winrm_transport: ntlm          # NTLM chiffre les echanges meme sur HTTP
+ansible_user: svc-ansible@infraready.test

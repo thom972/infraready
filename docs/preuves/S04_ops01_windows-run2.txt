@@ -1,0 +1,31 @@
+
+PLAY [Structure AD InfraReady (unites d'organisation, groupes, comptes de test)] ***
+
+TASK [Unite d'organisation racine InfraReady] **********************************
+ok: [WIN-DC01]
+
+TASK [Unites d'organisation Utilisateurs et Groupes] ***************************
+ok: [WIN-DC01] => (item=Utilisateurs)
+ok: [WIN-DC01] => (item=Groupes)
+
+TASK [Groupes de securite globaux] *********************************************
+ok: [WIN-DC01] => (item=GG-Admins-Infra)
+ok: [WIN-DC01] => (item=GG-Utilisateurs-Lab)
+
+TASK [Comptes de test (mot de passe initial a changer a la premiere connexion)] ***
+ok: [WIN-DC01] => (item=(censored due to no_log))
+ok: [WIN-DC01] => (item=(censored due to no_log))
+ok: [WIN-DC01] => (item=(censored due to no_log))
+
+TASK [Lire les comptes de l'unite Utilisateurs] ********************************
+ok: [WIN-DC01]
+
+TASK [Verifier que tous les comptes attendus existent] *************************
+ok: [WIN-DC01] => {
+    "changed": false,
+    "msg": "Les 3 comptes de test sont presents."
+}
+
+PLAY RECAP *********************************************************************
+WIN-DC01                   : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

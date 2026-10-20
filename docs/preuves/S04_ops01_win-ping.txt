@@ -1,0 +1,4 @@
+WIN-DC01 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}

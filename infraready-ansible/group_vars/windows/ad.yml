@@ -1,0 +1,15 @@
+---
+# Structure de l'annuaire InfraReady - aucun secret ici.
+ad_base_dn: "DC=infraready,DC=test"
+ad_ou_racine: "OU=InfraReady,DC=infraready,DC=test"
+
+ad_groupes:
+  - nom: GG-Admins-Infra
+    description: "Administrateurs de l'infrastructure InfraReady"
+  - nom: GG-Utilisateurs-Lab
+    description: "Utilisateurs de test du laboratoire"
+
+ad_utilisateurs:
+  - { sam: a.martin, prenom: Alice, nom: Martin, groupes: [GG-Admins-Infra, GG-Utilisateurs-Lab] }
+  - { sam: b.durand, prenom: Bruno, nom: Durand, groupes: [GG-Utilisateurs-Lab] }
+  - { sam: c.petit,  prenom: Chloe, nom: Petit,  groupes: [GG-Utilisateurs-Lab] }

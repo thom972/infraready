@@ -1,0 +1,23 @@
+
+Name         DistinguishedName                                  
+----         -----------------                                  
+InfraReady   OU=InfraReady,DC=infraready,DC=test                
+Utilisateurs OU=Utilisateurs,OU=InfraReady,DC=infraready,DC=test
+Groupes      OU=Groupes,OU=InfraReady,DC=infraready,DC=test     
+
+
+
+SamAccountName Enabled PasswordExpired
+-------------- ------- ---------------
+a.martin          True            True
+b.durand          True            True
+c.petit           True            True
+
+
+== GG-Admins-Infra ==
+a.martin
+== GG-Utilisateurs-Lab ==
+a.martin
+b.durand
+c.petit
+
