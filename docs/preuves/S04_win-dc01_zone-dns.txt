@@ -1,0 +1,18 @@
+
+HostName       Adresse      
+--------       -------      
+@              192.168.50.10
+DomainDnsZones 192.168.50.10
+ForestDnsZones 192.168.50.10
+LINUX01        192.168.50.20
+OPS01          192.168.50.30
+win-dc01       192.168.50.10
+
+
+
+Name                       NameHost               
+----                       --------               
+20.50.168.192.in-addr.arpa LINUX01.infraready.test
+
+
+

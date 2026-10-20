@@ -1,0 +1,9 @@
+
+Name                                 NameTarget               Port
+----                                 ----------               ----
+_ldap._tcp.dc._msdcs.infraready.test win-dc01.infraready.test  389
+_ldap._tcp.infraready.test           win-dc01.infraready.test  389
+_kerberos._tcp.infraready.test       win-dc01.infraready.test   88
+
+
+

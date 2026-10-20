@@ -1,8 +1,9 @@
 ---
-- name: Structure AD InfraReady (unites d'organisation, groupes, comptes de test)
+- name: Annuaire et partage InfraReady sur WIN-DC01
   hosts: windows
   gather_facts: false
   tasks:
+    # ---------- Annuaire ----------
     - name: Unite d'organisation racine InfraReady
       microsoft.ad.ou:
         name: InfraReady
@@ -28,7 +29,7 @@
       loop_control:
         label: "{{ item.nom }}"
 
-    - name: Comptes de test (mot de passe initial a changer a la premiere connexion)
+    - name: Comptes de test
       microsoft.ad.user:
         name: "{{ item.sam }}"
         sam_account_name: "{{ item.sam }}"
@@ -37,8 +38,8 @@
         surname: "{{ item.nom }}"
         path: "OU=Utilisateurs,{{ ad_ou_racine }}"
         password: "{{ lab_user_initial_password }}"
-        update_password: on_create       # ne reinitialise pas le mot de passe aux executions suivantes
-        password_expired: true           # changement impose a la premiere connexion
+        update_password: on_create       # mot de passe defini a la creation seulement (idempotence)
+        password_expired: false          # choix de laboratoire : permet les tests d'acces (voir ecart E-16)
         enabled: true
         groups:
           add: "{{ item.groupes }}"
@@ -46,19 +47,64 @@
       loop: "{{ ad_utilisateurs }}"
       loop_control:
         label: "{{ item.sam }}"
-      no_log: true                       # empeche l'affichage du mot de passe dans la sortie
+      no_log: true                       # le mot de passe n'apparait jamais dans la sortie
 
-    # Verification apres execution (exigence D du sujet)
+    # ---------- Partage Lab ----------
+    - name: Dossier du partage
+      ansible.windows.win_file:
+        path: "{{ lab_share_path }}"
+        state: directory
+
+    - name: Droits NTFS explicites sur le dossier
+      ansible.windows.win_acl:
+        path: "{{ lab_share_path }}"
+        user: "{{ item.compte }}"
+        rights: "{{ item.droits }}"
+        type: allow
+        state: present
+        inherit: ContainerInherit, ObjectInherit
+        propagation: None
+      loop: "{{ lab_ntfs_acl }}"
+      loop_control:
+        label: "{{ item.compte }} -> {{ item.droits }}"
+
+    - name: Couper l'heritage NTFS (les droits herites de C:\ ne s'appliquent plus)
+      ansible.windows.win_acl_inheritance:
+        path: "{{ lab_share_path }}"
+        state: absent
+        reorganize: false
+
+    - name: Partage SMB avec autorisations par groupe
+      ansible.windows.win_share:
+        name: "{{ lab_share_name }}"
+        path: "{{ lab_share_path }}"
+        description: "Partage de test InfraReady"
+        full: "{{ lab_share_full }}"
+        change: "{{ lab_share_change }}"
+        list: false
+        state: present
+
+    # ---------- Verifications apres execution ----------
     - name: Lire les comptes de l'unite Utilisateurs
       microsoft.ad.object_info:
         ldap_filter: "(&(objectCategory=person)(objectClass=user))"
         search_base: "OU=Utilisateurs,{{ ad_ou_racine }}"
-        properties: [sAMAccountName, memberOf]
+        properties: [sAMAccountName]
       register: comptes_ad
 
-    - name: Verifier que tous les comptes attendus existent
+    - name: Lire les autorisations du partage
+      ansible.windows.win_powershell:
+        script: |
+          Get-SmbShareAccess -Name '{{ lab_share_name }}' | ForEach-Object { "$($_.AccountName)=$($_.AccessRight)" }
+      register: acces_partage
+      changed_when: false
+
+    - name: Verifier comptes et autorisations
       ansible.builtin.assert:
         that:
           - comptes_ad.objects | map(attribute='sAMAccountName') | list | sort == ad_utilisateurs | map(attribute='sam') | list | sort
-        success_msg: "Les {{ ad_utilisateurs | length }} comptes de test sont presents."
-        fail_msg: "Comptes manquants ou inattendus dans OU=Utilisateurs."
+          - (lab_share_full ~ '=Full') in acces_partage.output
+          - (lab_share_change ~ '=Change') in acces_partage.output
+          - acces_partage.output | length == 2
+        success_msg: "Comptes presents ; partage limite aux deux groupes prevus."
+        fail_msg: "Ecart entre l'etat attendu et l'etat reel (comptes ou autorisations du partage)."

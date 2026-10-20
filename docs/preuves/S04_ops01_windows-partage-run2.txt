@@ -1,0 +1,50 @@
+
+PLAY [Annuaire et partage InfraReady sur WIN-DC01] *****************************
+
+TASK [Unite d'organisation racine InfraReady] **********************************
+ok: [WIN-DC01]
+
+TASK [Unites d'organisation Utilisateurs et Groupes] ***************************
+ok: [WIN-DC01] => (item=Utilisateurs)
+ok: [WIN-DC01] => (item=Groupes)
+
+TASK [Groupes de securite globaux] *********************************************
+ok: [WIN-DC01] => (item=GG-Admins-Infra)
+ok: [WIN-DC01] => (item=GG-Utilisateurs-Lab)
+
+TASK [Comptes de test] *********************************************************
+ok: [WIN-DC01] => (item=(censored due to no_log))
+ok: [WIN-DC01] => (item=(censored due to no_log))
+ok: [WIN-DC01] => (item=(censored due to no_log))
+ok: [WIN-DC01] => (item=(censored due to no_log))
+
+TASK [Dossier du partage] ******************************************************
+ok: [WIN-DC01]
+
+TASK [Droits NTFS explicites sur le dossier] ***********************************
+ok: [WIN-DC01] => (item=S-1-5-18 -> FullControl)
+ok: [WIN-DC01] => (item=S-1-5-32-544 -> FullControl)
+ok: [WIN-DC01] => (item=INFRAREADY\GG-Admins-Infra -> FullControl)
+ok: [WIN-DC01] => (item=INFRAREADY\GG-Utilisateurs-Lab -> Modify)
+
+TASK [Couper l'heritage NTFS (les droits herites de C:\ ne s'appliquent plus)] ***
+ok: [WIN-DC01]
+
+TASK [Partage SMB avec autorisations par groupe] *******************************
+ok: [WIN-DC01]
+
+TASK [Lire les comptes de l'unite Utilisateurs] ********************************
+ok: [WIN-DC01]
+
+TASK [Lire les autorisations du partage] ***************************************
+ok: [WIN-DC01]
+
+TASK [Verifier comptes et autorisations] ***************************************
+ok: [WIN-DC01] => {
+    "changed": false,
+    "msg": "Comptes presents ; partage limite aux deux groupes prevus."
+}
+
+PLAY RECAP *********************************************************************
+WIN-DC01                   : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

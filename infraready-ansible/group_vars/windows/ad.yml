@@ -1,5 +1,5 @@
 ---
-# Structure de l'annuaire InfraReady - aucun secret ici.
+# Structure de l'annuaire et du partage InfraReady - aucun secret ici.
 ad_base_dn: "DC=infraready,DC=test"
 ad_ou_racine: "OU=InfraReady,DC=infraready,DC=test"
 
@@ -13,3 +13,17 @@ ad_utilisateurs:
   - { sam: a.martin, prenom: Alice, nom: Martin, groupes: [GG-Admins-Infra, GG-Utilisateurs-Lab] }
   - { sam: b.durand, prenom: Bruno, nom: Durand, groupes: [GG-Utilisateurs-Lab] }
   - { sam: c.petit,  prenom: Chloe, nom: Petit,  groupes: [GG-Utilisateurs-Lab] }
+  - { sam: d.invite, prenom: Dan,   nom: Invite, groupes: [] }    # aucun groupe : test d'acces refuse
+
+# Partage de fichiers Lab
+lab_share_name: Lab
+lab_share_path: 'C:\Partages\Lab'
+lab_share_full: 'INFRAREADY\GG-Admins-Infra'
+lab_share_change: 'INFRAREADY\GG-Utilisateurs-Lab'
+
+# Droits NTFS explicites (l'heritage est coupe : seules ces entrees s'appliquent)
+lab_ntfs_acl:
+  - { compte: 'S-1-5-18',                    droits: FullControl }   # SYSTEM
+  - { compte: 'S-1-5-32-544',                droits: FullControl }   # Administrateurs (BUILTIN)
+  - { compte: 'INFRAREADY\GG-Admins-Infra',     droits: FullControl }
+  - { compte: 'INFRAREADY\GG-Utilisateurs-Lab', droits: Modify }

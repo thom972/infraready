@@ -1,0 +1,19 @@
+Password for [INFRAREADY\b.durand]:putting file /etc/hostname as \test-b.durand.txt (0,7 kB/s) (average 0,7 kB/s)
+
+  .                                   D        0  Tue Oct 20 14:20:15 2026
+  ..                                  D        0  Tue Oct 20 14:17:36 2026
+  test-b.durand.txt                   A        8  Tue Oct 20 14:20:15 2026
+
+		13081087 blocks of size 4096. 6379584 blocks available
+Password for [INFRAREADY\a.martin]:
+  .                                   D        0  Tue Oct 20 14:20:15 2026
+  ..                                  D        0  Tue Oct 20 14:17:36 2026
+  test-b.durand.txt                   A        8  Tue Oct 20 14:20:15 2026
+
+		13081087 blocks of size 4096. 6379328 blocks available
+  .                                   D        0  Tue Oct 20 14:20:32 2026
+  ..                                  D        0  Tue Oct 20 14:17:36 2026
+
+		13081087 blocks of size 4096. 6379328 blocks available
+Password for [INFRAREADY\d.invite]:
+NT_STATUS_ACCESS_DENIED listing \*

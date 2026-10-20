@@ -1,0 +1,76 @@
+
+Diagnostic du serveur d'annuaire
+
+
+Exécution de l'installation initiale : 
+
+   Tentative de recherche de serveur associé...
+
+   Serveur associé : WIN-DC01
+
+   * Forêt AD identifiée. 
+   Collecte des informations initiales terminée.
+
+
+Exécution des tests initiaux nécessaires
+
+   
+   Test du serveur : Default-First-Site-Name\WIN-DC01
+
+      Démarrage du test : Connectivity
+
+         ......................... Le test Connectivity
+
+          de WIN-DC01 a réussi
+
+
+Exécution des tests principaux
+
+   
+   Test du serveur : Default-First-Site-Name\WIN-DC01
+
+      Démarrage du test : Advertising
+
+         ......................... Le test Advertising
+
+          de WIN-DC01 a réussi
+      Démarrage du test : SysVolCheck
+
+         ......................... Le test SysVolCheck
+
+          de WIN-DC01 a réussi
+      Démarrage du test : NetLogons
+
+         ......................... Le test NetLogons
+
+          de WIN-DC01 a réussi
+      Démarrage du test : Services
+
+         ......................... Le test Services
+
+          de WIN-DC01 a réussi
+   
+   
+   Exécution de tests de partitions sur ForestDnsZones
+
+   
+   Exécution de tests de partitions sur DomainDnsZones
+
+   
+   Exécution de tests de partitions sur Schema
+
+   
+   Exécution de tests de partitions sur Configuration
+
+   
+   Exécution de tests de partitions sur infraready
+
+   
+   Exécution de tests d'entreprise sur infraready.test
+
+      Démarrage du test : FsmoCheck
+
+         ......................... Le test FsmoCheck
+
+          de infraready.test a réussi
+
