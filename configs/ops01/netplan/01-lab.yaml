@@ -1,0 +1,15 @@
+# /etc/netplan/01-lab.yaml — OPS01
+# Adresse fixe du plan InfraReady. Remplacer enp1s0 par le nom réel (ip -br link).
+# DNS : 192.168.50.1 (temporaire, avant AD DS) -> 192.168.50.10 + search infraready.test ensuite.
+# Droits attendus : chmod 600. Appliquer avec : sudo netplan generate && sudo netplan try
+network:
+  version: 2
+  ethernets:
+    enp1s0:
+      dhcp4: false
+      addresses: [192.168.50.30/24]
+      routes:
+        - to: default
+          via: 192.168.50.1
+      nameservers:
+        addresses: [192.168.50.1]

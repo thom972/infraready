@@ -1,0 +1,23 @@
+<!--
+  Réseau virtuel du laboratoire InfraReady (libvirt).
+  - 192.168.50.1 : adresse de l'hôte sur ce réseau (passerelle NAT + DNS temporaire).
+  - Adresses fixes réservées : .10 WIN-DC01, .20 LINUX01, .30 OPS01.
+  - DHCP limité à .100-.199 (installations uniquement), hors des adresses fixes.
+  - Mode NAT : les VM sortent vers Internet pour les mises à jour ;
+    le LAN ne peut pas joindre les services du labo.
+
+  Création :
+    sudo virsh net-define infra/libvirt/infraready-network.xml
+    sudo virsh net-start infraready
+    sudo virsh net-autostart infraready
+-->
+<network>
+  <name>infraready</name>
+  <forward mode='nat'/>
+  <bridge name='virbr50' stp='on' delay='0'/>
+  <ip address='192.168.50.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.50.100' end='192.168.50.199'/>
+    </dhcp>
+  </ip>
+</network>
