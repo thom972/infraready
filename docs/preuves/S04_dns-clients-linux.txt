@@ -1,0 +1,20 @@
+=== linux01 ===
+        DNS Domain: infraready.test
+192.168.50.10   WIN-DC01.infraready.test
+127.0.1.1       linux01
+192.168.50.30   ops01.infraready.test
+2001:67c:1562::1f ubuntu.com
+rtt min/avg/max/mdev = 0.637/0.835/1.033/0.198 ms
+=== ops01 ===
+        DNS Domain: infraready.test
+192.168.50.10   WIN-DC01.infraready.test
+192.168.50.20   linux01.infraready.test
+192.168.50.30   ops01.infraready.test
+2620:2d:4000:1::28 ubuntu.com
+rtt min/avg/max/mdev = 0.392/0.610/0.828/0.218 ms
+linux01
+Global:
+Link 2 (enp1s0): 192.168.50.10
+ops01
+Global:
+Link 2 (enp1s0): 192.168.50.10
