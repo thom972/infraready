@@ -1,0 +1,16 @@
+---
+- name: Installer et verifier le service web sur le groupe linux
+  hosts: linux
+  # become est defini dans group_vars/linux.yml (ansible_become: true)
+  tasks:
+    - name: Installer le paquet {{ web_package }}
+      ansible.builtin.apt:
+        name: "{{ web_package }}"
+        state: present
+        update_cache: true
+
+    - name: S'assurer que {{ web_service }} est actif et active au demarrage
+      ansible.builtin.service:
+        name: "{{ web_service }}"
+        state: started
+        enabled: true
