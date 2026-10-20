@@ -1,0 +1,29 @@
+# Images d'installation et disques virtuels : jamais dans Git
+*.iso
+*.qcow2
+*.img
+*.raw
+*.vmdk
+*.vdi
+
+# Secrets : mots de passe, clés privées, coffres, variables d'environnement
+id_*
+*.pem
+*.key
+*.pfx
+.vault_pass*
+vault_pass*
+*.secret
+secrets/
+.env
+
+# Ansible
+*.retry
+
+# Fichiers temporaires d'éditeurs et de draw.io
+*.swp
+*~
+*.bak
+*.drawio.bkp
+.$*
+.DS_Store
