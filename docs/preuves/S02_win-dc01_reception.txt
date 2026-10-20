@@ -1,0 +1,134 @@
+=== Réception WIN-DC01 - 2026-10-19 16:30:14 ===
+
+### Système
+
+
+CsName             : WIN-DC01
+WindowsProductName : Windows Server 2025 Standard Evaluation
+OsVersion          : 10.0.26100
+OsBuildNumber      : 26100
+
+
+
+
+
+### Durée restante de l'évaluation
+
+Description : Windows(R) Operating System, TIMEBASED_EVAL channel
+Expiration de l'activation avec date d'expiration : 258945 minute(s) (180 jour(s))
+
+
+
+
+### Configuration IP
+
+
+InterfaceAlias : Ethernet
+IPv4           : 192.168.50.10
+Passerelle     : 192.168.50.1
+DNS            : 192.168.50.1
+
+
+
+
+
+### Profil réseau
+
+InterfaceAlias NetworkCategory
+-------------- ---------------
+Ethernet               Private
+
+
+
+
+### Ping 192.168.50.1
+
+Address      ResponseTime StatusCode
+-------      ------------ ----------
+192.168.50.1            0          0
+192.168.50.1            0          0
+
+
+
+
+### Ping 192.168.50.20
+
+Address       ResponseTime StatusCode
+-------       ------------ ----------
+192.168.50.20            0          0
+192.168.50.20            0          0
+
+
+
+
+### Ping 192.168.50.30
+Aucune réponse de 192.168.50.30
+
+### Résolution www.microsoft.com
+
+Name                           Type   TTL   Section    NameHost                                              
+----                           ----   ---   -------    --------                                              
+www.microsoft.com              CNAME  42    Answer     www.microsoft.com-c-3.edgekey.net                     
+www.microsoft.com-c-3.edgekey. CNAME  42    Answer     e13678.dscb.akamaiedge.net                            
+net                                                                                                          
+
+Name       : e13678.dscb.akamaiedge.net
+QueryType  : AAAA
+TTL        : 12
+Section    : Answer
+IP6Address : 2a02:26f0:1180:184::356e
+
+
+
+
+
+### WinRM
+
+Name   Status StartType
+----   ------ ---------
+WinRM Running Automatic
+
+
+
+
+Name                     Enabled RemoteAddress
+----                     ------- -------------
+WINRM-HTTP-In-TCP           True Any          
+WINRM-HTTP-In-TCP-PUBLIC    True LocalSubnet  
+
+
+
+
+### Règle ICMP du labo
+
+Name                 Enabled Profile
+----                 ------- -------
+InfraReady-ICMPv4-In    True Private
+
+
+
+
+### Dernières mises à jour installées
+
+HotFixID  InstalledOn        
+--------  -----------        
+KB5072725 14/01/2026 00:00:00
+KB5073379 14/01/2026 00:00:00
+KB5066131 14/01/2026 00:00:00
+
+
+
+
+### Services automatiques arrêtés
+
+Name           State  
+----           -----  
+AppXSvc        Stopped
+edgeupdate     Stopped
+InventorySvc   Stopped
+QEMU-GA        Stopped
+RemoteRegistry Stopped
+
+
+
+

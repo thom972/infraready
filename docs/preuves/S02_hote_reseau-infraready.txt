@@ -1,0 +1,30 @@
+Tue Oct 20 03:06:59 PM CEST 2026
+ Name         State    Autostart   Persistent
+-----------------------------------------------
+ default      active   yes         yes
+ infraready   active   yes         yes
+
+Name:           infraready
+UUID:           8f6540ff-e0a5-4e1f-a890-77ec2c51e5d1
+Active:         yes
+Persistent:     yes
+Autostart:      yes
+Bridge:         virbr50
+
+<network connections='3'>
+  <name>infraready</name>
+  <uuid>8f6540ff-e0a5-4e1f-a890-77ec2c51e5d1</uuid>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name='virbr50' stp='on' delay='0'/>
+  <mac address='52:54:00:67:69:3c'/>
+  <ip address='192.168.50.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.50.100' end='192.168.50.199'/>
+    </dhcp>
+  </ip>
+</network>
+
