@@ -1,0 +1,20 @@
+oct. 20 09:51:09 linux01 sshd-session[3602]: Accepted publickey for keo from 192.168.50.1 port 50930 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:51:09 linux01 sshd-session[3602]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)
+oct. 20 09:51:10 linux01 sshd-session[3602]: pam_unix(sshd:session): session closed for user keo
+oct. 20 09:52:05 linux01 sshd-session[3662]: Accepted publickey for keo from 192.168.50.1 port 56778 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:52:05 linux01 sshd-session[3662]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)
+oct. 20 09:52:06 linux01 sshd-session[3662]: pam_unix(sshd:session): session closed for user keo
+oct. 20 09:52:06 linux01 sshd-session[3714]: Accepted publickey for keo from 192.168.50.1 port 56788 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:52:06 linux01 sshd-session[3714]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)
+oct. 20 09:52:06 linux01 sshd-session[3714]: pam_unix(sshd:session): session closed for user keo
+oct. 20 09:52:06 linux01 sshd-session[3766]: Accepted publickey for keo from 192.168.50.1 port 56802 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:52:06 linux01 sshd-session[3766]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)
+oct. 20 09:52:06 linux01 sshd-session[3766]: pam_unix(sshd:session): session closed for user keo
+oct. 20 09:52:06 linux01 sshd-session[3816]: Accepted publickey for keo from 192.168.50.1 port 56808 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:52:06 linux01 sshd-session[3816]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)
+oct. 20 09:52:06 linux01 sshd-session[3816]: pam_unix(sshd:session): session closed for user keo
+oct. 20 09:52:06 linux01 sshd-session[3866]: Accepted publickey for keo from 192.168.50.1 port 56810 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:52:06 linux01 sshd-session[3866]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)
+oct. 20 09:52:06 linux01 sshd-session[3866]: pam_unix(sshd:session): session closed for user keo
+oct. 20 09:53:05 linux01 sshd-session[3916]: Accepted publickey for keo from 192.168.50.1 port 36960 ssh2: ED25519 SHA256:DXcS068hUYctOwambWWqTFkpDTl4XGTj2WMJnq2MlR4
+oct. 20 09:53:05 linux01 sshd-session[3916]: pam_unix(sshd:session): session opened for user keo(uid=1001) by keo(uid=0)

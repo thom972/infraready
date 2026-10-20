@@ -1,0 +1,2 @@
+ls: impossible d'accéder à '/srv/infraready' : Aucun fichier ou répertoire de ce type
+drwxr-xr-x 2 root root 4096 Aug 26 04:45 /srv

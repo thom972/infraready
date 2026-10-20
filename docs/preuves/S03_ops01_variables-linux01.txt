@@ -1,0 +1,9 @@
+{
+    "ansible_become": true,
+    "ansible_host": "192.168.50.20",
+    "ansible_python_interpreter": "/usr/bin/python3",
+    "ansible_ssh_private_key_file": "~/.ssh/id_ed25519_ansible",
+    "ansible_user": "ansible",
+    "web_package": "nginx",
+    "web_service": "nginx"
+}

@@ -1,0 +1,4 @@
+infraready-ansible/group_vars/linux.yml
+infraready-ansible/inventory.ini
+infraready-ansible/nginx.yml
+infraready-ansible/README.md

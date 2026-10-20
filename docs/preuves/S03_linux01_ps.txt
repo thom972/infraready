@@ -1,0 +1,10 @@
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root        3662  4.7  0.7  18428 12256 ?        Ss   09:52   0:00 sshd-session: keo [priv]
+root        3289  0.0  0.0      0     0 ?        I    09:41   0:00 [kworker/1:1-events]
+root        3278  0.0  0.0      0     0 ?        I    09:30   0:00 [kworker/1:2-events]
+root        3269  0.0  0.0      0     0 ?        I    09:23   0:00 [kworker/0:0-events]
+root           1  0.0  0.9  24948 16500 ?        Ss   07:57   0:01 /usr/lib/systemd/systemd --switched-root --system --deserialize=51
+root        1052  0.0  2.5 1854308 42632 ?       Ssl  07:57   0:01 /snap/snapd/current/usr/lib/snapd/snapd
+root         598  0.0  0.5 279456  9612 ?        SLsl 07:57   0:00 /usr/sbin/multipathd -d -s
+root         357  0.0  0.0      0     0 ?        I    07:57   0:00 [kworker/u10:5-events_freezable_pwr_efficient]
+root          59  0.0  0.0      0     0 ?        I    07:57   0:00 [kworker/u10:2-flush-252:0]

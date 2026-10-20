@@ -1,0 +1,2 @@
+ERREUR : le service nginx n'est pas actif
+code de sortie : 1

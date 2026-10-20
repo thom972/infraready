@@ -1,0 +1,33 @@
+TARGET                                        SOURCE                            FSTYPE      OPTIONS
+/                                             /dev/mapper/ubuntu--vg-ubuntu--lv ext4        rw,relatime
+├─/run                                        tmpfs                             tmpfs       rw,nosuid,nodev,size=336372k,nr_inodes=819200,mode=755,inode64
+│ ├─/run/credentials/systemd-journald.service none                              tmpfs       ro,nosuid,nodev,noexec,relatime,nosymfollow,size=1024k,nr_inodes=1024,mode=700,inode64,noswap
+│ ├─/run/credentials/systemd-resolved.service none                              tmpfs       ro,nosuid,nodev,noexec,relatime,nosymfollow,size=1024k,nr_inodes=1024,mode=700,inode64,noswap
+│ ├─/run/credentials/systemd-networkd.service none                              tmpfs       ro,nosuid,nodev,noexec,relatime,nosymfollow,size=1024k,nr_inodes=1024,mode=700,inode64,noswap
+│ ├─/run/credentials/getty@tty1.service       none                              tmpfs       ro,nosuid,nodev,noexec,relatime,nosymfollow,size=1024k,nr_inodes=1024,mode=700,inode64,noswap
+│ └─/run/user/1001                            tmpfs                             tmpfs       rw,nosuid,nodev,relatime,size=168184k,nr_inodes=42046,mode=700,uid=1001,gid=1001,inode64
+├─/boot                                       /dev/vda2                         ext4        rw,relatime
+├─/dev                                        devtmpfs                          devtmpfs    rw,nosuid,size=802860k,nr_inodes=200715,mode=755,inode64
+│ ├─/dev/hugepages                            hugetlbfs                         hugetlbfs   rw,nosuid,nodev,relatime,pagesize=2M
+│ ├─/dev/mqueue                               mqueue                            mqueue      rw,nosuid,nodev,noexec,relatime
+│ ├─/dev/shm                                  tmpfs                             tmpfs       rw,nosuid,nodev,inode64,usrquota
+│ └─/dev/pts                                  devpts                            devpts      rw,nosuid,noexec,relatime,gid=5,mode=600,ptmxmode=000
+├─/sys                                        sysfs                             sysfs       rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/kernel/tracing                       tracefs                           tracefs     rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/kernel/debug                         debugfs                           debugfs     rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/fuse/connections                  fusectl                           fusectl     rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/kernel/security                      securityfs                        securityfs  rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/cgroup                            cgroup2                           cgroup2     rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting
+│ ├─/sys/fs/pstore                            none                              pstore      rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/bpf                               bpf                               bpf         rw,nosuid,nodev,noexec,relatime,mode=700
+│ └─/sys/kernel/config                        configfs                          configfs    rw,nosuid,nodev,noexec,relatime
+├─/proc                                       proc                              proc        rw,nosuid,nodev,noexec,relatime
+│ └─/proc/sys/fs/binfmt_misc                  systemd-1                         autofs      rw,relatime,fd=33,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=6505
+│   └─/proc/sys/fs/binfmt_misc                binfmt_misc                       binfmt_misc rw,nosuid,nodev,noexec,relatime
+├─/snap/core24/1643                           /dev/loop0                        squashfs    ro,nodev,relatime,errors=continue,threads=single
+├─/tmp                                        tmpfs                             tmpfs       rw,nosuid,nodev,nr_inodes=1048576,inode64,usrquota
+├─/snap/hwctl/123                             /dev/loop1                        squashfs    ro,nodev,relatime,errors=continue,threads=single
+├─/snap/core24/2124                           /dev/loop2                        squashfs    ro,nodev,relatime,errors=continue,threads=single
+├─/snap/snapd/27710                           /dev/loop4                        squashfs    ro,nodev,relatime,errors=continue,threads=single
+├─/snap/hwctl/131                             /dev/loop3                        squashfs    ro,nodev,relatime,errors=continue,threads=single
+└─/snap/snapd/28254                           /dev/loop5                        squashfs    ro,nodev,relatime,errors=continue,threads=single

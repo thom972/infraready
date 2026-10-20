@@ -1,0 +1,11 @@
+Filesystem                        Type   Size  Used Avail Use% Mounted on
+tmpfs                             tmpfs  329M  1,2M  328M   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4   9,8G  4,8G  4,5G  52% /
+tmpfs                             tmpfs  822M     0  822M   0% /dev/shm
+none                              tmpfs  1,0M     0  1,0M   0% /run/credentials/systemd-journald.service
+none                              tmpfs  1,0M     0  1,0M   0% /run/credentials/systemd-resolved.service
+/dev/vda2                         ext4   1,8G  101M  1,6G   7% /boot
+tmpfs                             tmpfs  822M     0  822M   0% /tmp
+none                              tmpfs  1,0M     0  1,0M   0% /run/credentials/systemd-networkd.service
+none                              tmpfs  1,0M     0  1,0M   0% /run/credentials/getty@tty1.service
+tmpfs                             tmpfs  165M  8,0K  165M   1% /run/user/1001
