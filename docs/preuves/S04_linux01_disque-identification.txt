@@ -1,0 +1,15 @@
+NAME                       SIZE TYPE FSTYPE      MOUNTPOINTS       SERIAL
+loop0                     66,8M loop squashfs    /snap/core24/1643 
+loop1                      1,5M loop squashfs    /snap/hwctl/123   
+loop2                     66,8M loop squashfs    /snap/core24/2124 
+loop3                      1,5M loop squashfs    /snap/hwctl/131   
+loop4                     50,1M loop squashfs    /snap/snapd/27710 
+loop5                     44,7M loop squashfs    /snap/snapd/28254 
+sr0                       1024M rom                                QM00001
+vda                         20G disk                               
+├─vda1                       1M part                               
+├─vda2                     1,8G part ext4        /boot             
+└─vda3                    18,2G part LVM2_member                   
+  └─ubuntu--vg-ubuntu--lv   10G lvm  ext4        /                 
+vdb                          5G disk                               INFRA-DATA
+lrwxrwxrwx 1 root root  9 Oct 20 14:32 virtio-INFRA-DATA -> ../../vdb

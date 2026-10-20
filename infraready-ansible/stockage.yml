@@ -1,0 +1,110 @@
+---
+- name: Volume de donnees /srv/infraready sur LINUX01
+  hosts: LINUX01
+  tasks:
+    # ---------- Garde-fous AVANT toute ecriture ----------
+    - name: Verifier que le disque de donnees existe
+      ansible.builtin.stat:
+        path: "{{ data_disk }}"
+      register: disque
+
+    - name: Lire le peripherique qui porte la racine /
+      ansible.builtin.command: findmnt -no SOURCE /
+      register: racine
+      changed_when: false
+
+    - name: Refuser de continuer si le disque est absent ou porte la racine
+      ansible.builtin.assert:
+        that:
+          - disque.stat.exists
+          - disque.stat.lnk_source is not search('vda')
+          - "'vdb' not in racine.stdout"
+        fail_msg: "Disque INFRA-DATA introuvable ou cible douteuse : arret sans rien modifier."
+        success_msg: "Cible {{ disque.stat.lnk_source }} validee (la racine est sur {{ racine.stdout }})."
+
+    # ---------- Partition et systeme de fichiers ----------
+    - name: Partition unique sur tout le disque (table GPT)
+      community.general.parted:
+        device: "{{ data_disk }}"
+        label: gpt
+        number: 1
+        name: infradata
+        state: present
+
+    - name: Systeme de fichiers (jamais de reformatage si un systeme existe deja)
+      community.general.filesystem:
+        dev: "{{ data_part }}"
+        fstype: "{{ data_fstype }}"
+        opts: "-L {{ data_label }}"
+        force: false
+
+    - name: Lire l'UUID du systeme de fichiers
+      ansible.builtin.command: blkid -s UUID -o value {{ data_part }}
+      register: uuid
+      changed_when: false
+
+    # ---------- Groupe, montage persistant, permissions ----------
+    - name: Groupe proprietaire des donnees
+      ansible.builtin.group:
+        name: "{{ data_group }}"
+        state: present
+
+    - name: Membres du groupe
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: "{{ data_group }}"
+        append: true
+      loop: "{{ data_group_members }}"
+
+    - name: Montage persistant par UUID (sauvegarde de /etc/fstab avant modification)
+      ansible.posix.mount:
+        path: "{{ data_mount }}"
+        src: "UUID={{ uuid.stdout }}"
+        fstype: "{{ data_fstype }}"
+        opts: defaults,nofail
+        state: mounted
+        backup: true
+
+    - name: Permissions du point de montage (groupe en ecriture, bit setgid)
+      ansible.builtin.file:
+        path: "{{ data_mount }}"
+        owner: root
+        group: "{{ data_group }}"
+        mode: "2775"
+        state: directory
+
+    - name: Repertoire des journaux applicatifs
+      ansible.builtin.file:
+        path: "{{ data_mount }}/logs"
+        owner: root
+        group: "{{ data_group }}"
+        mode: "2775"
+        state: directory
+
+    # ---------- Verifications apres execution ----------
+    - name: Verifier la syntaxe de /etc/fstab
+      ansible.builtin.command: findmnt --verify
+      changed_when: false
+
+    - name: Lire le montage actif
+      ansible.builtin.command: findmnt -no SOURCE,FSTYPE {{ data_mount }}
+      register: montage
+      changed_when: false
+
+    - name: Test positif - keo (membre du groupe) peut ecrire
+      ansible.builtin.shell: touch {{ data_mount }}/.test-ecriture && rm -f {{ data_mount }}/.test-ecriture
+      become_user: keo
+      changed_when: false
+
+    - name: Test negatif - ansible (hors groupe) ne peut pas ecrire
+      ansible.builtin.shell: touch {{ data_mount }}/.test-ecriture && rm -f {{ data_mount }}/.test-ecriture
+      become_user: ansible
+      register: ecriture_ansible
+      changed_when: false
+      failed_when: ecriture_ansible.rc == 0
+
+    - name: Bilan du montage
+      ansible.builtin.assert:
+        that:
+          - data_fstype in montage.stdout
+        success_msg: "{{ data_mount }} monte ({{ montage.stdout }}), droits conformes."

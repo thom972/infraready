@@ -1,0 +1,62 @@
+
+PLAY [Volume de donnees /srv/infraready sur LINUX01] ***************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Verifier que le disque de donnees existe] ********************************
+ok: [LINUX01]
+
+TASK [Lire le peripherique qui porte la racine /] ******************************
+ok: [LINUX01]
+
+TASK [Refuser de continuer si le disque est absent ou porte la racine] *********
+ok: [LINUX01] => {
+    "changed": false,
+    "msg": "Cible /dev/vdb validee (la racine est sur /dev/mapper/ubuntu--vg-ubuntu--lv)."
+}
+
+TASK [Partition unique sur tout le disque (table GPT)] *************************
+ok: [LINUX01]
+
+TASK [Systeme de fichiers (jamais de reformatage si un systeme existe deja)] ***
+ok: [LINUX01]
+
+TASK [Lire l'UUID du systeme de fichiers] **************************************
+ok: [LINUX01]
+
+TASK [Groupe proprietaire des donnees] *****************************************
+ok: [LINUX01]
+
+TASK [Membres du groupe] *******************************************************
+ok: [LINUX01] => (item=keo)
+
+TASK [Montage persistant par UUID (sauvegarde de /etc/fstab avant modification)] ***
+ok: [LINUX01]
+
+TASK [Permissions du point de montage (groupe en ecriture, bit setgid)] ********
+ok: [LINUX01]
+
+TASK [Repertoire des journaux applicatifs] *************************************
+ok: [LINUX01]
+
+TASK [Verifier la syntaxe de /etc/fstab] ***************************************
+ok: [LINUX01]
+
+TASK [Lire le montage actif] ***************************************************
+ok: [LINUX01]
+
+TASK [Test positif - keo (membre du groupe) peut ecrire] ***********************
+[ERROR]: Task failed: Module failed: non-zero return code
+Origin: /home/keo/infraready-ansible/stockage.yml:94:7
+
+92       changed_when: false
+93
+94     - name: Test positif - keo (membre du groupe) peut ecrire
+         ^ column 7
+
+fatal: [LINUX01]: FAILED! => {"changed": false, "cmd": ["test", "-w", "/srv/infraready"], "delta": "0:00:00.006200", "end": "2026-10-20 14:38:25.766105", "msg": "non-zero return code", "rc": 1, "start": "2026-10-20 14:38:25.759905", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=14   changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+

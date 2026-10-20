@@ -1,0 +1,63 @@
+
+PLAY [Volume de donnees /srv/infraready sur LINUX01] ***************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Verifier que le disque de donnees existe] ********************************
+ok: [LINUX01]
+
+TASK [Lire le peripherique qui porte la racine /] ******************************
+ok: [LINUX01]
+
+TASK [Refuser de continuer si le disque est absent ou porte la racine] *********
+ok: [LINUX01] => {
+    "changed": false,
+    "msg": "Cible /dev/vdb validee (la racine est sur /dev/mapper/ubuntu--vg-ubuntu--lv)."
+}
+
+TASK [Partition unique sur tout le disque (table GPT)] *************************
+changed: [LINUX01]
+
+TASK [Systeme de fichiers (jamais de reformatage si un systeme existe deja)] ***
+changed: [LINUX01]
+
+TASK [Lire l'UUID du systeme de fichiers] **************************************
+ok: [LINUX01]
+
+TASK [Groupe proprietaire des donnees] *****************************************
+changed: [LINUX01]
+
+TASK [Membres du groupe] *******************************************************
+changed: [LINUX01] => (item=keo)
+
+TASK [Montage persistant par UUID (sauvegarde de /etc/fstab avant modification)] ***
+changed: [LINUX01]
+
+TASK [Permissions du point de montage (groupe en ecriture, bit setgid)] ********
+changed: [LINUX01]
+
+TASK [Repertoire des journaux applicatifs] *************************************
+changed: [LINUX01]
+
+TASK [Verifier la syntaxe de /etc/fstab] ***************************************
+ok: [LINUX01]
+
+TASK [Lire le montage actif] ***************************************************
+ok: [LINUX01]
+
+TASK [Test positif - keo (membre du groupe) peut ecrire] ***********************
+[ERROR]: Task failed: Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user (rc: 1, err: chmod: invalid operator (expected +, -, or =, but found A)
+}). For information on working around this, see https://docs.ansible.com/ansible-core/2.20/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+Origin: /home/keo/infraready-ansible/stockage.yml:94:7
+
+92       changed_when: false
+93
+94     - name: Test positif - keo (membre du groupe) peut ecrire
+         ^ column 7
+
+fatal: [LINUX01]: FAILED! => {"changed": false, "msg": "Task failed: Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user (rc: 1, err: chmod: invalid operator (expected +, -, or =, but found A)\n}). For information on working around this, see https://docs.ansible.com/ansible-core/2.20/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user"}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=14   changed=7    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+

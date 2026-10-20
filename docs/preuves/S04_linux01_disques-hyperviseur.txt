@@ -1,0 +1,6 @@
+ Type   Device   Target   Source
+----------------------------------------------------------------------
+ file   disk     vda      /var/lib/libvirt/images/LINUX01.qcow2
+ file   disk     vdb      /var/lib/libvirt/images/LINUX01-data.qcow2
+ file   cdrom    sda      -
+

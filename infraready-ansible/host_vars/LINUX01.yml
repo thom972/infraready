@@ -1,0 +1,9 @@
+---
+# Disque de donnees de LINUX01 - identifie par son numero de serie, jamais par /dev/vdX
+data_disk: /dev/disk/by-id/virtio-INFRA-DATA
+data_part: /dev/disk/by-id/virtio-INFRA-DATA-part1
+data_fstype: ext4
+data_label: infradata
+data_mount: /srv/infraready
+data_group: infraready
+data_group_members: [keo]

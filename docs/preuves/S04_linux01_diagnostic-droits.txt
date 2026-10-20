@@ -1,0 +1,24 @@
+--- H1/H4 : montage et droits
+TARGET    SOURCE  FSTYPE OPTIONS
+/srv/infraready
+          /dev/vdb1
+                  ext4   rw,relati
+drwxrwsr-x 4 root infraready 4096 Oct 20 14:36 /srv/infraready
+--- H2 : appartenance au groupe
+uid=1001(keo) gid=1001(keo) groups=1001(keo),27(sudo),100(users),1003(infraready)
+infraready:x:1003:keo
+--- H3 : groupes du processus via sudo
+uid=1001(keo) gid=1001(keo) groups=1001(keo),27(sudo),100(users),1003(infraready)
+--- Test direct
+code : 1
+--- Version de sudo
+sudo-rs 0.2.13-0ubuntu1.2
+--- Outil test utilise
+--- 1. /usr/bin/test -w
+code : 1
+--- 2. test integre au shell (dash)
+code : 0
+--- 3. ecriture reelle
+ECRITURE OK
+/usr/lib/cargo/bin/coreutils/test
+rust-coreutils: /usr/lib/cargo/bin/coreutils/test

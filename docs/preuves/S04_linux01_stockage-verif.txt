@@ -1,0 +1,13 @@
+NAME   FSTYPE FSVER LABEL     UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+vdb                                                                               
+└─vdb1 ext4   1.0   infradata bd3813fb-b629-45a6-be2e-34dba82bca03    4,6G     0% /srv/infraready
+TARGET          SOURCE    FSTYPE OPTIONS
+/srv/infraready /dev/vdb1 ext4   rw,relatime
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/vdb1      ext4  4,9G  1,3M  4,6G   1% /srv/infraready
+drwxrwsr-x 4 root infraready 4096 Oct 20 14:41 /srv/infraready
+drwxrwsr-x 2 root infraready 4096 Oct 20 14:36 /srv/infraready/logs
+UUID=bd3813fb-b629-45a6-be2e-34dba82bca03 /srv/infraready ext4 defaults,nofail 0 0
+TARGET          SOURCE    FSTYPE OPTIONS
+/srv/infraready /dev/vdb1 ext4   rw,relatime
+MONTAGE PERSISTANT OK
