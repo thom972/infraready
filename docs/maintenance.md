@@ -70,7 +70,7 @@ du laboratoire, il doit donc rester une décision humaine, dans un créneau anno
 
 | Date | Serveur | Action | Résultat |
 |---|---|---|---|
-| 21/10/2026 | OPS01 | Extension du volume racine avec l'espace libre du groupe LVM (`lvextend -r -l +100%FREE`) | 10 Gio → 18,22 Gio ; `/` de 60 % à 33 % utilisés, à chaud |
+| 22/10/2026 | OPS01 | Extension du volume racine avec l'espace libre du groupe LVM (`lvextend -r -l +100%FREE`) | 10 Gio → 18,22 Gio ; `/` de 60 % à 33 % utilisés, à chaud |
 
 ## 7. Retour arrière
 
@@ -84,4 +84,5 @@ du laboratoire, il doit donc rester une décision humaine, dans un créneau anno
 
 | Date | Serveurs | Mises à jour | Redémarrage | Vérification finale | Preuve |
 |---|---|---|---|---|---|
-| 21/10/2026 | LINUX01, OPS01 | Paquets Ubuntu appliqués (mode safe) | Non requis | `failed=0` sur les 3 hôtes | `S05_ops01_maintenance.txt` |
+| 22/10/2026 | LINUX01, OPS01 | Paquets Ubuntu appliqués (mode safe) | Non requis | `failed=0` sur les 3 hôtes | `S05_ops01_maintenance.txt` |
+| 22/10/2026 | WIN-DC01 | KB5126646 (cumulatif de sécurité), KB5126645, KB5127690 (.NET), KB890830 (outil anti-malware) via Windows Update, en deux passages, snapshot préalable | Oui (contrôleur de domaine, en dernier) | `dcdiag` OK, recherche suivante : 0 mise à jour, `failed=0` | `S05_ops01_maintenance-apres-windows.txt`, `S05_win-dc01_historique-wu.png` |
