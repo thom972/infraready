@@ -1,0 +1,9 @@
+# Fournisseur de tableaux de bord : Grafana charge les JSON du dossier ci-dessous.
+apiVersion: 1
+providers:
+  - name: infraready
+    folder: InfraReady
+    type: file
+    disableDeletion: true
+    options:
+      path: /var/lib/grafana/dashboards

@@ -1,0 +1,33 @@
+# Configuration Prometheus InfraReady - deployee par playbooks/supervision.yml
+# vers /etc/prometheus/prometheus.yml sur OPS01.
+global:
+  scrape_interval: 15s        # frequence de collecte des metriques
+  evaluation_interval: 15s    # frequence d'evaluation des regles d'alerte
+
+rule_files:
+  - /etc/prometheus/alertes.yml
+
+scrape_configs:
+  # Prometheus se surveille lui-meme
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          hote: OPS01
+
+  # Serveurs Linux : node_exporter (port 9100)
+  - job_name: linux
+    static_configs:
+      - targets: ['192.168.50.20:9100']
+        labels:
+          hote: LINUX01
+      - targets: ['localhost:9100']
+        labels:
+          hote: OPS01
+
+  # Serveur Windows : windows_exporter (port 9182, pare-feu limite a OPS01)
+  - job_name: windows
+    static_configs:
+      - targets: ['192.168.50.10:9182']
+        labels:
+          hote: WIN-DC01

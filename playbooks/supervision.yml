@@ -1,0 +1,253 @@
+---
+# Supervision InfraReady : exporters (Linux, Windows), Prometheus et Grafana sur OPS01.
+# Configurations versionnees dans monitoring/ ; aucune saisie manuelle dans Grafana.
+# Lancement : ansible-playbook playbooks/supervision.yml -K --ask-vault-pass
+
+# ---------------------------------------------------------------- Linux
+- name: Collecteur de metriques Linux (node_exporter)
+  hosts: serveurs_linux
+  tasks:
+    - name: Installer node_exporter (paquet Ubuntu, mis a jour par maintenance.yml)
+      ansible.builtin.apt:
+        name: prometheus-node-exporter
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: node_exporter actif et active au demarrage
+      ansible.builtin.service:
+        name: prometheus-node-exporter
+        state: started
+        enabled: true
+
+    - name: Verifier que les metriques sont publiees (port 9100)
+      ansible.builtin.uri:
+        url: http://localhost:9100/metrics
+        status_code: 200
+        return_content: false
+      register: metriques
+      retries: 5
+      delay: 3
+      until: metriques.status == 200
+
+# ---------------------------------------------------------------- Windows
+- name: Collecteur de metriques Windows (windows_exporter)
+  hosts: windows
+  gather_facts: false
+  tasks:
+    - name: Installer windows_exporter {{ windows_exporter_version }} (MSI officiel)
+      ansible.windows.win_package:
+        path: "{{ windows_exporter_url }}"
+        creates_path: 'C:\Program Files\windows_exporter\windows_exporter.exe'
+        state: present
+
+    - name: Service windows_exporter actif et automatique
+      ansible.windows.win_service:
+        name: windows_exporter
+        state: started
+        start_mode: auto
+
+    - name: Regle de pare-feu limitee a OPS01 (port 9182)
+      community.windows.win_firewall_rule:
+        name: "{{ windows_exporter_regle }}"
+        localport: 9182
+        protocol: tcp
+        direction: in
+        action: allow
+        remoteip: 192.168.50.30
+        profiles: [domain, private]
+        enabled: true
+        state: present
+
+    - name: Desactiver toute autre regle ouvrant le port 9182 (ex. regle creee par l'installeur)
+      ansible.windows.win_powershell:
+        script: |
+          $regles = Get-NetFirewallPortFilter -Protocol TCP |
+            Where-Object { $_.LocalPort -contains '9182' } | Get-NetFirewallRule |
+            Where-Object { $_.DisplayName -ne '{{ windows_exporter_regle }}' -and $_.Enabled -eq 'True' }
+          if ($regles) {
+            $regles | Disable-NetFirewallRule
+            $regles | ForEach-Object { "Regle desactivee : $($_.DisplayName)" }
+          } else {
+            $Ansible.Changed = $false
+          }
+
+    - name: Verifier que les metriques sont publiees (port 9182)
+      ansible.windows.win_uri:
+        url: http://localhost:9182/metrics
+        status_code: 200
+      register: metriques_win
+      retries: 5
+      delay: 5
+      until: metriques_win.status_code == 200
+
+# ---------------------------------------------------------------- OPS01
+- name: Prometheus et Grafana sur OPS01
+  hosts: ops
+  handlers:
+    - name: Redemarrer prometheus
+      ansible.builtin.service:
+        name: prometheus
+        state: restarted
+
+    - name: Redemarrer grafana
+      ansible.builtin.service:
+        name: grafana-server
+        state: restarted
+
+  tasks:
+    # ---- Prometheus
+    - name: Installer Prometheus (paquet Ubuntu) et la bibliotheque python3-debian
+      ansible.builtin.apt:
+        name: [prometheus, python3-debian]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Deployer les regles d'alerte (validees par promtool avant mise en place)
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../monitoring/alertes.yml"
+        dest: /etc/prometheus/alertes.yml
+        owner: root
+        group: root
+        mode: "0644"
+        validate: promtool check rules %s
+      notify: Redemarrer prometheus
+
+    - name: Deployer la configuration de collecte (validee par promtool avant mise en place)
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../monitoring/prometheus.yml"
+        dest: /etc/prometheus/prometheus.yml
+        owner: root
+        group: root
+        mode: "0644"
+        backup: true
+        validate: promtool check config %s
+      notify: Redemarrer prometheus
+
+    - name: Prometheus actif et active au demarrage
+      ansible.builtin.service:
+        name: prometheus
+        state: started
+        enabled: true
+
+    # ---- Grafana
+    - name: Depot APT officiel de Grafana (cle de signature verifiee)
+      ansible.builtin.deb822_repository:
+        name: grafana
+        types: deb
+        uris: https://apt.grafana.com
+        suites: stable
+        components: main
+        signed_by: https://apt.grafana.com/gpg.key
+        state: present
+
+    - name: Installer Grafana
+      ansible.builtin.apt:
+        name: grafana
+        state: present
+        update_cache: true
+
+    - name: Provisionner la source de donnees Prometheus
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../monitoring/grafana/datasource.yml"
+        dest: /etc/grafana/provisioning/datasources/infraready.yml
+        owner: root
+        group: grafana
+        mode: "0640"
+      notify: Redemarrer grafana
+
+    - name: Provisionner le fournisseur de tableaux de bord
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../monitoring/grafana/dashboards.yml"
+        dest: /etc/grafana/provisioning/dashboards/infraready.yml
+        owner: root
+        group: grafana
+        mode: "0640"
+      notify: Redemarrer grafana
+
+    - name: Dossier des tableaux de bord
+      ansible.builtin.file:
+        path: /var/lib/grafana/dashboards
+        state: directory
+        owner: grafana
+        group: grafana
+        mode: "0755"
+
+    - name: Deployer le tableau de bord InfraReady
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../monitoring/dashboards/infraready.json"
+        dest: /var/lib/grafana/dashboards/infraready.json
+        owner: grafana
+        group: grafana
+        mode: "0644"
+
+    - name: Grafana actif et active au demarrage
+      ansible.builtin.service:
+        name: grafana-server
+        state: started
+        enabled: true
+
+    - name: Appliquer les redemarrages en attente avant les verifications
+      ansible.builtin.meta: flush_handlers
+
+    - name: Attendre que Grafana reponde
+      ansible.builtin.uri:
+        url: http://localhost:3000/api/health
+        status_code: 200
+      register: sante_grafana
+      retries: 12
+      delay: 5
+      until: sante_grafana.status == 200
+
+    - name: Definir le mot de passe administrateur de Grafana (une seule fois, depuis le coffre)
+      ansible.builtin.shell: >
+        grafana cli --homepath /usr/share/grafana --config /etc/grafana/grafana.ini
+        admin reset-admin-password "{{ grafana_admin_password }}"
+        && touch /var/lib/grafana/.infraready-mdp-admin
+      args:
+        creates: /var/lib/grafana/.infraready-mdp-admin
+      become_user: grafana
+      no_log: true
+
+    # ---- Verifications apres execution
+    - name: Prometheus est pret
+      ansible.builtin.uri:
+        url: http://localhost:9090/-/ready
+        status_code: 200
+
+    - name: Toutes les cibles de collecte sont UP (Linux, Windows, Prometheus)
+      ansible.builtin.uri:
+        url: http://localhost:9090/api/v1/targets?state=active
+        return_content: true
+      register: cibles
+      retries: 10
+      delay: 15
+      until: >-
+        cibles.json.data.activeTargets | length >= 4 and
+        cibles.json.data.activeTargets | selectattr('health', 'ne', 'up') | list | length == 0
+
+    - name: Les regles d'alerte sont chargees
+      ansible.builtin.uri:
+        url: http://localhost:9090/api/v1/rules
+        return_content: true
+      register: regles
+      failed_when: regles.json.data.groups | length == 0
+
+    - name: Grafana interroge bien Prometheus (sante de la source de donnees)
+      ansible.builtin.uri:
+        url: http://localhost:3000/api/datasources/uid/prometheus-infraready/health
+        url_username: admin
+        url_password: "{{ grafana_admin_password }}"
+        force_basic_auth: true
+        return_content: true
+      register: sante_source
+      failed_when: sante_source.json.status | default('') != 'OK'
+      no_log: true
+
+    - name: Bilan de la supervision
+      ansible.builtin.debug:
+        msg:
+          - "Cibles UP : {{ cibles.json.data.activeTargets | map(attribute='labels.hote') | list | join(', ') }}"
+          - "Regles d'alerte chargees : {{ regles.json.data.groups | map(attribute='rules') | flatten | length }}"
+          - "Prometheus : http://192.168.50.30:9090 - Grafana : http://192.168.50.30:3000 (tableau de bord InfraReady)"
