@@ -1,0 +1,1312 @@
+
+PLAY [Verification des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [OPS01]
+ok: [LINUX01]
+
+TASK [Collecter l'etat des services] *******************************************
+ok: [LINUX01]
+ok: [OPS01]
+
+TASK [Les services critiques sont actifs] **************************************
+ok: [LINUX01] => (item=ssh) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": "ssh",
+    "msg": "ssh : actif"
+}
+ok: [LINUX01] => (item=nginx) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": "nginx",
+    "msg": "nginx : actif"
+}
+ok: [OPS01] => (item=ssh) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": "ssh",
+    "msg": "ssh : actif"
+}
+
+TASK [Espace libre suffisant sur les volumes surveilles] ***********************
+ok: [LINUX01] => (item=/) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 1154802,
+        "block_size": 4096,
+        "block_total": 2554693,
+        "block_used": 1399891,
+        "device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 544043,
+        "inode_total": 655360,
+        "inode_used": 111317,
+        "mount": "/",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 4730068992,
+        "size_total": 10464022528,
+        "uuid": "eeaab13a-2429-4d39-b920-fa918ba5dd8b"
+    },
+    "msg": "/ : 45.2 % libre"
+}
+ok: [LINUX01] => (item=/boot) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 394578,
+        "block_size": 4096,
+        "block_total": 447534,
+        "block_used": 52956,
+        "device": "/dev/vda2",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 115821,
+        "inode_total": 116160,
+        "inode_used": 339,
+        "mount": "/boot",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 1616191488,
+        "size_total": 1833099264,
+        "uuid": "932674aa-cfd5-4f45-b427-d4fd06b6b433"
+    },
+    "msg": "/boot : 88.2 % libre"
+}
+ok: [LINUX01] => (item=/srv/infraready) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 1198204,
+        "block_size": 4096,
+        "block_total": 1268136,
+        "block_used": 69932,
+        "device": "/dev/vdb1",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 327667,
+        "inode_total": 327680,
+        "inode_used": 13,
+        "mount": "/srv/infraready",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 4907843584,
+        "size_total": 5194285056,
+        "uuid": "bd3813fb-b629-45a6-be2e-34dba82bca03"
+    },
+    "msg": "/srv/infraready : 94.5 % libre"
+}
+ok: [OPS01] => (item=/) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 3013334,
+        "block_size": 4096,
+        "block_total": 4674235,
+        "block_used": 1660901,
+        "device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 1000351,
+        "inode_total": 1196032,
+        "inode_used": 195681,
+        "mount": "/",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 12342616064,
+        "size_total": 19145666560,
+        "uuid": "68b4acff-d676-4eab-a422-0b4345ebfa78"
+    },
+    "msg": "/ : 64.5 % libre"
+}
+ok: [OPS01] => (item=/boot) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 372700,
+        "block_size": 4096,
+        "block_total": 447534,
+        "block_used": 74834,
+        "device": "/dev/vda2",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 115817,
+        "inode_total": 116160,
+        "inode_used": 343,
+        "mount": "/boot",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 1526579200,
+        "size_total": 1833099264,
+        "uuid": "9a787016-a946-4277-9dc0-ce6b6668d810"
+    },
+    "msg": "/boot : 83.3 % libre"
+}
+
+TASK [Tous les volumes surveilles sont bien montes] ****************************
+ok: [LINUX01] => {
+    "changed": false,
+    "msg": "Volumes montes : /, /boot, /srv/infraready"
+}
+ok: [OPS01] => {
+    "changed": false,
+    "msg": "Volumes montes : /, /boot"
+}
+
+TASK [Le service web repond en HTTP] *******************************************
+skipping: [OPS01]
+ok: [LINUX01]
+
+PLAY [Verification du serveur Windows] *****************************************
+
+TASK [Lire l'etat des services critiques] **************************************
+ok: [WIN-DC01] => (item=NTDS)
+ok: [WIN-DC01] => (item=DNS)
+ok: [WIN-DC01] => (item=Netlogon)
+ok: [WIN-DC01] => (item=Kdc)
+ok: [WIN-DC01] => (item=WinRM)
+ok: [WIN-DC01] => (item=LanmanServer)
+
+TASK [Les services critiques sont demarres] ************************************
+ok: [WIN-DC01] => (item=NTDS) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "NTDS"
+            }
+        },
+        "item": "NTDS",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "shutdown"
+                ],
+                "dependencies": [],
+                "dependency_of": [
+                    "KdsSvc",
+                    "Kdc",
+                    "IsmServ",
+                    "DNS",
+                    "DFSR"
+                ],
+                "description": "Service de contrôleur de domaine des services de domaine Active Directory. Si ce service est arrêté, les utilisateurs ne peuvent plus se connecter au réseau. Si ce service est désactivé, tous les services qui en dépendent explicitement ne peuvent plus démarrer.",
+                "desktop_interact": false,
+                "display_name": "Services de domaine Active Directory",
+                "error_control": "normal",
+                "failure_actions": [],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 0,
+                "launch_protection": "none",
+                "load_order_group": "Base",
+                "name": "NTDS",
+                "path": "C:\\WINDOWS\\System32\\lsass.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 760,
+                "required_privileges": [],
+                "service_exit_code": 0,
+                "service_flags": [
+                    "runs_in_system_process"
+                ],
+                "service_type": "win32_share_process",
+                "sid_info": "none",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "NTDS : demarre"
+}
+ok: [WIN-DC01] => (item=DNS) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "DNS"
+            }
+        },
+        "item": "DNS",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "pause_continue",
+                    "shutdown",
+                    "param_change",
+                    "netbind_change"
+                ],
+                "dependencies": [
+                    "Tcpip",
+                    "Afd",
+                    "RpcSs",
+                    "NTDS"
+                ],
+                "dependency_of": [],
+                "description": "Permet aux clients DNS de résoudre les noms DNS en répondant aux requêtes DNS et aux requêtes de mise à jour DNS dynamiques. Si ce service est arrêté, les mises à jour DNS n’auront pas lieu. Si ce service est désactivé, tous les services qui en dépendent explicitement ne pourront pas démarrer.",
+                "desktop_interact": false,
+                "display_name": "Serveur DNS",
+                "error_control": "normal",
+                "failure_actions": [
+                    {
+                        "delay_ms": 120000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 300000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 0,
+                        "type": "none"
+                    }
+                ],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 900,
+                "launch_protection": "none",
+                "load_order_group": "",
+                "name": "DNS",
+                "path": "C:\\WINDOWS\\system32\\dns.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 2584,
+                "required_privileges": [
+                    "SeChangeNotifyPrivilege",
+                    "SeImpersonatePrivilege",
+                    "SeCreateGlobalPrivilege",
+                    "SeAuditPrivilege"
+                ],
+                "service_exit_code": 0,
+                "service_flags": [],
+                "service_type": "win32_own_process",
+                "sid_info": "unrestricted",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "DNS : demarre"
+}
+ok: [WIN-DC01] => (item=Netlogon) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "Netlogon"
+            }
+        },
+        "item": "Netlogon",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "pause_continue"
+                ],
+                "dependencies": [
+                    "LanmanWorkstation",
+                    "LanmanServer"
+                ],
+                "dependency_of": [],
+                "description": "Maintient un canal sécurisé entre cet ordinateur et le contrôleur de domaine pour authentifier les utilisateurs et les services. Si ce service est arrêté, l’ordinateur peut ne pas authentifier les utilisateurs et les services et le contrôleur de domaine ne peut pas inscrire les enregistrements DNS. Si ce service est désactivé, tout service qui en dépend explicitement ne pourra pas démarrer.",
+                "desktop_interact": false,
+                "display_name": "Netlogon",
+                "error_control": "normal",
+                "failure_actions": [],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 0,
+                "launch_protection": "none",
+                "load_order_group": "MS_WindowsRemoteValidation",
+                "name": "Netlogon",
+                "path": "C:\\WINDOWS\\system32\\lsass.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 760,
+                "required_privileges": [],
+                "service_exit_code": 0,
+                "service_flags": [
+                    "runs_in_system_process"
+                ],
+                "service_type": "win32_share_process",
+                "sid_info": "none",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "Netlogon : demarre"
+}
+ok: [WIN-DC01] => (item=Kdc) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "Kdc"
+            }
+        },
+        "item": "Kdc",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop"
+                ],
+                "dependencies": [
+                    "RpcSs",
+                    "Afd",
+                    "NTDS"
+                ],
+                "dependency_of": [],
+                "description": "Ce service, qui s’exécute sur les contrôleurs de domaine, permet aux utilisateurs d’ouvrir une session sur le réseau en utilisant le protocole d’authentification Kerberos. Si ce service est arrêté, les utilisateurs ne pourront plus ouvrir de session sur le réseau. Si ce service est désactivé, les services qui en dépendent explicitement ne démarreront pas.",
+                "desktop_interact": false,
+                "display_name": "Centre de distribution de clés Kerberos",
+                "error_control": "normal",
+                "failure_actions": [],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 0,
+                "launch_protection": "none",
+                "load_order_group": "MS_WindowsRemoteValidation",
+                "name": "Kdc",
+                "path": "C:\\WINDOWS\\System32\\lsass.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 760,
+                "required_privileges": [],
+                "service_exit_code": 0,
+                "service_flags": [
+                    "runs_in_system_process"
+                ],
+                "service_type": "win32_share_process",
+                "sid_info": "none",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "Kdc : demarre"
+}
+ok: [WIN-DC01] => (item=WinRM) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "WinRM"
+            }
+        },
+        "item": "WinRM",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "shutdown"
+                ],
+                "dependencies": [
+                    "RPCSS",
+                    "HTTP",
+                    "NSI"
+                ],
+                "dependency_of": [],
+                "description": "Le service Gestion à distance de Windows implémente le protocole Gestion des services Web pour la gestion à distance. La Gestion des services Web est un protocole standard utilisé pour la gestion à distance de logiciels et de matériels. Le service Gestion à distance de Windows traite les demandes Gestion des services Web. Il doit être configuré à l’aide de l’outil winrm.cmd ou via la stratégie de groupe. Ce service donne accès aux données WMI et permet le recueil d’événements. Le recueil d’événements et l’abonnement exigent que ce service s'exécute. Les messages du service Gestion à distance de Windows utilisent HTTP et HTTPS. Le service Gestion à distance de Windows ne dépend pas d’IIS mais partage un port avec IIS sur la même machine. Le service Gestion à distance de Windows réserve le préfixe d’URL /wsman. Pour éviter les conflits avec IIS, vérifiez que les sites Web hébergés sur IIS n’utilisent pas le préfixe d’URL /wsman.",
+                "desktop_interact": false,
+                "display_name": "Gestion à distance de Windows (Gestion WSM)",
+                "error_control": "normal",
+                "failure_actions": [
+                    {
+                        "delay_ms": 120000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 300000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 0,
+                        "type": "none"
+                    }
+                ],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 86400,
+                "launch_protection": "none",
+                "load_order_group": "",
+                "name": "WinRM",
+                "path": "C:\\WINDOWS\\System32\\svchost.exe -k NetworkService -p",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 3100,
+                "required_privileges": [
+                    "SeAssignPrimaryTokenPrivilege",
+                    "SeAuditPrivilege",
+                    "SeChangeNotifyPrivilege",
+                    "SeCreateGlobalPrivilege",
+                    "SeImpersonatePrivilege"
+                ],
+                "service_exit_code": 0,
+                "service_flags": [],
+                "service_type": "win32_share_process",
+                "sid_info": "unrestricted",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "NT AUTHORITY\\NetworkService",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "WinRM : demarre"
+}
+ok: [WIN-DC01] => (item=LanmanServer) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "LanmanServer"
+            }
+        },
+        "item": "LanmanServer",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop"
+                ],
+                "dependencies": [
+                    "SamSS",
+                    "Srv2"
+                ],
+                "dependency_of": [
+                    "Netlogon",
+                    "Dfs"
+                ],
+                "description": "Prend en charge le partage de fichiers, d’impression et des canaux nommés via le réseau pour cet ordinateur. Si ce service est arrêté, ces fonctions ne seront pas disponibles. Si ce service est désactivé, les services qui en dépendent ne pourront pas démarrer.",
+                "desktop_interact": false,
+                "display_name": "Serveur",
+                "error_control": "normal",
+                "failure_actions": [
+                    {
+                        "delay_ms": 60000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 120000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 0,
+                        "type": "none"
+                    }
+                ],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 86400,
+                "launch_protection": "none",
+                "load_order_group": "",
+                "name": "LanmanServer",
+                "path": "C:\\WINDOWS\\System32\\svchost.exe -k smbsvcs",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 2904,
+                "required_privileges": [
+                    "SeChangeNotifyPrivilege",
+                    "SeImpersonatePrivilege",
+                    "SeAuditPrivilege"
+                ],
+                "service_exit_code": 0,
+                "service_flags": [],
+                "service_type": "win32_share_process",
+                "sid_info": "unrestricted",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [
+                    {
+                        "action": "start_service",
+                        "data_items": [
+                            {
+                                "data": "4B324FC8-1670-01D3-1278-5A47BF6EE188",
+                                "type": "string"
+                            }
+                        ],
+                        "sub_type": "rpc_interface_event",
+                        "sub_type_guid": "bc90d167-9470-4139-a9ba-be0bbbf5b74d",
+                        "type": "network_endpoint"
+                    },
+                    {
+                        "action": "start_service",
+                        "data_items": [
+                            {
+                                "data": "srvsvc",
+                                "type": "string"
+                            }
+                        ],
+                        "sub_type": "named_pipe_event",
+                        "sub_type_guid": "1f81d131-3fac-4537-9e0c-7e7b0c2f4b55",
+                        "type": "network_endpoint"
+                    }
+                ],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "LanmanServer : demarre"
+}
+
+TASK [Lire l'espace libre sur C:] **********************************************
+ok: [WIN-DC01]
+
+TASK [Espace libre suffisant sur C:] *******************************************
+ok: [WIN-DC01] => {
+    "changed": false,
+    "msg": "C: : 49.2 % libre"
+}
+
+PLAY [Mises a jour Linux] ******************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Mettre a jour le cache et appliquer les mises a jour (mode safe, aucune suppression de paquet)] ***
+changed: [LINUX01]
+
+TASK [Resultat des mises a jour] ***********************************************
+ok: [LINUX01] => {
+    "msg": "LINUX01 : mises a jour appliquees"
+}
+
+TASK [Un redemarrage est-il requis ?] ******************************************
+ok: [LINUX01]
+
+TASK [Redemarrer (seulement si requis, autorise, et pas sur le controleur lui-meme)] ***
+skipping: [LINUX01]
+
+TASK [Signaler un redemarrage restant a planifier] *****************************
+skipping: [LINUX01]
+
+PLAY [Mises a jour Linux] ******************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [OPS01]
+
+TASK [Mettre a jour le cache et appliquer les mises a jour (mode safe, aucune suppression de paquet)] ***
+changed: [OPS01]
+
+TASK [Resultat des mises a jour] ***********************************************
+ok: [OPS01] => {
+    "msg": "OPS01 : mises a jour appliquees"
+}
+
+TASK [Un redemarrage est-il requis ?] ******************************************
+ok: [OPS01]
+
+TASK [Redemarrer (seulement si requis, autorise, et pas sur le controleur lui-meme)] ***
+skipping: [OPS01]
+
+TASK [Signaler un redemarrage restant a planifier] *****************************
+skipping: [OPS01]
+
+PLAY [Mises a jour Windows (recherche)] ****************************************
+
+TASK [Rechercher les mises a jour disponibles (aucune installation)] ***********
+ok: [WIN-DC01]
+
+TASK [Mises a jour Windows disponibles] ****************************************
+ok: [WIN-DC01] => {
+    "msg": "3 mise(s) a jour disponible(s) : ['2026-10 Correctif de sécurité (KB5126646) (26100.33650)', 'Outil de suppression de logiciels malveillants Windows x64\\xa0- v5.146 (KB890830)', '2026-10 .NET Framework Correctif de sécurité (KB5127690)']"
+}
+
+PLAY [Verification des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+ok: [OPS01]
+
+TASK [Collecter l'etat des services] *******************************************
+ok: [LINUX01]
+ok: [OPS01]
+
+TASK [Les services critiques sont actifs] **************************************
+ok: [LINUX01] => (item=ssh) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": "ssh",
+    "msg": "ssh : actif"
+}
+ok: [LINUX01] => (item=nginx) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": "nginx",
+    "msg": "nginx : actif"
+}
+ok: [OPS01] => (item=ssh) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": "ssh",
+    "msg": "ssh : actif"
+}
+
+TASK [Espace libre suffisant sur les volumes surveilles] ***********************
+ok: [LINUX01] => (item=/) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 1147028,
+        "block_size": 4096,
+        "block_total": 2554693,
+        "block_used": 1407665,
+        "device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 543902,
+        "inode_total": 655360,
+        "inode_used": 111458,
+        "mount": "/",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 4698226688,
+        "size_total": 10464022528,
+        "uuid": "eeaab13a-2429-4d39-b920-fa918ba5dd8b"
+    },
+    "msg": "/ : 44.9 % libre"
+}
+ok: [OPS01] => (item=/) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 3096081,
+        "block_size": 4096,
+        "block_total": 4674235,
+        "block_used": 1578154,
+        "device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 1041191,
+        "inode_total": 1196032,
+        "inode_used": 154841,
+        "mount": "/",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 12681547776,
+        "size_total": 19145666560,
+        "uuid": "68b4acff-d676-4eab-a422-0b4345ebfa78"
+    },
+    "msg": "/ : 66.2 % libre"
+}
+ok: [LINUX01] => (item=/boot) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 395715,
+        "block_size": 4096,
+        "block_total": 447534,
+        "block_used": 51819,
+        "device": "/dev/vda2",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 115821,
+        "inode_total": 116160,
+        "inode_used": 339,
+        "mount": "/boot",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 1620848640,
+        "size_total": 1833099264,
+        "uuid": "932674aa-cfd5-4f45-b427-d4fd06b6b433"
+    },
+    "msg": "/boot : 88.4 % libre"
+}
+ok: [OPS01] => (item=/boot) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 395710,
+        "block_size": 4096,
+        "block_total": 447534,
+        "block_used": 51824,
+        "device": "/dev/vda2",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 115821,
+        "inode_total": 116160,
+        "inode_used": 339,
+        "mount": "/boot",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 1620828160,
+        "size_total": 1833099264,
+        "uuid": "9a787016-a946-4277-9dc0-ce6b6668d810"
+    },
+    "msg": "/boot : 88.4 % libre"
+}
+ok: [LINUX01] => (item=/srv/infraready) => {
+    "ansible_loop_var": "m",
+    "changed": false,
+    "m": {
+        "block_available": 1198204,
+        "block_size": 4096,
+        "block_total": 1268136,
+        "block_used": 69932,
+        "device": "/dev/vdb1",
+        "dump": 0,
+        "fstype": "ext4",
+        "inode_available": 327667,
+        "inode_total": 327680,
+        "inode_used": 13,
+        "mount": "/srv/infraready",
+        "options": "rw,relatime",
+        "passno": 0,
+        "size_available": 4907843584,
+        "size_total": 5194285056,
+        "uuid": "bd3813fb-b629-45a6-be2e-34dba82bca03"
+    },
+    "msg": "/srv/infraready : 94.5 % libre"
+}
+
+TASK [Tous les volumes surveilles sont bien montes] ****************************
+ok: [LINUX01] => {
+    "changed": false,
+    "msg": "Volumes montes : /, /boot, /srv/infraready"
+}
+ok: [OPS01] => {
+    "changed": false,
+    "msg": "Volumes montes : /, /boot"
+}
+
+TASK [Le service web repond en HTTP] *******************************************
+skipping: [OPS01]
+ok: [LINUX01]
+
+PLAY [Verification du serveur Windows] *****************************************
+
+TASK [Lire l'etat des services critiques] **************************************
+ok: [WIN-DC01] => (item=NTDS)
+ok: [WIN-DC01] => (item=DNS)
+ok: [WIN-DC01] => (item=Netlogon)
+ok: [WIN-DC01] => (item=Kdc)
+ok: [WIN-DC01] => (item=WinRM)
+ok: [WIN-DC01] => (item=LanmanServer)
+
+TASK [Les services critiques sont demarres] ************************************
+ok: [WIN-DC01] => (item=NTDS) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "NTDS"
+            }
+        },
+        "item": "NTDS",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "shutdown"
+                ],
+                "dependencies": [],
+                "dependency_of": [
+                    "KdsSvc",
+                    "Kdc",
+                    "IsmServ",
+                    "DNS",
+                    "DFSR"
+                ],
+                "description": "Service de contrôleur de domaine des services de domaine Active Directory. Si ce service est arrêté, les utilisateurs ne peuvent plus se connecter au réseau. Si ce service est désactivé, tous les services qui en dépendent explicitement ne peuvent plus démarrer.",
+                "desktop_interact": false,
+                "display_name": "Services de domaine Active Directory",
+                "error_control": "normal",
+                "failure_actions": [],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 0,
+                "launch_protection": "none",
+                "load_order_group": "Base",
+                "name": "NTDS",
+                "path": "C:\\WINDOWS\\System32\\lsass.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 760,
+                "required_privileges": [],
+                "service_exit_code": 0,
+                "service_flags": [
+                    "runs_in_system_process"
+                ],
+                "service_type": "win32_share_process",
+                "sid_info": "none",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "NTDS : demarre"
+}
+ok: [WIN-DC01] => (item=DNS) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "DNS"
+            }
+        },
+        "item": "DNS",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "pause_continue",
+                    "shutdown",
+                    "param_change",
+                    "netbind_change"
+                ],
+                "dependencies": [
+                    "Tcpip",
+                    "Afd",
+                    "RpcSs",
+                    "NTDS"
+                ],
+                "dependency_of": [],
+                "description": "Permet aux clients DNS de résoudre les noms DNS en répondant aux requêtes DNS et aux requêtes de mise à jour DNS dynamiques. Si ce service est arrêté, les mises à jour DNS n’auront pas lieu. Si ce service est désactivé, tous les services qui en dépendent explicitement ne pourront pas démarrer.",
+                "desktop_interact": false,
+                "display_name": "Serveur DNS",
+                "error_control": "normal",
+                "failure_actions": [
+                    {
+                        "delay_ms": 120000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 300000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 0,
+                        "type": "none"
+                    }
+                ],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 900,
+                "launch_protection": "none",
+                "load_order_group": "",
+                "name": "DNS",
+                "path": "C:\\WINDOWS\\system32\\dns.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 2584,
+                "required_privileges": [
+                    "SeChangeNotifyPrivilege",
+                    "SeImpersonatePrivilege",
+                    "SeCreateGlobalPrivilege",
+                    "SeAuditPrivilege"
+                ],
+                "service_exit_code": 0,
+                "service_flags": [],
+                "service_type": "win32_own_process",
+                "sid_info": "unrestricted",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "DNS : demarre"
+}
+ok: [WIN-DC01] => (item=Netlogon) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "Netlogon"
+            }
+        },
+        "item": "Netlogon",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "pause_continue"
+                ],
+                "dependencies": [
+                    "LanmanWorkstation",
+                    "LanmanServer"
+                ],
+                "dependency_of": [],
+                "description": "Maintient un canal sécurisé entre cet ordinateur et le contrôleur de domaine pour authentifier les utilisateurs et les services. Si ce service est arrêté, l’ordinateur peut ne pas authentifier les utilisateurs et les services et le contrôleur de domaine ne peut pas inscrire les enregistrements DNS. Si ce service est désactivé, tout service qui en dépend explicitement ne pourra pas démarrer.",
+                "desktop_interact": false,
+                "display_name": "Netlogon",
+                "error_control": "normal",
+                "failure_actions": [],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 0,
+                "launch_protection": "none",
+                "load_order_group": "MS_WindowsRemoteValidation",
+                "name": "Netlogon",
+                "path": "C:\\WINDOWS\\system32\\lsass.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 760,
+                "required_privileges": [],
+                "service_exit_code": 0,
+                "service_flags": [
+                    "runs_in_system_process"
+                ],
+                "service_type": "win32_share_process",
+                "sid_info": "none",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "Netlogon : demarre"
+}
+ok: [WIN-DC01] => (item=Kdc) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "Kdc"
+            }
+        },
+        "item": "Kdc",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop"
+                ],
+                "dependencies": [
+                    "RpcSs",
+                    "Afd",
+                    "NTDS"
+                ],
+                "dependency_of": [],
+                "description": "Ce service, qui s’exécute sur les contrôleurs de domaine, permet aux utilisateurs d’ouvrir une session sur le réseau en utilisant le protocole d’authentification Kerberos. Si ce service est arrêté, les utilisateurs ne pourront plus ouvrir de session sur le réseau. Si ce service est désactivé, les services qui en dépendent explicitement ne démarreront pas.",
+                "desktop_interact": false,
+                "display_name": "Centre de distribution de clés Kerberos",
+                "error_control": "normal",
+                "failure_actions": [],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 0,
+                "launch_protection": "none",
+                "load_order_group": "MS_WindowsRemoteValidation",
+                "name": "Kdc",
+                "path": "C:\\WINDOWS\\System32\\lsass.exe",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 760,
+                "required_privileges": [],
+                "service_exit_code": 0,
+                "service_flags": [
+                    "runs_in_system_process"
+                ],
+                "service_type": "win32_share_process",
+                "sid_info": "none",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "Kdc : demarre"
+}
+ok: [WIN-DC01] => (item=WinRM) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "WinRM"
+            }
+        },
+        "item": "WinRM",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop",
+                    "shutdown"
+                ],
+                "dependencies": [
+                    "RPCSS",
+                    "HTTP",
+                    "NSI"
+                ],
+                "dependency_of": [],
+                "description": "Le service Gestion à distance de Windows implémente le protocole Gestion des services Web pour la gestion à distance. La Gestion des services Web est un protocole standard utilisé pour la gestion à distance de logiciels et de matériels. Le service Gestion à distance de Windows traite les demandes Gestion des services Web. Il doit être configuré à l’aide de l’outil winrm.cmd ou via la stratégie de groupe. Ce service donne accès aux données WMI et permet le recueil d’événements. Le recueil d’événements et l’abonnement exigent que ce service s'exécute. Les messages du service Gestion à distance de Windows utilisent HTTP et HTTPS. Le service Gestion à distance de Windows ne dépend pas d’IIS mais partage un port avec IIS sur la même machine. Le service Gestion à distance de Windows réserve le préfixe d’URL /wsman. Pour éviter les conflits avec IIS, vérifiez que les sites Web hébergés sur IIS n’utilisent pas le préfixe d’URL /wsman.",
+                "desktop_interact": false,
+                "display_name": "Gestion à distance de Windows (Gestion WSM)",
+                "error_control": "normal",
+                "failure_actions": [
+                    {
+                        "delay_ms": 120000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 300000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 0,
+                        "type": "none"
+                    }
+                ],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 86400,
+                "launch_protection": "none",
+                "load_order_group": "",
+                "name": "WinRM",
+                "path": "C:\\WINDOWS\\System32\\svchost.exe -k NetworkService -p",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 3100,
+                "required_privileges": [
+                    "SeAssignPrimaryTokenPrivilege",
+                    "SeAuditPrivilege",
+                    "SeChangeNotifyPrivilege",
+                    "SeCreateGlobalPrivilege",
+                    "SeImpersonatePrivilege"
+                ],
+                "service_exit_code": 0,
+                "service_flags": [],
+                "service_type": "win32_share_process",
+                "sid_info": "unrestricted",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [],
+                "username": "NT AUTHORITY\\NetworkService",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "WinRM : demarre"
+}
+ok: [WIN-DC01] => (item=LanmanServer) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "exists": true,
+        "failed": false,
+        "invocation": {
+            "module_args": {
+                "name": "LanmanServer"
+            }
+        },
+        "item": "LanmanServer",
+        "services": [
+            {
+                "checkpoint": 0,
+                "controls_accepted": [
+                    "stop"
+                ],
+                "dependencies": [
+                    "SamSS",
+                    "Srv2"
+                ],
+                "dependency_of": [
+                    "Netlogon",
+                    "Dfs"
+                ],
+                "description": "Prend en charge le partage de fichiers, d’impression et des canaux nommés via le réseau pour cet ordinateur. Si ce service est arrêté, ces fonctions ne seront pas disponibles. Si ce service est désactivé, les services qui en dépendent ne pourront pas démarrer.",
+                "desktop_interact": false,
+                "display_name": "Serveur",
+                "error_control": "normal",
+                "failure_actions": [
+                    {
+                        "delay_ms": 60000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 120000,
+                        "type": "restart"
+                    },
+                    {
+                        "delay_ms": 0,
+                        "type": "none"
+                    }
+                ],
+                "failure_actions_on_non_crash_failure": false,
+                "failure_command": null,
+                "failure_reboot_msg": null,
+                "failure_reset_period_sec": 86400,
+                "launch_protection": "none",
+                "load_order_group": "",
+                "name": "LanmanServer",
+                "path": "C:\\WINDOWS\\System32\\svchost.exe -k smbsvcs",
+                "pre_shutdown_timeout_ms": 10000,
+                "preferred_node": null,
+                "process_id": 2904,
+                "required_privileges": [
+                    "SeChangeNotifyPrivilege",
+                    "SeImpersonatePrivilege",
+                    "SeAuditPrivilege"
+                ],
+                "service_exit_code": 0,
+                "service_flags": [],
+                "service_type": "win32_share_process",
+                "sid_info": "unrestricted",
+                "start_mode": "auto",
+                "state": "started",
+                "triggers": [
+                    {
+                        "action": "start_service",
+                        "data_items": [
+                            {
+                                "data": "4B324FC8-1670-01D3-1278-5A47BF6EE188",
+                                "type": "string"
+                            }
+                        ],
+                        "sub_type": "rpc_interface_event",
+                        "sub_type_guid": "bc90d167-9470-4139-a9ba-be0bbbf5b74d",
+                        "type": "network_endpoint"
+                    },
+                    {
+                        "action": "start_service",
+                        "data_items": [
+                            {
+                                "data": "srvsvc",
+                                "type": "string"
+                            }
+                        ],
+                        "sub_type": "named_pipe_event",
+                        "sub_type_guid": "1f81d131-3fac-4537-9e0c-7e7b0c2f4b55",
+                        "type": "network_endpoint"
+                    }
+                ],
+                "username": "AUTORITE NT\\Système",
+                "wait_hint_ms": 0,
+                "win32_exit_code": 0
+            }
+        ]
+    },
+    "msg": "LanmanServer : demarre"
+}
+
+TASK [Lire l'espace libre sur C:] **********************************************
+ok: [WIN-DC01]
+
+TASK [Espace libre suffisant sur C:] *******************************************
+ok: [WIN-DC01] => {
+    "changed": false,
+    "msg": "C: : 49.2 % libre"
+}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=16   changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+OPS01                      : ok=14   changed=1    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+WIN-DC01                   : ok=10   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

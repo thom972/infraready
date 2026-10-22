@@ -1,0 +1,80 @@
+---
+# Controles en LECTURE SEULE : espace disque, services, reponse du service web.
+# Utilisable seul, et appele avant/apres maintenance.yml.
+# Lancement : ansible-playbook verification.yml -K --ask-vault-pass
+
+- name: Verification des serveurs Linux
+  hosts: serveurs_linux
+  gather_facts: true
+  tasks:
+    - name: Collecter l'etat des services
+      ansible.builtin.service_facts:
+
+    - name: Les services critiques sont actifs
+      ansible.builtin.assert:
+        that:
+          - (item ~ '.service') in ansible_facts.services
+          - ansible_facts.services[item ~ '.service'].state == 'running'
+        success_msg: "{{ item }} : actif"
+        fail_msg: "{{ item }} : absent ou arrete sur {{ inventory_hostname }}"
+      loop: "{{ services_critiques }}"
+
+    - name: Espace libre suffisant sur les volumes surveilles
+      ansible.builtin.assert:
+        that:
+          - (m.size_available / m.size_total) >= seuil_espace_libre
+        success_msg: "{{ m.mount }} : {{ ((m.size_available / m.size_total) * 100) | round(1) }} % libre"
+        fail_msg: "{{ m.mount }} : seulement {{ ((m.size_available / m.size_total) * 100) | round(1) }} % libre (seuil {{ (seuil_espace_libre * 100) | int }} %)"
+      loop: "{{ ansible_mounts | selectattr('mount', 'in', volumes_surveilles) | list }}"
+      loop_control:
+        loop_var: m
+        label: "{{ m.mount }}"
+
+    - name: Tous les volumes surveilles sont bien montes
+      ansible.builtin.assert:
+        that:
+          - volumes_surveilles | difference(ansible_mounts | map(attribute='mount') | list) | length == 0
+        fail_msg: "Volume(s) non monte(s) : {{ volumes_surveilles | difference(ansible_mounts | map(attribute='mount') | list) }}"
+        success_msg: "Volumes montes : {{ volumes_surveilles | join(', ') }}"
+
+    - name: Le service web repond en HTTP
+      ansible.builtin.uri:
+        url: http://localhost/
+        status_code: 200
+      when: "'nginx' in services_critiques"
+
+- name: Verification du serveur Windows
+  hosts: windows
+  gather_facts: false
+  tasks:
+    - name: Lire l'etat des services critiques
+      ansible.windows.win_service_info:
+        name: "{{ item }}"
+      loop: "{{ services_critiques }}"
+      register: services_win
+
+    - name: Les services critiques sont demarres
+      ansible.builtin.assert:
+        that:
+          - item.services | length == 1
+          - item.services[0].state == 'started'
+        success_msg: "{{ item.item }} : demarre"
+        fail_msg: "{{ item.item }} : absent ou arrete"
+      loop: "{{ services_win.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: "Lire l'espace libre sur C:"
+      ansible.windows.win_powershell:
+        script: |
+          $v = Get-Volume -DriveLetter C
+          [math]::Round($v.SizeRemaining / $v.Size, 3)
+      register: libre_c
+      changed_when: false
+
+    - name: "Espace libre suffisant sur C:"
+      ansible.builtin.assert:
+        that:
+          - (libre_c.output[0] | float) >= seuil_espace_libre
+        success_msg: "C: : {{ ((libre_c.output[0] | float) * 100) | round(1) }} % libre"
+        fail_msg: "C: : seulement {{ ((libre_c.output[0] | float) * 100) | round(1) }} % libre"

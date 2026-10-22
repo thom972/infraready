@@ -1,0 +1,63 @@
+---
+# Maintenance : verification -> mises a jour -> verification.
+# - Linux : mises a jour appliquees UNE MACHINE A LA FOIS ; redemarrage seulement si
+#   necessaire ET autorise explicitement (-e autoriser_redemarrage=true), jamais pour OPS01.
+# - Windows : RECHERCHE des mises a jour seulement ; installation selon la procedure manuelle
+#   de docs/maintenance.md (snapshot avant, controleur de domaine).
+# Lancement : ansible-playbook maintenance.yml -K --ask-vault-pass
+
+- name: Etat initial
+  ansible.builtin.import_playbook: verification.yml
+
+- name: Mises a jour Linux
+  hosts: serveurs_linux
+  serial: 1
+  vars:
+    autoriser_redemarrage: false
+  tasks:
+    - name: Mettre a jour le cache et appliquer les mises a jour (mode safe, aucune suppression de paquet)
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: safe
+      register: maj
+
+    - name: Resultat des mises a jour
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} : {{ 'mises a jour appliquees' if maj.changed else 'deja a jour' }}"
+
+    - name: Un redemarrage est-il requis ?
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: redemarrage_requis
+
+    - name: Redemarrer (seulement si requis, autorise, et pas sur le controleur lui-meme)
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+        msg: "Redemarrage apres maintenance (Ansible)"
+      when:
+        - redemarrage_requis.stat.exists
+        - autoriser_redemarrage | bool
+        - ansible_connection | default('ssh') != 'local'
+
+    - name: Signaler un redemarrage restant a planifier
+      ansible.builtin.debug:
+        msg: "Redemarrage requis sur {{ inventory_hostname }} : a planifier selon docs/maintenance.md"
+      when:
+        - redemarrage_requis.stat.exists
+        - not (autoriser_redemarrage | bool) or ansible_connection | default('ssh') == 'local'
+
+- name: Mises a jour Windows (recherche)
+  hosts: windows
+  gather_facts: false
+  tasks:
+    - name: Rechercher les mises a jour disponibles (aucune installation)
+      ansible.windows.win_updates:
+        state: searched
+      register: wu
+
+    - name: Mises a jour Windows disponibles
+      ansible.builtin.debug:
+        msg: "{{ wu.found_update_count }} mise(s) a jour disponible(s) : {{ wu.updates.values() | map(attribute='title') | list }}"
+
+- name: Etat final
+  ansible.builtin.import_playbook: verification.yml

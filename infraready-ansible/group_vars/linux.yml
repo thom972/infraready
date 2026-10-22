@@ -4,3 +4,7 @@ ansible_become: true                          # taches executees avec sudo (comp
 ansible_python_interpreter: /usr/bin/python3  # interpreteur fixe : supprime l'avertissement de detection
 web_package: nginx                            # paquet du service web a installer
 web_service: nginx                            # service systemd correspondant
+
+# Maintenance et verification
+services_critiques: [ssh, nginx]
+volumes_surveilles: ['/', '/boot', '/srv/infraready']

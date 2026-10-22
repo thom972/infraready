@@ -1,0 +1,3 @@
+---
+# Valeurs communes a tous les hotes - aucun secret ici.
+seuil_espace_libre: 0.15        # alerte si moins de 15 % d'espace libre sur un volume surveille

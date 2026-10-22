@@ -1,0 +1,17 @@
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-10-22 07:28:04 UTC; 1h 17min ago
+ Invocation: 43cc0b2f5c1f4ce196e18879b87473c9
+       Docs: man:nginx(8)
+   Main PID: 1102 (nginx)
+      Tasks: 3 (limit: 1882)
+     Memory: 4.6M (peak: 4.9M)
+        CPU: 26ms
+     CGroup: /system.slice/nginx.service
+             ├─1102 "nginx: master process /usr/sbin/nginx -g daemon on; master_process on;"
+             ├─1105 "nginx: worker process"
+
+    PID    PPID USER     CMD
+   1102       1 root     nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+   1105    1102 www-data nginx: worker process
+   1106    1102 www-data nginx: worker process

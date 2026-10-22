@@ -1,0 +1,18 @@
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv  9,8G  5,5G  3,8G  60% /
+  VG        #PV #LV #SN Attr   VSize  VFree
+  ubuntu-vg   1   1   0 wz--n- 18,22g 8,22g
+  File system ext4 found on ubuntu-vg/ubuntu-lv mounted at /.
+  Size of logical volume ubuntu-vg/ubuntu-lv changed from 10,00 GiB (2560 extents) to 18,22 GiB (4665 extents).
+  Extending file system ext4 to 18,22 GiB (19566428160 bytes) on ubuntu-vg/ubuntu-lv...
+resize2fs /dev/ubuntu-vg/ubuntu-lv
+resize2fs 1.47.2 (1-Jan-2025)
+Filesystem at /dev/ubuntu-vg/ubuntu-lv is mounted on /; on-line resizing required
+old_desc_blocks = 2, new_desc_blocks = 3
+The filesystem on /dev/ubuntu-vg/ubuntu-lv is now 4776960 (4k) blocks long.
+
+resize2fs done
+  Extended file system ext4 on ubuntu-vg/ubuntu-lv.
+  Logical volume ubuntu-vg/ubuntu-lv successfully resized.
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   18G  5,5G   12G  33% /

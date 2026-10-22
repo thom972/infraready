@@ -1,0 +1,9 @@
+---
+# OPS01 (controleur Ansible) - aucun secret ici.
+ansible_become: true                          # sudo du compte keo : mot de passe demande avec -K
+ansible_python_interpreter: /usr/bin/python3
+services_critiques: [ssh]
+volumes_surveilles: ['/', '/boot']
+# sudo-rs (Ubuntu 26.04) modifie l'invite de mot de passe attendue par Ansible :
+# on utilise le sudo d'origine pour l'elevation de privileges sur OPS01 (ecart E-17).
+ansible_become_exe: sudo.ws
