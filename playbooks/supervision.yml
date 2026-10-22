@@ -203,10 +203,11 @@
     - name: Definir le mot de passe administrateur de Grafana (une seule fois, depuis le coffre)
       ansible.builtin.shell: >
         grafana cli --homepath /usr/share/grafana --config /etc/grafana/grafana.ini
-        admin reset-admin-password "{{ grafana_admin_password }}"
+        admin reset-admin-password {{ grafana_admin_password | quote }}
         && touch /var/lib/grafana/.infraready-mdp-admin
       args:
         creates: /var/lib/grafana/.infraready-mdp-admin
+        chdir: /tmp
       become_user: grafana
       no_log: true
 
