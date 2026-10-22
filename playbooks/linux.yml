@@ -1,0 +1,9 @@
+---
+# Configuration complete de LINUX01 : service web, puis volume de donnees.
+# Lancement : ansible-playbook playbooks/linux.yml
+
+- name: Service web Nginx
+  ansible.builtin.import_playbook: nginx.yml
+
+- name: Volume de donnees /srv/infraready
+  ansible.builtin.import_playbook: stockage.yml

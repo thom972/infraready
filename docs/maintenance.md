@@ -8,17 +8,17 @@ Maintenir les trois serveurs à jour et en bon état, sans interruption non maî
 
 | Serveur | Mises à jour | Méthode |
 |---|---|---|
-| LINUX01 | Paquets Ubuntu | **Automatisées** : `infraready-ansible/maintenance.yml` |
+| LINUX01 | Paquets Ubuntu | **Automatisées** : `playbooks/maintenance.yml` |
 | OPS01 | Paquets Ubuntu | **Automatisées** (exécution locale), redémarrage manuel |
 | WIN-DC01 | Windows Update | **Recherche automatisée** par Ansible, **installation manuelle** (procédure §5) |
 
-Contrôles en lecture seule, avant et après chaque maintenance : `infraready-ansible/verification.yml`
+Contrôles en lecture seule, avant et après chaque maintenance : `playbooks/verification.yml`
 (services critiques, espace disque, réponse HTTP du service web).
 
 ## 2. Précautions avant toute maintenance ou changement majeur
 
 1. **Prévenir** les utilisateurs du laboratoire (binôme) et choisir un créneau.
-2. **Relever l'état initial** : `ansible-playbook verification.yml -K --ask-vault-pass`. Ne pas lancer
+2. **Relever l'état initial** : `ansible-playbook playbooks/verification.yml -K --ask-vault-pass`. Ne pas lancer
    de maintenance sur un système déjà en erreur : diagnostiquer d'abord.
 3. **Snapshot** de chaque VM concernée (VM éteinte de préférence) :
    `virsh snapshot-create-as <VM> maint-AAAA-MM-JJ "Avant maintenance"`.
@@ -30,12 +30,12 @@ Contrôles en lecture seule, avant et après chaque maintenance : `infraready-an
 
 ## 3. Mises à jour Linux (automatisées)
 
-Depuis OPS01, dans `~/infraready-ansible` :
+Depuis OPS01, dans `~/infraready` :
 
     eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519_ansible
-    ansible-playbook maintenance.yml --syntax-check
-    ansible-playbook maintenance.yml -K --ask-vault-pass                               # sans redémarrage
-    ansible-playbook maintenance.yml -K --ask-vault-pass -e autoriser_redemarrage=true # avec redémarrage si requis
+    ansible-playbook playbooks/maintenance.yml --syntax-check
+    ansible-playbook playbooks/maintenance.yml -K --ask-vault-pass                               # sans redémarrage
+    ansible-playbook playbooks/maintenance.yml -K --ask-vault-pass -e autoriser_redemarrage=true # avec redémarrage si requis
 
 Déroulement : vérification initiale → `apt` en mode **safe** (aucune suppression de paquet) sur chaque
 serveur l'un après l'autre → détection de `/var/run/reboot-required` → redémarrage seulement s'il est requis

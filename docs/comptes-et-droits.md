@@ -1,9 +1,9 @@
 # Comptes, groupes et droits - domaine infraready.test
 
-*Mis à jour : séance 4. Créés et vérifiés par le playbook `infraready-ansible/windows.yml`.*
+*Mis à jour : séance 4. Créés et vérifiés par le playbook `playbooks/windows.yml`.*
 
 > Aucun mot de passe dans ce document. Les mots de passe sont dans le gestionnaire du binôme
-> et, pour l'automatisation, dans `group_vars/windows/vault.yml` (Ansible Vault, chiffré).
+> et, pour l'automatisation, dans `inventory/group_vars/windows/vault.yml` (Ansible Vault, chiffré).
 
 ## Organisation de l'annuaire
 

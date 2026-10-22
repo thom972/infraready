@@ -1,6 +1,6 @@
 # Stockage de données - LINUX01
 
-*Mis à jour : séance 4. Réalisé par le playbook `infraready-ansible/stockage.yml`.*
+*Mis à jour : séance 4. Réalisé par le playbook `playbooks/stockage.yml`.*
 
 ## Disque de données
 
