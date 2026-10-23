@@ -1,0 +1,19 @@
+== Service
+active
+== Écoute locale
+LISTEN 0      4096               *:9100            *:*   
+== Métriques en local
+== Journaux du service
+oct. 23 09:26:27 linux01 prometheus-node-exporter[1053]: time=2026-10-23T09:26:27.774Z level=ERROR source=http.go:231 msg="error encoding and sending metric family: write tcp 127.0.0.1:9100->127.0.0.1:44454: write: broken pipe"
+oct. 23 09:26:27 linux01 prometheus-node-exporter[1053]: time=2026-10-23T09:26:27.774Z level=ERROR source=http.go:231 msg="error encoding and sending metric family: write tcp 127.0.0.1:9100->127.0.0.1:44454: write: broken pipe"
+oct. 23 09:26:27 linux01 prometheus-node-exporter[1053]: time=2026-10-23T09:26:27.774Z level=ERROR source=http.go:231 msg="error encoding and sending metric family: write tcp 127.0.0.1:9100->127.0.0.1:44454: write: broken pipe"
+oct. 23 09:26:27 linux01 prometheus-node-exporter[1053]: time=2026-10-23T09:26:27.774Z level=ERROR source=http.go:231 msg="error encoding and sending metric family: write tcp 127.0.0.1:9100->127.0.0.1:44454: write: broken pipe"
+oct. 23 09:26:27 linux01 prometheus-node-exporter[1053]: time=2026-10-23T09:26:27.774Z level=ERROR source=http.go:231 msg="error encoding and sending metric family: write tcp 127.0.0.1:9100->127.0.0.1:44454: write: broken pipe"
+== Pare-feu
+table inet incident {
+	chain input {
+		type filter hook input priority filter; policy accept;
+		tcp dport 9100 drop
+	}
+}
+Connection to 192.168.50.20 closed.
