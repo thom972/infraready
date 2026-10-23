@@ -278,7 +278,7 @@
     {
       "id": 5,
       "type": "table",
-      "title": "Alertes Prometheus actives",
+      "title": "Alertes Prometheus (en attente et déclenchées)",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -292,7 +292,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "ALERTS{alertstate=\"firing\"}",
+          "expr": "ALERTS",
           "legendFormat": "",
           "datasource": {
             "type": "prometheus",

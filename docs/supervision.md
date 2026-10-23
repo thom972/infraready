@@ -69,6 +69,8 @@ Remplir volontairement le volume de données de LINUX01 au-delà de 85 %, observ
 
 ## Accès et sécurité
 
+- Le paquet Ubuntu de Prometheus ne fournit que l'interface classique (`/classic/targets`, `/classic/alerts`) ; la consultation courante se fait dans Grafana.
+
 - Prometheus : http://192.168.50.30:9090 - Grafana : http://192.168.50.30:3000 (depuis le poste du binôme, réseau du labo).
 - Mot de passe administrateur Grafana : défini par le playbook depuis Ansible Vault (`inventory/group_vars/ops/vault.yml`), jamais en clair.
 - Port 9182 de WIN-DC01 limité à OPS01 ; toute autre règle ouvrant ce port est désactivée par le playbook.
