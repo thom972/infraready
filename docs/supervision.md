@@ -62,10 +62,10 @@ Remplir volontairement le volume de données de LINUX01 au-delà de 85 %, observ
 
 | Étape | Heure | Observation | Preuve |
 |---|---|---|---|
-| État initial | *à renseigner* | | |
-| Fichier de démonstration créé | | | |
-| Alerte `pending` puis `firing` | | | |
-| Fichier supprimé, alerte résolue | | | |
+| État initial | 23/10, avant 09:06 UTC | `/srv/infraready` à 1 % utilisé, 4,6 Go libres ; alerte inactive | `S06_demo-seuil.txt` |
+| Fichier de démonstration créé | 09:06:58 UTC (11:06:58 Paris) | 4 300 Mo écrits : 7,68 % d'espace libre, barre rouge dans Grafana | `S06_demo-seuil.txt`, capture Grafana |
+| Alerte `pending` puis `firing` | pending 09:07:13, firing 09:12:13 UTC | `pending` 15 s après l'anomalie (évaluation suivante), `firing` exactement 5 min plus tard (`for: 5m`) | `S06_alerte-firing.png`, `S06_ops01_alerte-firing.json`, `S06_ops01_chronologie-seuil.txt` |
+| Fichier supprimé, alerte résolue | 09:16:28 puis 09:16:43 UTC | Alerte résolue 15 s après la suppression du fichier ; barre redevenue verte | `S06_alerte-resolue.png`, `S06_ops01_chronologie-seuil.txt` |
 
 ## Accès et sécurité
 

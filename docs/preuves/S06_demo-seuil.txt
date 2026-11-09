@@ -1,0 +1,6 @@
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vdb1       4,9G  1,3M  4,6G   1% /srv/infraready
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vdb1       4,9G  4,3G  381M  92% /srv/infraready
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vdb1       4,9G  1,3M  4,6G   1% /srv/infraready
