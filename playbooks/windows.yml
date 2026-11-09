@@ -1,0 +1,40 @@
+---
+- name: Administration Windows InfraReady
+  hosts: windows
+  gather_facts: false
+
+  tasks:
+    - name: Maintenir le service DNS actif
+      ansible.windows.win_service:
+        name: DNS
+        start_mode: auto
+        state: started
+
+    - name: Configurer les groupes Active Directory
+      ansible.windows.win_powershell:
+        script: |
+          Import-Module ActiveDirectory
+          $Ansible.Changed = $false
+
+          $domaine = (Get-ADDomain).DistinguishedName
+          $chemin = "OU=Groupes,OU=InfraReady,$domaine"
+
+          $groupes = @(
+            "GG_InfraReady_Exploitants",
+            "GG_InfraReady_Utilisateurs"
+          )
+
+          foreach ($groupe in $groupes) {
+            $existant = Get-ADGroup -Identity $groupe -ErrorAction SilentlyContinue
+
+            if (-not $existant) {
+              New-ADGroup `
+                -Name $groupe `
+                -SamAccountName $groupe `
+                -GroupScope Global `
+                -GroupCategory Security `
+                -Path $chemin
+
+              $Ansible.Changed = $true
+            }
+          }

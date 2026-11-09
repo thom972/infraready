@@ -1,0 +1,36 @@
+---
+- name: Administration Linux InfraReady
+  hosts: linux
+  become: true
+
+  tasks:
+    - name: Creer le groupe d'exploitation
+      ansible.builtin.group:
+        name: infraready-ops
+        state: present
+
+    - name: Configurer le compte infraops
+      ansible.builtin.user:
+        name: infraops
+        groups: infraready-ops
+        append: true
+        state: present
+
+    - name: Configurer le repertoire securise
+      ansible.builtin.file:
+        path: /srv/infraready
+        state: directory
+        owner: root
+        group: infraready-ops
+        mode: '2770'
+
+    - name: Activer le service web
+      ansible.builtin.systemd_service:
+        name: infraready-web
+        state: started
+        enabled: true
+
+    - name: Verifier le serveur web
+      ansible.builtin.uri:
+        url: http://192.168.50.20:8080
+        status_code: 200

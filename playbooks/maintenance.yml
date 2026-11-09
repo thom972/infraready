@@ -1,0 +1,35 @@
+---
+- name: Maintenance automatisee de LINUX01
+  hosts: linux
+  become: true
+
+  tasks:
+    - name: Mettre a jour les paquets Linux
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: safe
+
+    - name: Recuperer les informations des services
+      ansible.builtin.service_facts:
+
+    - name: Verifier les services InfraReady
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['infraready-web.service'].state == 'running'
+          - ansible_facts.services['prometheus-node-exporter.service'].state == 'running'
+        fail_msg: "Un service InfraReady est arrete"
+
+    - name: Verifier le montage du disque
+      ansible.builtin.command:
+        cmd: findmnt /mnt/infraready-data
+      changed_when: false
+
+    - name: Verifier l'espace disque
+      ansible.builtin.command:
+        cmd: df -h /
+      register: espace_disque
+      changed_when: false
+
+    - name: Afficher l'espace disque
+      ansible.builtin.debug:
+        var: espace_disque.stdout_lines

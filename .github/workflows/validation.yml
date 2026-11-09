@@ -1,0 +1,54 @@
+name: Validation InfraReady
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v6
+
+      - name: Installer Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Installer Ansible et PyYAML
+        run: |
+          python -m pip install ansible-core PyYAML
+          ansible-galaxy collection install ansible.windows
+
+      - name: Verifier les fichiers YAML
+        run: |
+          python - <<'PY'
+          import yaml
+
+          for fichier in [
+              "inventory/hosts.yml",
+              "monitoring/prometheus.yml",
+          ]:
+              with open(fichier, encoding="utf-8") as f:
+                  yaml.safe_load(f)
+              print(f"OK : {fichier}")
+          PY
+
+      - name: Verifier l'inventaire Ansible
+        run: ansible-inventory -i inventory/hosts.yml --list
+
+      - name: Verifier les playbooks Ansible
+        run: |
+          for fichier in \
+            playbooks/linux.yml \
+            playbooks/windows.yml \
+            playbooks/monitoring-linux.yml \
+            playbooks/maintenance.yml
+          do
+            ansible-playbook -i inventory/hosts.yml "$fichier" --syntax-check
+          done
