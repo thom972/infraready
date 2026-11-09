@@ -1,15 +1,25 @@
 ---
-# Pare-feu des serveurs Linux (ufw) : refus par defaut en entree, ouverture limitee aux flux necessaires.
-# Les regles sont dans inventory/group_vars/ (regles_pare_feu).
+# Securite transversale InfraReady.
+#  1. Pare-feu ufw des serveurs Linux : refus par defaut en entree, flux limites (inventory/group_vars/*).
+#  2. Compte d'automatisation de LINUX01 : sudo AVEC mot de passe (Ansible Vault), SSH par cle uniquement (E-14).
+#  3. WIN-DC01 : SMB et DNS limites au reseau du labo ; compte svc-ansible non delegable (E-15).
+#  4. Verifications : flux autorises toujours fonctionnels, flux non autorises refuses, sudo protege.
 #
-# Garde-fous :
-#  - les regles d'autorisation (dont SSH) sont posees AVANT l'activation du pare-feu ;
-#  - un serveur a la fois (serial: 1) : en cas de probleme, l'autre reste accessible ;
-#  - simulation possible : ansible-playbook playbooks/securite.yml --check --diff -K --ask-vault-pass
-# Retour arriere (console de la VM) : sudo ufw disable
-#
-# Lancement : ansible-playbook playbooks/securite.yml -K --ask-vault-pass
+# Simulation : ansible-playbook playbooks/securite.yml --check --diff -K --ask-vault-pass
+# Lancement  : ansible-playbook playbooks/securite.yml -K --ask-vault-pass
+# Retour arriere pare-feu (console de la VM) : sudo ufw disable
 
+# ------------------------------------------------------------------ 0. prerequis
+- name: Prerequis du controleur Ansible
+  hosts: ops
+  gather_facts: false
+  tasks:
+    - name: Bibliotheque passlib (hachage du mot de passe, Python 3.13+ n'ayant plus le module crypt)
+      ansible.builtin.apt:
+        name: python3-passlib
+        state: present
+
+# ------------------------------------------------------------------ 1. pare-feu
 - name: Pare-feu ufw des serveurs Linux
   hosts: serveurs_linux
   serial: 1
@@ -57,7 +67,134 @@
       ansible.builtin.debug:
         var: etat_ufw.stdout_lines
 
-# ----------------------------------------------------------- verifications
+# ------------------------------------------------------------------ 2. compte d'automatisation (E-14)
+- name: Compte ansible de LINUX01 - sudo avec mot de passe, SSH par cle uniquement
+  hosts: linux
+  handlers:
+    - name: Recharger ssh
+      ansible.builtin.service:
+        name: ssh
+        state: reloaded
+
+  tasks:
+    - name: Le mot de passe sudo doit etre defini dans le coffre (inventory/group_vars/linux/vault.yml)
+      ansible.builtin.assert:
+        that: ansible_become_password is defined and ansible_become_password | length >= 12
+        fail_msg: "ansible_become_password absent ou trop court dans inventory/group_vars/linux/vault.yml"
+        quiet: true
+      no_log: true
+
+    - name: Interdire la connexion SSH par mot de passe au compte ansible (cle uniquement)
+      ansible.builtin.copy:
+        dest: /etc/ssh/sshd_config.d/20-ansible.conf
+        content: |
+          # Gere par Ansible (playbooks/securite.yml) - le compte ansible ne se connecte que par cle.
+          Match User ansible
+              PasswordAuthentication no
+              KbdInteractiveAuthentication no
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Recharger ssh
+
+    - name: Valider la configuration SSH avant tout rechargement
+      ansible.builtin.command: sshd -t
+      changed_when: false
+
+    - name: Appliquer le rechargement de SSH maintenant
+      ansible.builtin.meta: flush_handlers
+
+    - name: Definir le mot de passe du compte ansible (depuis le coffre)
+      ansible.builtin.user:
+        name: ansible
+        password: "{{ ansible_become_password | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}"
+        update_password: always
+      no_log: true
+
+    - name: sudo avec mot de passe pour le compte ansible (remplace NOPASSWD, regle validee par visudo)
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/90-ansible
+        content: |
+          # Gere par Ansible (playbooks/securite.yml) - sudo avec mot de passe (fourni par Ansible Vault).
+          ansible ALL=(ALL:ALL) ALL
+        owner: root
+        group: root
+        mode: "0440"
+        validate: visudo -cf %s
+
+    - name: Controle - sudo sans mot de passe est maintenant refuse au compte ansible
+      ansible.builtin.command: sudo -n true
+      become: false
+      register: sudo_sans_mdp
+      changed_when: false
+      failed_when: sudo_sans_mdp.rc == 0
+
+    - name: Controle - l'elevation avec le mot de passe du coffre fonctionne
+      ansible.builtin.command: whoami
+      register: identite
+      changed_when: false
+      failed_when: identite.stdout != 'root'
+
+    - name: Controle - la connexion SSH par mot de passe est refusee au compte ansible
+      ansible.builtin.shell: sshd -T -C user=ansible,host=ops01,addr=192.168.50.30 | grep -i '^passwordauthentication'
+      register: ssh_mdp
+      changed_when: false
+      failed_when: "'no' not in ssh_mdp.stdout"
+
+# ------------------------------------------------------------------ 3. WIN-DC01 (E-15)
+- name: Durcissement de WIN-DC01
+  hosts: windows
+  gather_facts: false
+  vars:
+    reseau_labo: 192.168.50.0/24
+  tasks:
+    - name: Limiter les regles entrantes SMB (445) et DNS (53) au reseau du labo
+      ansible.windows.win_powershell:
+        script: |
+          $cible = '{{ reseau_labo }}'
+          $regles = Get-NetFirewallPortFilter |
+            Where-Object { $_.LocalPort -contains '53' -or $_.LocalPort -contains '445' } |
+            Get-NetFirewallRule |
+            Where-Object { $_.Direction -eq 'Inbound' -and $_.Enabled -eq 'True' -and $_.Action -eq 'Allow' }
+          $modifiees = @()
+          foreach ($r in $regles) {
+            $actuelle = (($r | Get-NetFirewallAddressFilter).RemoteAddress) -join ','
+            if ($actuelle -ne $cible) {
+              $r | Set-NetFirewallRule -RemoteAddress $cible
+              $modifiees += "$($r.DisplayName) : $actuelle -> $cible"
+            }
+          }
+          $Ansible.Changed = $modifiees.Count -gt 0
+          $modifiees
+
+    - name: Compte svc-ansible sensible et non delegable (mesure compensatoire de E-15)
+      ansible.windows.win_powershell:
+        script: |
+          $u = Get-ADUser svc-ansible -Properties AccountNotDelegated
+          if (-not $u.AccountNotDelegated) {
+            Set-ADUser svc-ansible -AccountNotDelegated $true
+            'AccountNotDelegated active'
+          } else {
+            $Ansible.Changed = $false
+          }
+
+    - name: Lire l'etat obtenu
+      ansible.windows.win_powershell:
+        script: |
+          Get-NetFirewallPortFilter |
+            Where-Object { $_.LocalPort -contains '53' -or $_.LocalPort -contains '445' } |
+            Get-NetFirewallRule |
+            Where-Object { $_.Direction -eq 'Inbound' -and $_.Enabled -eq 'True' } |
+            ForEach-Object { "$($_.DisplayName) <- $((($_ | Get-NetFirewallAddressFilter).RemoteAddress) -join ',')" }
+          "svc-ansible non delegable : $((Get-ADUser svc-ansible -Properties AccountNotDelegated).AccountNotDelegated)"
+      register: etat_dc
+      changed_when: false
+
+    - name: Etat de WIN-DC01
+      ansible.builtin.debug:
+        var: etat_dc.output
+
+# ------------------------------------------------------------------ 4. verifications
 - name: Verifier que les flux autorises fonctionnent toujours (depuis OPS01)
   hosts: ops
   gather_facts: false
@@ -73,6 +210,12 @@
         port: 22
         timeout: 5
 
+    - name: SMB de WIN-DC01 joignable depuis le labo (port 445)
+      ansible.builtin.wait_for:
+        host: 192.168.50.10
+        port: 445
+        timeout: 5
+
     - name: Toutes les cibles de collecte sont UP (node_exporter LINUX01 compris)
       ansible.builtin.uri:
         url: http://localhost:9090/api/v1/targets?state=active
@@ -82,23 +225,36 @@
       delay: 10
       until: cibles.json.data.activeTargets | selectattr('health', 'ne', 'up') | list | length == 0
 
+- name: Verifier la resolution DNS du domaine depuis les serveurs Linux
+  hosts: serveurs_linux
+  gather_facts: false
+  tasks:
+    - name: WIN-DC01.infraready.test se resout via le DNS du domaine
+      ansible.builtin.command: getent hosts WIN-DC01.infraready.test
+      become: false
+      register: dns
+      changed_when: false
+      failed_when: "'192.168.50.10' not in dns.stdout"
+
 - name: Verifier que les flux non autorises sont bloques (depuis LINUX01)
   hosts: linux
   gather_facts: false
   tasks:
     - name: Prometheus d'OPS01 (9090) doit etre refuse depuis LINUX01
       ansible.builtin.command: nc -z -w 3 192.168.50.30 9090
+      become: false
       register: test_9090
       changed_when: false
       failed_when: test_9090.rc == 0
 
     - name: Grafana d'OPS01 (3000) doit etre refuse depuis LINUX01
       ansible.builtin.command: nc -z -w 3 192.168.50.30 3000
+      become: false
       register: test_3000
       changed_when: false
       failed_when: test_3000.rc == 0
 
     - name: Bilan
       ansible.builtin.debug:
-        msg: "Flux autorises OK, Prometheus et Grafana d'OPS01 bien refuses depuis LINUX01."
+        msg: "Flux autorises OK, flux non autorises refuses, sudo du compte ansible protege par mot de passe."
       when: not ansible_check_mode

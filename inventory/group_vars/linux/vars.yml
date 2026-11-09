@@ -1,6 +1,7 @@
 ---
-# Variables communes au groupe [linux] de inventory.ini - aucun secret ici.
-ansible_become: true                          # taches executees avec sudo (compte ansible, voir E-14)
+# Variables communes au groupe [linux] - aucun secret ici (mot de passe sudo dans vault.yml, chiffre).
+ansible_become: true                          # taches executees avec sudo (compte ansible)
+ansible_become_exe: sudo.ws                   # sudo d'origine : sudo-rs modifie l'invite de mot de passe (E-17)
 ansible_python_interpreter: /usr/bin/python3  # interpreteur fixe : supprime l'avertissement de detection
 web_package: nginx                            # paquet du service web a installer
 web_service: nginx                            # service systemd correspondant
