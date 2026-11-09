@@ -11,7 +11,7 @@ volumes_surveilles: ['/', '/boot', '/srv/infraready']
 
 # Pare-feu (playbooks/securite.yml) : tout le reste est refuse en entree
 regles_pare_feu:
-  - { port: 22,   source: 192.168.50.1,    commentaire: "SSH administration depuis l'hote" }
+  - { port: 22,   source: 192.168.50.1,    commentaire: "SSH administration depuis le poste hote" }
   - { port: 22,   source: 192.168.50.30,   commentaire: "SSH Ansible depuis OPS01" }
   - { port: 80,   source: 192.168.50.0/24, commentaire: "Nginx depuis le labo" }
   - { port: 9100, source: 192.168.50.30,   commentaire: "node_exporter collecte par Prometheus (OPS01)" }
