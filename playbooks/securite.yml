@@ -123,11 +123,12 @@
         validate: visudo -cf %s
 
     - name: Controle - sudo sans mot de passe est maintenant refuse au compte ansible
-      ansible.builtin.command: sudo -n true
-      become: false
+      ansible.builtin.shell: id -un; sudo -n true
+      vars:
+        ansible_become: false
       register: sudo_sans_mdp
       changed_when: false
-      failed_when: sudo_sans_mdp.rc == 0
+      failed_when: sudo_sans_mdp.stdout_lines[0] != 'ansible' or sudo_sans_mdp.rc == 0
 
     - name: Controle - l'elevation avec le mot de passe du coffre fonctionne
       ansible.builtin.command: whoami
@@ -231,7 +232,8 @@
   tasks:
     - name: WIN-DC01.infraready.test se resout via le DNS du domaine
       ansible.builtin.command: getent hosts WIN-DC01.infraready.test
-      become: false
+      vars:
+        ansible_become: false
       register: dns
       changed_when: false
       failed_when: "'192.168.50.10' not in dns.stdout"
@@ -242,14 +244,16 @@
   tasks:
     - name: Prometheus d'OPS01 (9090) doit etre refuse depuis LINUX01
       ansible.builtin.command: nc -z -w 3 192.168.50.30 9090
-      become: false
+      vars:
+        ansible_become: false
       register: test_9090
       changed_when: false
       failed_when: test_9090.rc == 0
 
     - name: Grafana d'OPS01 (3000) doit etre refuse depuis LINUX01
       ansible.builtin.command: nc -z -w 3 192.168.50.30 3000
-      become: false
+      vars:
+        ansible_become: false
       register: test_3000
       changed_when: false
       failed_when: test_3000.rc == 0
