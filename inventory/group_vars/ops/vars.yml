@@ -7,3 +7,10 @@ volumes_surveilles: ['/', '/boot']
 # sudo-rs (Ubuntu 26.04) modifie l'invite de mot de passe attendue par Ansible :
 # on utilise le sudo d'origine pour l'elevation de privileges sur OPS01 (ecart E-17).
 ansible_become_exe: sudo.ws
+
+# Pare-feu (playbooks/securite.yml) : tout le reste est refuse en entree.
+# Prometheus collecte son propre node_exporter via localhost : l'interface de bouclage est toujours autorisee.
+regles_pare_feu:
+  - { port: 22,   source: 192.168.50.1, commentaire: "SSH administration depuis l'hote" }
+  - { port: 3000, source: 192.168.50.1, commentaire: "Grafana depuis l'hote" }
+  - { port: 9090, source: 192.168.50.1, commentaire: "Prometheus depuis l'hote" }

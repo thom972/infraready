@@ -1,0 +1,103 @@
+---
+# Pare-feu des serveurs Linux (ufw) : refus par defaut en entree, ouverture limitee aux flux necessaires.
+# Les regles sont dans inventory/group_vars/ (regles_pare_feu).
+#
+# Garde-fous :
+#  - les regles d'autorisation (dont SSH) sont posees AVANT l'activation du pare-feu ;
+#  - un serveur a la fois (serial: 1) : en cas de probleme, l'autre reste accessible ;
+#  - simulation possible : ansible-playbook playbooks/securite.yml --check --diff -K --ask-vault-pass
+# Retour arriere (console de la VM) : sudo ufw disable
+#
+# Lancement : ansible-playbook playbooks/securite.yml -K --ask-vault-pass
+
+- name: Pare-feu ufw des serveurs Linux
+  hosts: serveurs_linux
+  serial: 1
+  tasks:
+    - name: Installer ufw
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+
+    - name: Autoriser les flux necessaires (avant toute activation)
+      community.general.ufw:
+        rule: allow
+        proto: tcp
+        port: "{{ item.port | string }}"
+        from_ip: "{{ item.source }}"
+        comment: "{{ item.commentaire }}"
+      loop: "{{ regles_pare_feu }}"
+      loop_control:
+        label: "{{ item.port }} depuis {{ item.source }}"
+
+    - name: Refuser par defaut les connexions entrantes
+      community.general.ufw:
+        default: deny
+        direction: incoming
+
+    - name: Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)
+      community.general.ufw:
+        default: allow
+        direction: outgoing
+
+    - name: Journaliser les connexions refusees (niveau bas)
+      community.general.ufw:
+        logging: "low"
+
+    - name: Activer le pare-feu
+      community.general.ufw:
+        state: enabled
+
+    - name: Lire l'etat du pare-feu
+      ansible.builtin.command: ufw status verbose
+      register: etat_ufw
+      changed_when: false
+
+    - name: Etat du pare-feu
+      ansible.builtin.debug:
+        var: etat_ufw.stdout_lines
+
+# ----------------------------------------------------------- verifications
+- name: Verifier que les flux autorises fonctionnent toujours (depuis OPS01)
+  hosts: ops
+  gather_facts: false
+  tasks:
+    - name: Nginx de LINUX01 joignable (port 80)
+      ansible.builtin.uri:
+        url: http://192.168.50.20/
+        status_code: 200
+
+    - name: Port SSH de LINUX01 joignable depuis OPS01
+      ansible.builtin.wait_for:
+        host: 192.168.50.20
+        port: 22
+        timeout: 5
+
+    - name: Toutes les cibles de collecte sont UP (node_exporter LINUX01 compris)
+      ansible.builtin.uri:
+        url: http://localhost:9090/api/v1/targets?state=active
+        return_content: true
+      register: cibles
+      retries: 6
+      delay: 10
+      until: cibles.json.data.activeTargets | selectattr('health', 'ne', 'up') | list | length == 0
+
+- name: Verifier que les flux non autorises sont bloques (depuis LINUX01)
+  hosts: linux
+  gather_facts: false
+  tasks:
+    - name: Prometheus d'OPS01 (9090) doit etre refuse depuis LINUX01
+      ansible.builtin.command: nc -z -w 3 192.168.50.30 9090
+      register: test_9090
+      changed_when: false
+      failed_when: test_9090.rc == 0
+
+    - name: Grafana d'OPS01 (3000) doit etre refuse depuis LINUX01
+      ansible.builtin.command: nc -z -w 3 192.168.50.30 3000
+      register: test_3000
+      changed_when: false
+      failed_when: test_3000.rc == 0
+
+    - name: Bilan
+      ansible.builtin.debug:
+        msg: "Flux autorises OK, Prometheus et Grafana d'OPS01 bien refuses depuis LINUX01."
