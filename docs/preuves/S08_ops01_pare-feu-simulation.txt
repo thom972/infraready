@@ -1,0 +1,96 @@
+
+PLAY [Pare-feu ufw des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Installer ufw] ***********************************************************
+ok: [LINUX01]
+
+TASK [Autoriser les flux necessaires (avant toute activation)] *****************
+changed: [LINUX01] => (item=22 depuis 192.168.50.1)
+changed: [LINUX01] => (item=22 depuis 192.168.50.30)
+changed: [LINUX01] => (item=80 depuis 192.168.50.0/24)
+changed: [LINUX01] => (item=9100 depuis 192.168.50.30)
+
+TASK [Refuser par defaut les connexions entrantes] *****************************
+changed: [LINUX01]
+
+TASK [Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)] ***
+changed: [LINUX01]
+
+TASK [Journaliser les connexions refusees (niveau bas)] ************************
+changed: [LINUX01]
+
+TASK [Activer le pare-feu] *****************************************************
+changed: [LINUX01]
+
+TASK [Lire l'etat du pare-feu] *************************************************
+skipping: [LINUX01]
+
+TASK [Etat du pare-feu] ********************************************************
+ok: [LINUX01] => {
+    "etat_ufw.stdout_lines": []
+}
+
+PLAY [Pare-feu ufw des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [OPS01]
+
+TASK [Installer ufw] ***********************************************************
+ok: [OPS01]
+
+TASK [Autoriser les flux necessaires (avant toute activation)] *****************
+changed: [OPS01] => (item=22 depuis 192.168.50.1)
+changed: [OPS01] => (item=3000 depuis 192.168.50.1)
+changed: [OPS01] => (item=9090 depuis 192.168.50.1)
+
+TASK [Refuser par defaut les connexions entrantes] *****************************
+changed: [OPS01]
+
+TASK [Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)] ***
+changed: [OPS01]
+
+TASK [Journaliser les connexions refusees (niveau bas)] ************************
+changed: [OPS01]
+
+TASK [Activer le pare-feu] *****************************************************
+changed: [OPS01]
+
+TASK [Lire l'etat du pare-feu] *************************************************
+skipping: [OPS01]
+
+TASK [Etat du pare-feu] ********************************************************
+ok: [OPS01] => {
+    "etat_ufw.stdout_lines": []
+}
+
+PLAY [Verifier que les flux autorises fonctionnent toujours (depuis OPS01)] ****
+
+TASK [Nginx de LINUX01 joignable (port 80)] ************************************
+skipping: [OPS01]
+
+TASK [Port SSH de LINUX01 joignable depuis OPS01] ******************************
+skipping: [OPS01]
+
+TASK [Toutes les cibles de collecte sont UP (node_exporter LINUX01 compris)] ***
+skipping: [OPS01]
+
+PLAY [Verifier que les flux non autorises sont bloques (depuis LINUX01)] *******
+
+TASK [Prometheus d'OPS01 (9090) doit etre refuse depuis LINUX01] ***************
+skipping: [LINUX01]
+
+TASK [Grafana d'OPS01 (3000) doit etre refuse depuis LINUX01] ******************
+skipping: [LINUX01]
+
+TASK [Bilan] *******************************************************************
+ok: [LINUX01] => {
+    "msg": "Flux autorises OK, Prometheus et Grafana d'OPS01 bien refuses depuis LINUX01."
+}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=9    changed=5    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+OPS01                      : ok=8    changed=5    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+

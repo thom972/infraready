@@ -101,3 +101,4 @@
     - name: Bilan
       ansible.builtin.debug:
         msg: "Flux autorises OK, Prometheus et Grafana d'OPS01 bien refuses depuis LINUX01."
+      when: not ansible_check_mode

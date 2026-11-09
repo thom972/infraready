@@ -1,0 +1,8 @@
+09:24:02
+== SSH (autorisés)
+linux01
+ops01
+== Grafana depuis l'hôte (autorisé)
+200
+== node_exporter LINUX01 depuis l'hôte (doit être REFUSÉ)
+curl: (28) Connection timed out after 5000 milliseconds
