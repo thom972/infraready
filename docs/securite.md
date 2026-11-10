@@ -14,7 +14,7 @@
   droits `600`, protégées par phrase de passe. Les clés publiques seules sont copiées sur les cibles.
 - Avant chaque commit : `git diff --staged` relu ; le `.gitignore` bloque ISO, disques et clés.
 - Contrôle automatique à chaque push : chiffrement des trois coffres vérifié et recherche de secrets dans tout
-  l'historique (gitleaks, aucun secret trouvé sur les 35 commits au 10/11/2026).
+  l'historique (gitleaks : aucun secret trouvé au 10/11/2026).
 
 ## Comptes et privilèges
 
