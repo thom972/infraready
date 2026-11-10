@@ -27,7 +27,7 @@ Les sorties Windows `S02_win-dc01_reception.txt` et `S04_win-dc01_dcdiag.txt` so
 - Aucun mot de passe, jeton, clé privée ni information personnelle.
 - La preuve correspond à un test réellement exécuté ; un test non réalisé n'a pas de fichier.
 
-## Index des preuves (89 sorties, 35 captures)
+## Index des preuves (90 sorties, 40 captures)
 
 Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../tracabilite.md)) ou thème transversal.
 
@@ -120,6 +120,8 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 | `S04_ops01_windows-partage-run2.txt` | B, D | 2e passage : `changed=0` |
 | `S04_ops01_windows-run1.txt` | B, D | Playbook annuaire, 1er passage : `changed=4` |
 | `S04_ops01_windows-run2.txt` | B, D | 2e passage : `changed=0` |
+| `S04_win-dc01_aduc-groupes.png` | B | Console « Utilisateurs et ordinateurs AD » : OU `InfraReady/Groupes`, groupes GG-Admins-Infra et GG-Utilisateurs-Lab |
+| `S04_win-dc01_aduc-utilisateurs.png` | B | OU `InfraReady/Utilisateurs` : comptes a.martin, b.durand, c.petit, d.invite |
 | `S04_win-dc01_ad-structure.txt` | B | OU, comptes et membres des groupes |
 | `S04_win-dc01_dcdiag.txt` | B | `dcdiag` : tests du contrôleur réussis (encodage Windows-1252) |
 | `S04_win-dc01_dns-srv.txt` | B | Enregistrements SRV du domaine (LDAP, Kerberos) |
@@ -184,9 +186,13 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 | Fichier | Partie | Ce qu'il démontre |
 |---|---|---|
 | `S08_github_actions-validation.txt` | G | Exécution réussie du workflow GitHub Actions (11 étapes, gitleaks, lint, promtool) |
+| `S08_github_actions-executions.png` | G | Onglet *Actions* : exécutions réussies du workflow sur les branches `Keo` et `thomas` |
 | `S08_hote_erreur-iso-manquante.png` | Maintenance | WIN-DC01 ne démarre plus : ISO d'installation introuvable |
 | `S08_hote_tests-pare-feu.txt` | Sécurité | Depuis l'hôte : SSH et Grafana autorisés, node_exporter refusé |
 | `S08_hote_win-dc01-lecteur-cdrom.png` | Maintenance | Lecteur CD de WIN-DC01 encore relié à l'ISO (cause du point précédent) |
+| `S08_hote_win-dc01-materiel.txt` | A | Matériel virtuel réel de WIN-DC01 : q35, 2 vCPU, 4 Gio, disque SATA, carte e1000e (E-06) |
+| `S08_win-dc01_journal-systeme.png` | B | Observateur d'événements, journal *Système* (7 145 événements) : démarrages de services (7036), avertissement `disk` 153 |
+| `S08_win-dc01_journal-directory-service.png` | B | Journal *Directory Service* (282 événements) : catalogue global trouvé (1869), avertissements de sécurité AD |
 | `S08_ops01_controle-sudo-manuel.txt` | Sécurité | `sudo -n` refusé au compte `ansible` (authentification exigée) |
 | `S08_ops01_durcissement-run1.txt` | Sécurité, D | 1er passage : contrôle `sudo -n` en échec (élévation non désactivée, corrigé) |
 | `S08_ops01_durcissement-run2.txt` | Sécurité, D | Même échec, avant correction |

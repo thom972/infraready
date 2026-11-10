@@ -25,7 +25,7 @@ schéma modifiable [`docs/schemas/infraready-architecture.drawio`](docs/schemas/
 | Partie du sujet | État | Où le vérifier |
 |---|---|---|
 | A. Installation et réseau | Réalisé | [`docs/tracabilite.md`](docs/tracabilite.md#a-installation-et-réseau) |
-| B. Administration Windows | Réalisé | [`docs/comptes-et-droits.md`](docs/comptes-et-droits.md) |
+| B. Administration Windows | Réalisé (annuaire, partage, journaux) | [`docs/comptes-et-droits.md`](docs/comptes-et-droits.md) |
 | C. Administration Linux | Réalisé | [`docs/stockage.md`](docs/stockage.md) |
 | D. Automatisation Ansible | Réalisé (8 playbooks, second passage `changed=0`) | [`docs/ansible.md`](docs/ansible.md) |
 | E. Maintenance et mises à jour | Réalisé | [`docs/maintenance.md`](docs/maintenance.md) |
@@ -34,7 +34,6 @@ schéma modifiable [`docs/schemas/infraready-architecture.drawio`](docs/schemas/
 | H. Diagnostic d'incident | Réalisé | [`docs/incident.md`](docs/incident.md) |
 
 La correspondance complète exigence → fichiers → preuves est dans [`docs/tracabilite.md`](docs/tracabilite.md).
-Aucune étiquette de séance n'a encore été posée (règle 4 de [`CONTRIBUTING.md`](CONTRIBUTING.md)).
 
 ## Organisation du dépôt
 
@@ -42,7 +41,7 @@ Aucune étiquette de séance n'a encore été posée (règle 4 de [`CONTRIBUTING
 infraready/
 ├── README.md · CONTRIBUTING.md
 ├── ansible.cfg                        inventaire par défaut, pipelining
-├── .github/workflows/validation.yml   CI : yamllint, ansible-lint, syntax-check, promtool, gitleaks
+├── .github/workflows/validation.yml   CI : gitleaks, yamllint, ansible-lint, syntax-check, promtool, scripts
 ├── .yamllint                          règles yamllint (compatibles ansible-lint)
 ├── collections/requirements.yml       collections Ansible utilisées
 ├── inventory/
@@ -127,6 +126,7 @@ for p in playbooks/*.yml; do ansible-playbook "$p" --syntax-check; done
 docker run --rm -v "$PWD/monitoring:/etc/prometheus:ro" --entrypoint promtool prom/prometheus \
   check config /etc/prometheus/prometheus.yml
 docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks git /repo
+shellcheck scripts/linux/*.sh
 ```
 
 ## Documents de référence
@@ -146,9 +146,8 @@ docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks git /repo
 | Livrables | [`docs/dossier-technique.pdf`](docs/dossier-technique.pdf), [`docs/soutenance.pdf`](docs/soutenance.pdf) |
 | Conventions de commit | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 
-## Limites connues
+## Choix assumés
 
 - `svc-ansible` reste membre de « Admins du domaine » : risque accepté avec mesures compensatoires (E-15).
 - Les alertes sont visibles dans Prometheus et Grafana, sans notification externe (pas d'Alertmanager).
 - Les mises à jour Windows sont recherchées par Ansible mais installées manuellement (redémarrage du contrôleur de domaine).
-- Aucune capture de l'Observateur d'événements Windows n'est versionnée.

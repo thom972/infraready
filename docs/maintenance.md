@@ -66,6 +66,19 @@ Seuil : 15 % d'espace libre minimum (`group_vars/all.yml`). Le service web est a
 Le contrôleur de domaine n'est pas mis à jour automatiquement : un redémarrage interrompt l'annuaire et le DNS
 du laboratoire, il doit donc rester une décision humaine, dans un créneau annoncé.
 
+**Journaux Windows.** Après chaque redémarrage et à chaque contrôle, les journaux de WIN-DC01 sont relus dans
+l'Observateur d'événements (`eventvwr /c:System`, puis `eventvwr /c:"Directory Service"`) ou en PowerShell :
+
+```powershell
+Get-WinEvent -LogName System -MaxEvents 50 | Where-Object Level -le 3     # critiques, erreurs, avertissements
+Get-WinEvent -LogName 'Directory Service' -MaxEvents 50 | Where-Object Level -le 3
+```
+
+Relevé du 10/11/2026 : journal *Système* (7 145 événements), uniquement des démarrages de services (7036)
+et un avertissement `disk` 153 (opération d'E/S relancée sur le disque virtuel) ;
+journal *Directory Service* (282 événements) : catalogue global trouvé (1869), avertissements de sécurité AD 3051 et 3054 émis au démarrage des services d'annuaire.
+Preuves : `S08_win-dc01_journal-systeme.png`, `S08_win-dc01_journal-directory-service.png`.
+
 ## 6. Gestion de la capacité
 
 | Date | Serveur | Action | Résultat |

@@ -2,13 +2,13 @@
 
 *Mise à jour : séance 8.* Chaque exigence du sujet (§6, parties A à H) est reliée aux fichiers qui la réalisent
 ou la documentent, puis aux preuves de `docs/preuves/` (index : [`preuves/README.md`](preuves/README.md)).
-Statuts : **OK** (réalisé et prouvé), **Partiel** (réalisé, preuve incomplète), **À faire**.
+Statut **OK** : exigence réalisée et prouvée.
 
 ## A. Installation et réseau
 
 | Exigence | Fichiers | Preuves | Statut |
 |---|---|---|---|
-| Créer les machines virtuelles | `docs/seance-02/0[2-5]-installation-*.md`, `docs/architecture.md` | `S02_*_reception.txt` (×3), `S04_linux01_disques-hyperviseur.txt` | OK |
+| Créer les machines virtuelles | `docs/seance-02/0[2-5]-installation-*.md`, `docs/architecture.md` | `S02_*_reception.txt` (×3), `S04_linux01_disques-hyperviseur.txt`, `S08_hote_win-dc01-materiel.txt` | OK |
 | Noms d'hôtes et adresses IP | `docs/adressage-ip.md`, `configs/*/netplan/01-lab.yaml` | `S02_linux01_reception.txt`, `S02_ops01_netplan-try-ip-fixe.png`, `S02_win-dc01_reception.txt` | OK |
 | Réseau virtuel adapté | `infra/libvirt/infraready-network.xml`, écarts E-03, E-04 | `S02_hote_reseau-infraready.txt` | OK |
 | Connectivité entre machines | `scripts/linux/verif-reception.sh`, `scripts/windows/Verif-Reception.ps1` | `S02_*_reception.txt` (ping), `S04_dns-clients-linux.txt` (rtt) | OK |
@@ -21,9 +21,9 @@ Statuts : **OK** (réalisé et prouvé), **Partiel** (réalisé, preuve incompl�
 |---|---|---|---|
 | Rôle AD DS, domaine de laboratoire | `docs/seance-02/03-installation-win-dc01.md` | `S04_win-dc01_test-et-promotion-adds.png`, `S04_win-dc01_dcdiag.txt` | OK |
 | Configurer DNS | — | `S04_win-dc01_zone-dns.txt`, `S04_win-dc01_dns-srv.txt` | OK |
-| Au moins deux groupes, plusieurs comptes | `playbooks/windows.yml`, `inventory/group_vars/windows/ad.yml` | `S04_win-dc01_ad-structure.txt`, `S04_ops01_windows-run1.txt`, `-run2.txt` | OK |
+| Au moins deux groupes, plusieurs comptes | `playbooks/windows.yml`, `inventory/group_vars/windows/ad.yml` | `S04_win-dc01_ad-structure.txt`, `S04_win-dc01_aduc-groupes.png`, `S04_win-dc01_aduc-utilisateurs.png`, `S04_ops01_windows-run1.txt`, `-run2.txt` | OK |
 | Documenter droits et accès | `docs/comptes-et-droits.md` | `S04_linux01_test-partage.txt`, `S04_ops01_windows-partage-run2.txt` | OK |
-| Vérifier les journaux Windows | `docs/maintenance.md` (§7, Observateur d'événements) | Aucune capture versionnée | Partiel |
+| Vérifier les journaux Windows | `docs/maintenance.md` (§5, journaux Windows) | `S08_win-dc01_journal-systeme.png`, `S08_win-dc01_journal-directory-service.png` | OK |
 
 ## C. Administration Linux
 
@@ -78,7 +78,7 @@ Statuts : **OK** (réalisé et prouvé), **Partiel** (réalisé, preuve incompl�
 |---|---|---|---|
 | Dépôt GitHub organisé | `README.md` (organisation), `thom972/infraready` branche `Keo` | — | OK |
 | Commits compréhensibles | `CONTRIBUTING.md` | `git log --oneline` (commits conventionnels) | OK |
-| Workflow GitHub Actions sur push et pull request | `.github/workflows/validation.yml`, `.yamllint`, `collections/requirements.yml` | `S08_github_actions-validation.txt` (déclenché par un push) | OK |
+| Workflow GitHub Actions sur push et pull request | `.github/workflows/validation.yml`, `.yamllint`, `collections/requirements.yml` | `S08_github_actions-validation.txt` (déclenché par un push), `S08_github_actions-executions.png` | OK |
 | Preuve d'une exécution réussie | — | `S08_github_actions-validation.txt` : exécution 42783406785, 11 étapes réussies | OK |
 
 ## H. Diagnostic d'incident

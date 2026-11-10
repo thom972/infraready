@@ -1,0 +1,14 @@
+# Poste hôte (Arch Linux) — 10/11/2026 09:54
+# virsh -c qemu:///system dumpxml --inactive WIN-DC01 | grep -E "<vcpu|<memory|machine=|<disk |<driver name='qemu'|<target dev=.sd|<model type|<source network"
+  <memory unit='KiB'>4194304</memory>
+  <vcpu placement='static'>2</vcpu>
+    <type arch='x86_64' machine='pc-q35-11.1'>hvm</type>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' discard='unmap'/>
+      <target dev='sda' bus='sata'/>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <target dev='sdb' bus='sata'/>
+      <source network='infraready'/>
+      <model type='e1000e'/>
+      <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
