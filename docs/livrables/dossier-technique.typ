@@ -63,7 +63,7 @@
     stat("8", "playbooks Ansible"),
     stat("4", "cibles supervisées"),
     stat("131", "preuves versionnées"),
-    stat("44", "commits documentés"),
+    stat("46", "commits documentés"),
   )
   #v(1.4cm)
   #card(inset: 14pt)[
@@ -802,7 +802,7 @@ infraready/
     #table(columns: (auto, auto),
       [Type], [Commits],
       [`feat` (fonctionnalité)], [12],
-      [`docs`], [13],
+      [`docs`], [15],
       [`test` (preuve, démonstration)], [7],
       [`fix` (correction)], [6],
       [`chore`, `ci`, `style`], [5],
@@ -1048,7 +1048,7 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [Seuil, alerte, interprétation], [3], [08, 11], [Disque pending → firing → résolue ; action], ok(),
   H[6. GitHub et intégration continue — 10 pts],
   [Organisation du dépôt], [2], [09], [Arborescence commentée], ok(),
-  [Versionnement et commits], [2], [09], [43 commits conventionnels], ok(),
+  [Versionnement et commits], [2], [09], [45 commits conventionnels], ok(),
   [Workflow GitHub Actions], [3], [09], [`validation.yml` : 14 contrôles, du secret au script], ok(),
   [Portée et limites], [2], [09], [Valide sans déployer ; runner sans accès au /24], ok(),
   [Preuve de réussite], [1], [09], [Exécution 42786343692, onglet Actions], ok(),

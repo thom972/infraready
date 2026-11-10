@@ -257,7 +257,7 @@ sudo nft delete table inet incident
         [shellcheck, PSScriptAnalyzer], ok(l: "0 erreur"),
         [`promtool` config + règles], ok(l: "4 règles"),
       )
-      #small[Le runner GitHub est sur Internet, sans route vers 192.168.50.0/24 ni secret : il *valide*, il ne *déploie* pas. 43 commits conventionnels.]
+      #small[Le runner GitHub est sur Internet, sans route vers 192.168.50.0/24 ni secret : il *valide*, il ne *déploie* pas. 45 commits conventionnels.]
     ],
     [
       #set text(size: 11pt)
