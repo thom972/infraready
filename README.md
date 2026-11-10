@@ -30,7 +30,7 @@ schéma modifiable [`docs/schemas/infraready-architecture.drawio`](docs/schemas/
 | D. Automatisation Ansible | Réalisé (8 playbooks, second passage `changed=0`) | [`docs/ansible.md`](docs/ansible.md) |
 | E. Maintenance et mises à jour | Réalisé | [`docs/maintenance.md`](docs/maintenance.md) |
 | F. Supervision | Réalisé (4 cibles, alerte de seuil démontrée) | [`docs/supervision.md`](docs/supervision.md) |
-| G. GitHub et intégration continue | Workflow en place ; preuve d'exécution à capturer après le premier push | [`.github/workflows/validation.yml`](.github/workflows/validation.yml) |
+| G. GitHub et intégration continue | Réalisé (exécution réussie le 10/11/2026) | [`docs/preuves/S08_github_actions-validation.txt`](docs/preuves/S08_github_actions-validation.txt) |
 | H. Diagnostic d'incident | Réalisé | [`docs/incident.md`](docs/incident.md) |
 
 La correspondance complète exigence → fichiers → preuves est dans [`docs/tracabilite.md`](docs/tracabilite.md).

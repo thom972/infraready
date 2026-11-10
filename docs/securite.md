@@ -39,7 +39,8 @@ De la séance 3 (premier playbook avec sudo) à la séance 7, `ansible` disposai
 - `/etc/ssh/sshd_config.d/20-ansible.conf` interdit toute authentification par mot de passe à ce compte
   (`sshd -t` avant rechargement) : il faut **la clé et le mot de passe** pour devenir root ;
 - contrôles automatiques : `sudo -n true` échoue, l'élévation avec le mot de passe du coffre donne `root`,
-  `sshd -T` confirme `passwordauthentication no` pour `ansible`.
+  `sshd -T` confirme `passwordauthentication no` pour `ansible` (`S08_ops01_durcissement-run3.txt`, contrôle manuel :
+  `S08_ops01_controle-sudo-manuel.txt`).
 
 Ansible utilise le sudo d'origine (`sudo.ws`) sur LINUX01 et OPS01 : sudo-rs d'Ubuntu 26.04 modifie l'invite de
 mot de passe qu'Ansible attend (E-17).

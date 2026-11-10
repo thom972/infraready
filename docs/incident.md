@@ -23,12 +23,12 @@
 |---|---|---|
 | 09:28:18 | État initial : 4 cibles `UP`, aucune alerte | `S07_etat-initial.txt`, capture Grafana |
 | *à compléter* | Ajout de la règle de pare-feu (début de l'incident) | Heure affichée par la commande de provocation |
-| 09:34:03 | Première collecte en échec : `up{hote="LINUX01"} == 0` | chronologie reconstituée (sortie non versionnée) |
+| 09:34:03 | Première collecte en échec : `up{hote="LINUX01"} == 0` | `S07_ops01_chronologie-incident.txt` |
 | 09:34:18 | Alerte `HoteInjoignable` en **pending** (évaluation suivante, + 15 s) | idem |
 | 09:35:18 | Alerte en **firing** (exactement 1 min plus tard : `for: 1m`) | idem, capture |
-| 09:3x | Diagnostic depuis OPS01 puis sur LINUX01 | `S07_linux01_diagnostic.txt` (tests depuis OPS01 : non versionnés) |
+| 09:3x | Diagnostic depuis OPS01 puis sur LINUX01 | `S07_ops01_diagnostic.txt`, `S07_linux01_diagnostic.txt` |
 | 09:38:31 | Correction : suppression de la table `incident` | `S07_linux01_diagnostic.txt` (sortie de correction) |
-| 09:38:33 | Dernière collecte en échec ; la suivante réussit | chronologie reconstituée (sortie non versionnée) |
+| 09:38:33 | Dernière collecte en échec ; la suivante réussit | `S07_ops01_chronologie-incident.txt` |
 | 09:38:48 | Alerte **résolue** (évaluation suivante, + 15 s) | idem |
 
 ## 1. Symptôme observé
@@ -87,10 +87,10 @@ Correction limitée à l'élément fautif : seule la table `incident` est suppri
 | Cible LINUX01 dans Prometheus et Grafana | De nouveau `UP` après 09:38:33 |
 | Alerte `HoteInjoignable` | Résolue à 09:38:48 |
 
-Preuves : captures `S07_grafana-retour-normale.png` (4 cibles `UP`) et `S07_prometheus-retour-normale.png` (4 règles inactives).
-Les sorties texte côté OPS01 (tests 1 à 3, chronologie reconstituée par `scripts/linux/chronologie-alerte.py`, `curl` de retour
-à la normale) n'ont pas été versionnées. La capture `S07_prometheus-pending.png` affiche `Active Since 09:34:09.9 UTC` ;
-la chronologie reconstituée, calée sur les évaluations toutes les 15 s, indique 09:34:18.
+Preuves : `S07_ops01_retour-normale.txt` (première ligne de métriques reçue), `S07_ops01_chronologie-incident.txt`,
+captures `S07_grafana-retour-normale.png` (4 cibles `UP`) et `S07_prometheus-retour-normale.png` (4 règles inactives).
+La capture `S07_prometheus-pending.png` affiche `Active Since 09:34:09.9 UTC` ; la chronologie, reconstituée par
+`scripts/linux/chronologie-alerte.py` et calée sur les évaluations toutes les 15 s, indique 09:34:18.
 
 ## Enseignements et prévention
 

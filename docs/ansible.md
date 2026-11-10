@@ -142,13 +142,15 @@ au lieu de passer inaperçu.
 | `windows.yml` (annuaire) | `changed=4` | `changed=0` | `S04_ops01_windows-run1.txt`, `-run2.txt` |
 | `windows.yml` (partage) | `changed=5` | `changed=0` | `S04_ops01_windows-partage-run1.txt`, `-run2.txt` |
 | `stockage.yml` | échecs corrigés (runs 1 à 4) | `changed=0` (runs 5 et 6) | `S04_ops01_stockage-run1.txt` à `-run6.txt` |
+| `supervision.yml` | échecs corrigés (runs 1 à 3), puis `failed=0` | `changed=0` (run 6) | `S06_ops01_supervision-run1.txt` à `-run6.txt` |
 | `securite.yml` (pare-feu) | `changed=3` par hôte | `changed=0` | `S08_ops01_pare-feu-run1.txt`, `-run2.txt` |
+| `securite.yml` (complet) | contrôle `sudo -n` en échec (runs 1 et 2, corrigé : `c95cb74`) | `failed=0` sur les 3 hôtes (run 3) | `S08_ops01_durcissement-*.txt` |
 
 ## Validation continue
 
 Le workflow `.github/workflows/validation.yml` rejoue à chaque `push` et `pull_request` : `yamllint --strict`,
 `ansible-lint` (profil `production` atteint), `--syntax-check` de tous les playbooks, `promtool check config/rules`,
-contrôle du chiffrement des coffres et `gitleaks`. Il ne se connecte à aucune VM : voir [`../README.md`](../README.md#validation-du-dépôt).
+contrôle du chiffrement des coffres et `gitleaks`. Première exécution réussie : `preuves/S08_github_actions-validation.txt`. Il ne se connecte à aucune VM : voir [`../README.md`](../README.md#validation-du-dépôt).
 
 ## Mettre à jour le projet sur OPS01
 
