@@ -62,8 +62,8 @@
     stat("3", "machines virtuelles"),
     stat("8", "playbooks Ansible"),
     stat("4", "cibles supervisées"),
-    stat("124", "preuves versionnées"),
-    stat("40", "commits documentés"),
+    stat("131", "preuves versionnées"),
+    stat("44", "commits documentés"),
   )
   #v(1.4cm)
   #card(inset: 14pt)[
@@ -76,7 +76,7 @@
     )
   ]
   #v(1fr)
-  #text(size: 8pt, fill: ink3)[Projet fil rouge 2026. Ce dossier est rédigé à partir de la documentation du dépôt (`docs/`) et décrit uniquement ce qui est démontré par une preuve versionnée (sortie de commande, capture, exécution). Les éléments non démontrés sont signalés comme tels. Aucun mot de passe, jeton ni clé n'apparaît dans ce document.]
+  #text(size: 8pt, fill: ink3)[Projet fil rouge 2026. Ce dossier est rédigé à partir de la documentation du dépôt (`docs/`) et décrit uniquement ce qui est démontré par une preuve versionnée (sortie de commande, capture, exécution). Aucun mot de passe, jeton ni clé n'apparaît dans ce document.]
 ]
 
 // =====================================================================
@@ -100,12 +100,12 @@
 #table(columns: (auto, 1fr, auto, 1.25fr),
   [Partie], [Exigence], [État], [Preuve principale],
   [A], [Installation des 3 VM, réseau, DNS], ok(), [Ping et résolution entre VM, zone DNS (§02)],
-  [B], [Administration Windows : AD DS, comptes, groupes, droits], ok(), [OU, 2 groupes, 4 comptes, partage testé (§04)],
+  [B], [Administration Windows : AD DS, comptes, groupes, droits, journaux], ok(), [OU, 2 groupes, 4 comptes, partage testé, journaux relus (§04)],
   [C], [Administration Linux : services, droits, stockage, journaux], ok(), [Nginx, setgid 2775, ext4 persistant (§05–06)],
   [D], [Automatisation Ansible Linux et Windows], ok(), [8 playbooks, 2#super[e] passage `changed=0` (§07)],
   [E], [Maintenance Linux et Windows], ok(), [`maintenance.yml`, 4 KB Windows installées (§06)],
   [F], [Supervision, tableau de bord, alerte], ok(), [4 cibles UP, alerte disque pending → firing (§08)],
-  [G], [GitHub et intégration continue], ok(), [Workflow déclenché par push, exécution réussie le 10/11 (§09)],
+  [G], [GitHub et intégration continue], ok(), [Workflow de 14 contrôles sur push et PR, exécutions réussies (§09)],
   [H], [Diagnostic d'incident], ok(), [Rapport complet, retour à la normale prouvé (§11)],
 )
 #note([Comment lire ce dossier], [Chaque section correspond à un critère des grilles d'évaluation, indiqué en tête de section. L'#link(<annexe-grille>)[annexe A] reprend tous les sous-critères des grilles pairs et formateur, avec la section et la preuve qui y répondent. La traçabilité exigence par exigence est dans `docs/tracabilite.md`.])
@@ -268,6 +268,16 @@ Le laboratoire se reconstruit à partir du dépôt seul : chaque configuration e
 )
 Ansible charge le coffre d'un groupe dès qu'un de ses hôtes est visé : *toute commande qui touche une VM demande `--ask-vault-pass`*. `-K` (sudo de `keo`) s'ajoute dès qu'OPS01 est visé.
 
+== Procédure standard pour chaque playbook
+#grid(columns: (1fr,) * 5, gutter: 8pt,
+  card(inset: 9pt)[#text(weight: 700, fill: blue, "1") #h(2pt) #text(weight: 650, "Syntaxe") \ #text(size: 8pt, fill: ink2)[`--syntax-check`]],
+  card(inset: 9pt)[#text(weight: 700, fill: blue, "2") #h(2pt) #text(weight: 650, "Cibles") \ #text(size: 8pt, fill: ink2)[`--list-hosts`]],
+  card(inset: 9pt)[#text(weight: 700, fill: blue, "3") #h(2pt) #text(weight: 650, "Simulation") \ #text(size: 8pt, fill: ink2)[`--check --diff`]],
+  card(inset: 9pt)[#text(weight: 700, fill: blue, "4") #h(2pt) #text(weight: 650, "Exécution") \ #text(size: 8pt, fill: ink2)[RECAP : `failed=0`, `unreachable=0`]],
+  card(inset: 9pt)[#text(weight: 700, fill: blue, "5") #h(2pt) #text(weight: 650, "Rejeu") \ #text(size: 8pt, fill: ink2)[second passage : `changed=0`]],
+)
+Le dépôt est l'unique source : les modifications sont faites sur le poste du binôme, poussées sur GitHub, puis récupérées sur OPS01 par `git pull`. Chaque modification est d'abord validée par le workflow GitHub Actions (§09).
+
 == Déployer un labo neuf
 #grid(columns: (1fr, 1fr), gutter: 10pt,
   term(title: "OPS01 — ~/infraready")[
@@ -298,16 +308,6 @@ ansible-playbook playbooks/verification.yml \
     ```
   ],
 )
-
-== Procédure standard pour chaque playbook
-#grid(columns: (1fr,) * 5, gutter: 8pt,
-  card(inset: 9pt)[#text(weight: 700, fill: blue, "1") #h(2pt) #text(weight: 650, "Syntaxe") \ #text(size: 8pt, fill: ink2)[`--syntax-check`]],
-  card(inset: 9pt)[#text(weight: 700, fill: blue, "2") #h(2pt) #text(weight: 650, "Cibles") \ #text(size: 8pt, fill: ink2)[`--list-hosts`]],
-  card(inset: 9pt)[#text(weight: 700, fill: blue, "3") #h(2pt) #text(weight: 650, "Simulation") \ #text(size: 8pt, fill: ink2)[`--check --diff`]],
-  card(inset: 9pt)[#text(weight: 700, fill: blue, "4") #h(2pt) #text(weight: 650, "Exécution") \ #text(size: 8pt, fill: ink2)[RECAP : `failed=0`, `unreachable=0`]],
-  card(inset: 9pt)[#text(weight: 700, fill: blue, "5") #h(2pt) #text(weight: 650, "Rejeu") \ #text(size: 8pt, fill: ink2)[second passage : `changed=0`]],
-)
-Le dépôt est l'unique source : les modifications sont faites sur le poste du binôme, poussées sur GitHub, puis récupérées sur OPS01 par `git pull`. Chaque modification est d'abord validée par le workflow GitHub Actions (§09).
 
 // =====================================================================
 = Administration Windows — Active Directory
@@ -346,6 +346,11 @@ c.petit
 )
 Les deux groupes sont globaux, de type sécurité. *Les droits sont donnés aux groupes, jamais aux comptes* : ajouter ou retirer un utilisateur d'un groupe suffit à changer ses accès.
 
+#grid(columns: (1fr, 1.12fr), gutter: 12pt,
+  shot("S04_win-dc01_aduc-groupes.png", caption: [Console « Utilisateurs et ordinateurs AD » : OU `InfraReady/Groupes`.]),
+  shot("S04_win-dc01_aduc-utilisateurs.png", caption: [OU `InfraReady/Utilisateurs` : les quatre comptes de test.]),
+)
+
 == Droits sur le partage `\\WIN-DC01\Lab`
 L'accès effectif est le plus restrictif des deux niveaux, partage *et* NTFS. L'héritage NTFS est coupé : seules les entrées listées s'appliquent.
 #grid(columns: (1fr, 1fr), gutter: 12pt,
@@ -367,21 +372,40 @@ L'accès effectif est le plus restrictif des deux niveaux, partage *et* NTFS. L'
 == Services, accès distant et journaux Windows
 - *Services critiques surveillés* par `verification.yml` : NTDS, DNS, Netlogon, Kdc, WinRM, LanmanServer (tous `Running`, `S05_ops01_verification.txt`). Santé du contrôleur contrôlée par `dcdiag` après chaque maintenance.
 - *WinRM* (TCP 5985, transport NTLM qui chiffre les échanges) n'est accepté que depuis OPS01 : la même requête depuis LINUX01 expire (capture ci-dessous).
-- *Diagnostic du contrôleur* : `dcdiag` a réussi les tests Connectivity, Advertising, SysVolCheck, NetLogons, Services et FsmoCheck (`S04_win-dc01_dcdiag.txt`). La procédure de retour arrière prévoit la lecture de l'*Observateur d'événements* en cas de service arrêté (`docs/maintenance.md` §7).
+- *Diagnostic du contrôleur* : `dcdiag` a réussi les tests Connectivity, Advertising, SysVolCheck, NetLogons, Services et FsmoCheck (`S04_win-dc01_dcdiag.txt`).
 
 #grid(columns: (1.05fr, 1fr), gutter: 12pt,
   shot("S02_winrm-ops01-ok-linux01-refuse.png", caption: [WinRM : accepté depuis OPS01 (HTTP 405), refusé depuis LINUX01 (délai dépassé).]),
   [
+    #show raw.where(block: true): set text(size: 7.2pt)
     #text(size: 8pt, fill: ink2, weight: 600, "Contrôles Windows documentés (maintenance.md)")
     ```powershell
 dcdiag /test:Services /test:Advertising `
-       /test:NetLogons /test:SysVolCheck
-Get-HotFix | Sort-Object InstalledOn -Descending |
+  /test:NetLogons /test:SysVolCheck
+Get-HotFix |
+  Sort-Object InstalledOn -Descending |
   Select-Object -First 5
     ```
-    #note([Limite de preuve], [Aucune capture de l'Observateur d'événements n'est versionnée : l'exigence « vérifier les journaux Windows » est documentée mais pas prouvée.], kind: "part")
+    #v(2pt)
+    #text(size: 8pt, fill: ink2, weight: 600, "Lire les journaux (maintenance.md §5)")
+    ```powershell
+Get-WinEvent -LogName System -MaxEvents 50 |
+  Where-Object Level -le 3
+Get-WinEvent -LogName 'Directory Service' `
+  -MaxEvents 50 | Where-Object Level -le 3
+    ```
   ],
 )
+
+#block(breakable: false)[
+=== Journaux Windows relus
+Les journaux de WIN-DC01 sont relus après chaque redémarrage et à chaque contrôle, dans l'Observateur d'événements (`eventvwr /c:System`) ou par `Get-WinEvent` (niveau ≤ 3 : critique, erreur, avertissement).
+#grid(columns: (1fr, 1fr), gutter: 12pt,
+  shot("S08_win-dc01_journal-systeme.png", caption: [Journal *Système* : 7 145 événements, démarrages de services (7036), un avertissement `disk` 153.]),
+  shot("S08_win-dc01_journal-directory-service.png", caption: [Journal *Directory Service* : catalogue global trouvé (1869), avertissements de sécurité AD 3051 et 3054.]),
+)
+Relevé du 10/11/2026 : aucune erreur dans les événements affichés ; l'avertissement `disk` 153 signale une opération d'E/S relancée sur le disque virtuel, à surveiller s'il se répète.
+]
 
 // =====================================================================
 = Administration Linux — services, droits et journaux
@@ -398,10 +422,8 @@ Get-HotFix | Sort-Object InstalledOn -Descending |
 == Service applicatif : Nginx
 Nginx est installé et activé au démarrage par `playbooks/nginx.yml`. Le script `scripts/linux/check-nginx.sh` vérifie son état et renvoie un code de sortie exploitable (0 si actif).
 
-#grid(columns: (1fr, 1fr), gutter: 10pt,
-  [
-    #text(size: 8pt, fill: ink2, weight: 600, "Vérifier, piloter, diagnostiquer")
-    ```bash
+#text(size: 8pt, fill: ink2, weight: 600, "Vérifier, piloter, diagnostiquer")
+```bash
 systemctl status nginx         # état, PID, dernières lignes
 systemctl is-active nginx      # active / inactive
 systemctl is-enabled nginx     # démarrage automatique
@@ -411,11 +433,10 @@ journalctl -u nginx --since -1h
 ss -lntp | grep ':80'          # port en écoute
 curl -I http://192.168.50.20   # réponse HTTP
 ps -o pid,user,cmd -C nginx    # maître root, workers www-data
-    ```
-  ],
+```
+#grid(columns: (1fr, 1fr), gutter: 10pt,
   [
-    #text(size: 8pt, fill: ink2, weight: 600, "Avant / après le playbook (S03)")
-    #term(title: "check-nginx.sh")[
+    #term(title: "check-nginx.sh — avant / après le playbook (S03)")[
       ```
 # avant
 Unit nginx.service could not be found.
@@ -424,7 +445,8 @@ OK : le service nginx est actif
 code de sortie : 0
       ```
     ]
-    #v(4pt)
+  ],
+  [
     Le processus maître tourne en `root` pour ouvrir le port 80, les *workers* en `www-data` (`S05_linux01_nginx-processus.txt`). `verification.yml` contrôle en plus la réponse HTTP 200.
   ],
 )
@@ -515,11 +537,14 @@ Avant le premier passage : snapshot `04-avant-disque-donnees` et sauvegarde auto
   ],
 )
 
+#block(breakable: false)[
+=== Historique des maintenances
 #table(columns: (auto, auto, 1fr, auto),
   [Date], [Serveurs], [Mises à jour], [Résultat],
   [22/10], [LINUX01, OPS01], [Paquets Ubuntu (mode safe), redémarrage non requis], [`failed=0` ×3],
   [22/10], [WIN-DC01], [KB5126646 (cumulative sécurité), KB5126645, KB5127690 (.NET), KB890830, en deux passages, snapshot préalable], [`dcdiag` OK, 0 restante],
 )
+]
 #grid(columns: (1fr, 2.2fr), gutter: 12pt,
   shot("S05_win-dc01_historique-wu.png", caption: [Historique Windows Update de WIN-DC01.]),
   [
@@ -558,6 +583,7 @@ Avant le premier passage : snapshot `04-avant-disque-donnees` et sauvegarde auto
 == Inventaire et variables
 #grid(columns: (1fr, 1.15fr), gutter: 12pt,
   [
+    #show raw.where(block: true): set text(size: 7.4pt)
     #text(size: 8pt, fill: ink2, weight: 600, "inventory/hosts.yml")
     ```yaml
 all:
@@ -582,20 +608,21 @@ all:
     ```
   ],
   [
+    #show raw.where(block: true): set text(size: 7.4pt)
     #text(size: 8pt, fill: ink2, weight: 600, "Organisation des variables")
     ```
 inventory/
-├─ hosts.yml            hôtes, groupes (sans secret)
+├─ hosts.yml          hôtes, groupes
 ├─ group_vars/
-│  ├─ all.yml           seuil d'espace libre 15 %
-│  ├─ linux/vars.yml    sudo, Nginx, pare-feu
-│  ├─ ops/vars.yml      exécution locale, sudo.ws
+│  ├─ all.yml         seuil disque 15 %
+│  ├─ linux/          sudo, Nginx, ufw
+│  ├─ ops/            local, sudo.ws
 │  └─ windows/
-│     ├─ vars.yml       WinRM 5985, NTLM
-│     ├─ ad.yml         OU, groupes, comptes
-│     └─ vault.yml      secrets CHIFFRÉS
+│     ├─ vars.yml     WinRM 5985, NTLM
+│     ├─ ad.yml       OU, groupes, comptes
+│     └─ vault.yml    secrets CHIFFRÉS
 └─ host_vars/
-   └─ LINUX01.yml       disque INFRA-DATA
+   └─ LINUX01.yml     disque INFRA-DATA
     ```
     Les variables sont rangées par portée : commune, par groupe, par hôte. Les valeurs sensibles sont isolées dans des `vault.yml` chiffrés.
   ],
@@ -643,19 +670,7 @@ Un playbook *décrit un état*, alors qu'un script enchaîne des actions. Rejou�
 - Diagnostic d'une erreur : relancer avec `-vvv`, isoler la tâche (`--start-at-task`), vérifier la connexion (`ansible <hôte> -m ping` / `-m win_ping`).
 
 == Commandes et reproductibilité
-#term(title: "OPS01 — ~/infraready (racine du dépôt, ansible.cfg y désigne l'inventaire)")[
-  ```
-git pull                                              # une seule source : le dépôt
-eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519_ansible
-ansible-inventory --graph                             # cibles et groupes
-ansible all -m ping --ask-vault-pass                  # (win_ping pour WIN-DC01)
-ansible-playbook playbooks/<nom>.yml --syntax-check   # 1. syntaxe
-ansible-playbook playbooks/<nom>.yml --list-hosts     # 2. cibles
-ansible-playbook playbooks/<nom>.yml --check --diff -K --ask-vault-pass   # 3. simulation
-ansible-playbook playbooks/<nom>.yml -K --ask-vault-pass                  # 4. exécution
-ansible-playbook playbooks/<nom>.yml -K --ask-vault-pass                  # 5. rejeu : changed=0
-  ```
-]
+Les commandes de déploiement et la procédure en cinq étapes (syntaxe, cibles, simulation, exécution, rejeu) sont au §03 ; les commandes d'exploitation sont regroupées en annexe B.
 
 // =====================================================================
 = Supervision — Prometheus et Grafana
@@ -669,10 +684,9 @@ ansible-playbook playbooks/<nom>.yml -K --ask-vault-pass                  # 5. r
   [Prometheus], [OPS01], [9090], [Collecte toutes les 15 s, stocke, évalue les règles d'alerte],
   [Grafana], [OPS01], [3000], [Visualise ; source et tableau de bord provisionnés par fichiers],
 )
-Prometheus fonctionne en *pull* : c'est lui qui interroge `GET /metrics` sur chaque exporter. Chaque cible porte une étiquette `hote` (LINUX01, OPS01, WIN-DC01) utilisée dans les légendes. La métrique `up` vaut 1 si la dernière collecte a réussi, 0 sinon : c'est la base de l'indicateur de disponibilité, et de l'alerte `HoteInjoignable`.
-
-#grid(columns: (1fr, 1fr), gutter: 10pt,
+#grid(columns: (1fr, 1fr), gutter: 12pt,
   [
+    #show raw.where(block: true): set text(size: 7.4pt)
     #text(size: 8pt, fill: ink2, weight: 600, "monitoring/prometheus.yml (extrait)")
     ```yaml
 global:
@@ -693,22 +707,26 @@ scrape_configs:
     ```
   ],
   [
-    #text(size: 8pt, fill: ink2, weight: 600, "monitoring/alertes.yml (extrait)")
-    ```yaml
+    Prometheus fonctionne en *pull* : c'est lui qui interroge `GET /metrics` sur chaque exporter, toutes les 15 s. Chaque cible porte une étiquette `hote` (LINUX01, OPS01, WIN-DC01) utilisée dans les légendes.
+
+    La métrique `up` vaut 1 si la dernière collecte a réussi, 0 sinon : c'est la base de l'indicateur de disponibilité et de l'alerte `HoteInjoignable`.
+
+    Les règles d'alerte sont évaluées toutes les 15 s ; le `for` impose une durée minimale avant le passage en `firing`, ce qui évite d'alerter sur un pic isolé.
+  ],
+)
+#text(size: 8pt, fill: ink2, weight: 600, "monitoring/alertes.yml (extrait, annotations omises)")
+```yaml
 - alert: HoteInjoignable
   expr: up == 0
   for: 1m
-  labels: { severite: critique }
 - alert: EspaceDisqueFaibleLinux
-  expr: node_filesystem_avail_bytes{fstype=~"ext4|xfs"}
-      / node_filesystem_size_bytes{fstype=~"ext4|xfs"}
-      < 0.15
+  expr: (node_filesystem_avail_bytes{fstype=~"ext4|xfs"}
+        / node_filesystem_size_bytes{fstype=~"ext4|xfs"}) < 0.15
   for: 5m
-- alert: ProcesseurSature   # > 90 % pendant 10 min
-    ```
-    Quatre règles, validées par `promtool check rules` (§09). Le `for` évite d'alerter sur un pic isolé.
-  ],
-)
+- alert: EspaceDisqueFaibleWindows     # même seuil sur C:, windows_logical_disk_*
+- alert: ProcesseurSature              # > 90 % pendant 10 min
+```
+Quatre règles, validées par `promtool check config` et `promtool check rules` à chaque push (§09).
 
 == Tableau de bord « InfraReady - Supervision »
 #shot("S07_grafana-etat-initial.png", caption: [Tableau de bord provisionné : 4 cibles UP, CPU, mémoire, espace disque (seuil 15 %), table des alertes.])
@@ -723,6 +741,7 @@ scrape_configs:
 )
 La source de données Prometheus (`monitoring/grafana/datasource.yml`) et le tableau de bord (`monitoring/dashboards/infraready.json`) sont *provisionnés* : aucun clic manuel, Grafana est reconstruit à l'identique par le playbook. Le mot de passe administrateur vient du coffre.
 
+#block(breakable: false)[
 == Démonstration d'un seuil : disque de LINUX01
 Le volume `/srv/infraready` a été rempli volontairement au-delà de 85 %, puis vidé.
 #grid(columns: (1.35fr, 1fr), gutter: 12pt,
@@ -737,6 +756,7 @@ Le volume `/srv/infraready` a été rempli volontairement au-delà de 85 %, puis
     [09:16:43], [alerte résolue (+15 s)],
   ),
 )
+]
 Le seuil de 15 % est le même que celui de `verification.yml` : l'alerte et le contrôle de maintenance concordent. Preuves : `S06_demo-seuil.txt` (1 %, 92 %, 1 %), `S06_ops01_alerte-firing.json` (API Prometheus, état `firing`) et `S06_ops01_chronologie-seuil.txt` (heures reconstituées par `scripts/linux/chronologie-alerte.py`).
 
 // =====================================================================
@@ -746,6 +766,7 @@ Le seuil de 15 % est le même que celui de `verification.yml` : l'alerte et le c
 == Organisation du dépôt (branche `Keo`)
 #grid(columns: (1fr, 1fr), gutter: 12pt,
   [
+    #show raw.where(block: true): set text(size: 7pt)
     ```
 infraready/
 ├─ README.md · CONTRIBUTING.md · ansible.cfg
@@ -761,7 +782,7 @@ infraready/
    ├─ seance-01/ · seance-02/   sécurité, …
    ├─ tracabilite.md · livrables/ (Typst)
    ├─ schemas/     schéma draw.io
-   └─ preuves/     124 preuves S<séance>_<machine>_<objet>
+   └─ preuves/     131 preuves S<séance>_<machine>_<objet>
     ```
   ],
   [
@@ -771,40 +792,46 @@ infraready/
     #table(columns: (auto, auto),
       [Type], [Commits],
       [`feat` (fonctionnalité)], [12],
-      [`docs`], [10],
+      [`docs`], [13],
       [`test` (preuve, démonstration)], [7],
       [`fix` (correction)], [6],
-      [`chore`, `ci`, `style`], [4],
+      [`chore`, `ci`, `style`], [5],
     )
   ],
 )
-#term(title: "git log --oneline (extrait)")[
+#term(title: "git log --oneline (extrait)", size: 6.6pt)[
   ```
+e25bddf ci: contrôler l'inventaire et les scripts shell, Python et PowerShell
+b49ec4c docs(preuves): journaux Windows, console AD, exécutions GitHub Actions et matériel de WIN-DC01
 8376f72 ci: valider le dépôt avec yamllint, ansible-lint, syntax-check, promtool et gitleaks
 c95cb74 fix(securite): exécuter les contrôles sans élévation (ansible_become prime sur become)
 5e6edd2 test(securite): appliquer le pare-feu ufw, prouver les flux autorisés et refusés, et l'idempotence
 07f52d4 test(supervision): démontrer l'alerte de seuil disque (chronologie pending/firing/résolue)
 2940d07 docs(incident): diagnostiquer et documenter l'absence de métriques de LINUX01 (pare-feu port 9100)
 a4d23db feat(supervision): ajouter Prometheus, Grafana, node_exporter et windows_exporter
-e2e8a5a feat(ansible): ajouter le volume de données /srv/infraready (disque dédié, montage persistant)
   ```
 ]
 
 == Workflow GitHub Actions `validation.yml`
 Déclenché à chaque `push` et `pull_request`, sur un runner `ubuntu-latest` hébergé par GitHub, avec des droits en lecture seule (`permissions: contents: read`). Les collections sont installées depuis `collections/requirements.yml`.
 #table(columns: (auto, 1fr, auto),
-  [Étape], [Contrôle], [GitHub 10/11],
+  [Étape], [Contrôle], [Exécution du 10/11],
   [gitleaks], [Recherche de secrets dans *tout l'historique Git*], ok(l: "0 fuite"),
   [Coffres], [Chaque `vault.yml` commence par `$ANSIBLE_VAULT;1.1;AES256`], ok(l: "3/3"),
   [yamllint], [`yamllint --strict .` avec `.yamllint` compatible ansible-lint], ok(l: "0 alerte"),
   [ansible-lint], [Bonnes pratiques Ansible ; remarques corrigées sans changer le comportement], ok(l: "profil production"),
+  [Inventaire], [`ansible-inventory --graph` : groupes et hôtes lisibles], ok(l: "3 hôtes"),
   [Playbooks], [`ansible-playbook --syntax-check` sur les 8 playbooks], ok(l: "8/8"),
+  [Scripts], [`shellcheck` (Bash), `py_compile` (Python), PSScriptAnalyzer (PowerShell, erreurs bloquantes)], ok(l: "0 erreur"),
   [promtool], [`check config` de `prometheus.yml` et `check rules` de `alertes.yml`], ok(l: "4 règles"),
 )
+Chaque étape échoue au moindre problème et bloque l'exécution : une modification qui casse un playbook, une règle d'alerte ou un script, ou qui contient un secret, apparaît en rouge sur le commit concerné.
 
-#note([Portée et limite du pipeline], [Le workflow *valide le dépôt*, il ne *déploie* rien. Le runner hébergé par GitHub est une machine d'Internet : il n'a aucune route vers 192.168.50.0/24, réseau privé NATé derrière le poste hôte, et il ne doit pas en avoir (il faudrait exposer WinRM et SSH, ou y placer des secrets). Le déploiement reste manuel depuis OPS01. L'automatiser demanderait un runner auto-hébergé *dans* le labo.])
+#note([Portée du pipeline], [Le workflow *valide le dépôt*, il ne *déploie* rien. Le runner hébergé par GitHub est une machine d'Internet : il n'a aucune route vers 192.168.50.0/24, réseau privé NATé derrière le poste hôte, et il ne doit pas en avoir (il faudrait exposer WinRM et SSH, ou y placer des secrets). Le déploiement reste manuel depuis OPS01. L'automatiser demanderait un runner auto-hébergé *dans* le labo.])
 
-#note([Preuve de réussite], [Exécution `42783406785` du 10/11/2026, déclenchée par un `push` sur la branche `Keo` : 11 étapes réussies en 1 min 11 s, « no leaks found », ansible-lint en profil `production`, 8 playbooks valides, configuration et 4 règles Prometheus valides. Sortie complète et lien : `docs/preuves/S08_github_actions-validation.txt`. Chaque push suivant relance la validation.], kind: "ok")
+#note([Preuve de réussite], [Exécution `42786343692` du 10/11/2026, déclenchée par un `push` sur la branche `Keo` : toutes les étapes réussies en 1 min 14 s, 46 commits analysés par gitleaks (« no leaks found »), ansible-lint « 0 failure(s), 0 warning(s) » en profil `production`, 8 playbooks, configuration et 4 règles Prometheus valides. Sortie : `S08_github_actions-validation-scripts.txt` (exécution précédente : `S08_github_actions-validation.txt`).], kind: "ok")
+
+#shot("S08_github_actions-executions.png", caption: [Onglet *Actions* du dépôt : exécutions réussies du workflow sur les branches `Keo` et `thomas`.])
 
 // =====================================================================
 = Sécurité et gestion des accès
@@ -935,15 +962,17 @@ Première collecte réussie après 09:38:33, alerte résolue à 09:38:48 (évalu
 4. *Codes de retour dans un pipeline* : `curl … | head -1; echo $?` affiche le code de `head` (0), pas celui de `curl` (28) ; utiliser `${PIPESTATUS[0]}`.
 
 // =====================================================================
-= Écarts, limites et suites
+= Écarts, choix et évolutions
 #crit(8, "Documentation, preuves et diagnostic", 10, [limites annoncées honnêtement · cohérence des livrables])
 
 == Écarts au kit et au sujet
+#set text(size: 8.9pt)
 #table(columns: (auto, 1fr, 1.25fr),
   [ID], [Écart], [Justification],
   [E-01/02], [QEMU/KVM + virt-manager sur Arch Linux, au lieu de VMware], [Hyperviseur natif de l'hôte, libre, snapshots qcow2],
   [E-03/04], [Réseau libvirt NAT ; DNS temporaire .1 avant AD DS], [« Chemin NAT contrôlé » du kit ; DNS fonctionnel jusqu'à la promotion],
   [E-05], [Noms d'hôte système en minuscules], [Convention Linux ; DNS et Ansible ignorent la casse],
+  [E-06], [WIN-DC01 en disque SATA et carte e1000e, au lieu de virtio], [Pilotes intégrés à l'installeur Windows (`S08_hote_win-dc01-materiel.txt`)],
   [E-08/09], [WinRM 5985 limité à OPS01 ; RDP désactivé], [Transport Windows exigé par le sujet ; surface réduite],
   [E-11], [Inventaire YAML], [Proposé par le sujet],
   [E-12], [Ubuntu Server 26.04.1 au lieu de 24.04], [Version installée ; impose E-17],
@@ -953,18 +982,18 @@ Première collecte réussie après 09:38:33, alerte résolue à 09:38:48 (évalu
   [E-17], [Ansible utilise `sudo.ws` au lieu de sudo-rs, sur OPS01 puis LINUX01], [sudo-rs modifie l'invite attendue par Ansible],
 )
 
-== Limites connues
+== Choix assumés pour le laboratoire
 #table(columns: (1fr, auto, 1.2fr),
-  [Limite], [Statut], [Suite prévue],
-  [Pas de capture de l'Observateur d'événements Windows], part(), [Démonstration en direct, ajout d'une preuve],
+  [Choix], [Statut], [Évolution en production],
   [`svc-ansible` Admin du domaine (E-15)], part(l: "Risque accepté"), [Délégation limitée à `OU=InfraReady`],
-  [Alertes visibles dans Prometheus et Grafana, sans notification (pas d'Alertmanager)], info("Assumé"), [Alertmanager + courriel si besoin],
+  [Alertes visibles dans Prometheus et Grafana, sans notification (pas d'Alertmanager)], info("Assumé"), [Alertmanager + courriel],
   [Paquet Ubuntu de Prometheus : interface classique seulement], info("Assumé"), [Consultation dans Grafana],
   [Mises à jour Windows installées manuellement], info("Choix"), [Le redémarrage du DC reste une décision humaine],
 )
 
+#set text(size: 9.6pt)
 == Bilan
-Le laboratoire couvre les huit parties du sujet avec des preuves réelles : trois VM interconnectées et un domaine fonctionnel, une configuration entièrement décrite par huit playbooks idempotents, une supervision multiplateforme qui a détecté seule un incident, et un pare-feu versionné. La validation du dépôt tourne à chaque push. Les compléments restants (capture des journaux Windows, délégation de `svc-ansible`) ne remettent pas en cause l'infrastructure.
+Les huit parties du sujet sont réalisées et prouvées : trois VM et un domaine fonctionnel, huit playbooks idempotents, une supervision multiplateforme qui a détecté seule un incident, un pare-feu versionné, et 14 contrôles GitHub Actions à chaque push et pull request.
 
 // =====================================================================
 #heading(numbering: none)[Annexe A — Correspondance avec les grilles] <annexe-grille>
@@ -983,11 +1012,11 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [DNS et domaine], [3], [02], [Zone, `S04_dns-clients-linux.txt`, lecture d'un échec], ok(),
   [Schéma et cohérence], [3], [02], [Schéma conforme aux IP, ports et pare-feu réels], ok(),
   H[2. Administration Windows et Linux — 20 pts],
-  [Active Directory et DNS Windows], [4], [04], [Promotion, OU, 2 groupes, 4 comptes], ok(),
+  [Active Directory et DNS Windows], [4], [04], [Promotion, console AD : OU, 2 groupes, 4 comptes], ok(),
   [Comptes, groupes et droits], [4], [04–05], [Partage NTFS/SMB, test refusé, setgid 2775], ok(),
   [Services et processus Linux], [3], [05], [Nginx : systemctl, ps, journalctl, check-nginx.sh], ok(),
   [Stockage, permissions, FS], [3], [05–06], [findmnt, fstab UUID, droits testés], ok(),
-  [Journaux et diagnostic], [3], [05, 04], [journalctl (3 preuves) ; journaux Windows sans preuve], part(),
+  [Journaux et diagnostic], [3], [05, 04], [journalctl (3 preuves) ; journaux Système et Directory Service], ok(),
   [Tests et validation], [3], [04–06], [Écriture réelle plutôt que `test -w`, smbclient], ok(),
   H[3. Ansible et reproductibilité — 15 pts],
   [Inventaire et variables], [3], [07], [hosts.yml, group_vars, host_vars, vault], ok(),
@@ -1009,10 +1038,10 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [Seuil, alerte, interprétation], [3], [08, 11], [Disque pending → firing → résolue ; action], ok(),
   H[6. GitHub et intégration continue — 10 pts],
   [Organisation du dépôt], [2], [09], [Arborescence commentée], ok(),
-  [Versionnement et commits], [2], [09], [40 commits conventionnels], ok(),
-  [Workflow GitHub Actions], [3], [09], [`validation.yml` : gitleaks, yamllint, ansible-lint, syntax-check, promtool], ok(),
+  [Versionnement et commits], [2], [09], [43 commits conventionnels], ok(),
+  [Workflow GitHub Actions], [3], [09], [`validation.yml` : 14 contrôles, du secret au script], ok(),
   [Portée et limites], [2], [09], [Valide sans déployer ; runner sans accès au /24], ok(),
-  [Preuve de réussite], [1], [09], [`S08_github_actions-validation.txt`, exécution 42783406785], ok(),
+  [Preuve de réussite], [1], [09], [Exécution 42786343692, onglet Actions], ok(),
   H[7. Sécurité et gestion des accès — 5 pts],
   [Moindre privilège et accès], [2], [10], [Matrice ufw, sudo protégé, tests refus], ok(),
   [Protection des secrets], [1], [10], [3 coffres AES256, `no_log`, contrôle CI], ok(),
@@ -1020,17 +1049,18 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [Périmètre et limites], [1], [01, 10], [Labo /24 uniquement, incident réversible], ok(),
   H[8. Documentation, preuves et diagnostic — 10 pts],
   [Dossier technique et architecture], [2], [01–02], [Ce dossier], ok(),
-  [Preuves de fonctionnement], [2], [toutes, C], [124 preuves nommées par séance], ok(),
+  [Preuves de fonctionnement], [2], [toutes, C], [131 preuves nommées par séance], ok(),
   [Méthode de diagnostic], [2], [11], [8 tests ordonnés, hypothèses discriminées], ok(),
   [Correction et retour à la normale], [2], [11], [Commande ciblée, captures 4 UP], ok(),
-  [Limites et communication], [2], [12], [Limites et écarts listés], ok(),
+  [Limites et communication], [2], [12], [Écarts justifiés, choix assumés], ok(),
 )
 #set text(size: 9.6pt)
-#note([Points spécifiques à la grille du formateur], [*Playbook Windows* : prérequis de connexion précisés (§07). *Mises à jour Windows* : procédure documentée *et testée* (§06). *Cohérence du dépôt (1 pt)* : liens et noms de preuves vérifiés le 10/11 ; les sorties non versionnées sont signalées dans les documents qui les citaient. *Dossier PDF relié au dépôt* : ce PDF est `docs/dossier-technique.pdf`, ses sources sont dans `docs/livrables/`.])
+#note([Points spécifiques à la grille du formateur], [*Playbook Windows* : prérequis de connexion précisés (§07). *Mises à jour Windows* : procédure documentée *et testée* (§06). *Cohérence du dépôt (1 pt)* : liens et noms de preuves vérifiés le 10/11 ; chaque preuve citée existe dans `docs/preuves/`. *Dossier PDF relié au dépôt* : ce PDF est `docs/dossier-technique.pdf`, ses sources sont dans `docs/livrables/`.])
 
 // =====================================================================
 #heading(numbering: none)[Annexe B — Commandes de référence]
 Commandes extraites de la documentation du dépôt (fichier source indiqué en titre).
+#show raw.where(block: true): set text(size: 7.3pt)
 #grid(columns: (1fr, 1fr), gutter: 10pt,
   [
     === Réseau virtuel — `infra/libvirt/`
@@ -1082,22 +1112,26 @@ sudo nft delete table inet incident
     ```
     === Windows — `docs/maintenance.md`
     ```powershell
-Get-HotFix | Sort-Object InstalledOn -Descending |
+Get-HotFix |
+  Sort-Object InstalledOn -Descending |
   Select-Object -First 5
 dcdiag /test:Services /test:Advertising `
-       /test:NetLogons /test:SysVolCheck
+  /test:NetLogons /test:SysVolCheck
+Get-WinEvent -LogName System -MaxEvents 50 |
+  Where-Object Level -le 3
     ```
     === Validation locale — `README.md`
     ```bash
 yamllint --strict .
 ansible-lint
+shellcheck scripts/linux/*.sh
     ```
   ],
 )
 
 // =====================================================================
 #heading(numbering: none)[Annexe C — Index des preuves]
-Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<objet>`. L'index complet des 124 preuves est `docs/preuves/README.md` ; la correspondance exigence par exigence est `docs/tracabilite.md`. Sélection des preuves citées dans ce dossier :
+Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<objet>`. L'index complet des 131 preuves est `docs/preuves/README.md` ; la correspondance exigence par exigence est `docs/tracabilite.md`. Sélection des preuves citées dans ce dossier :
 #set text(size: 8.4pt)
 #table(columns: (auto, 1fr),
   [Fichier], [Ce qu'il démontre],
@@ -1106,6 +1140,7 @@ Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<ob
   [`S03_ops01_playbook-run1/2.txt`], [Idempotence du playbook Nginx],
   [`S03_linux01_check-nginx-avant/apres.txt`], [Service applicatif installé et actif],
   [`S04_win-dc01_ad-structure.txt`, `_zone-dns.txt`], [Annuaire, groupes, zone DNS],
+  [`S04_win-dc01_aduc-groupes.png`, `_aduc-utilisateurs.png`], [Console AD : OU, groupes et comptes],
   [`S04_dns-clients-linux.txt`], [Résolution DNS depuis les clients Linux],
   [`S04_linux01_test-partage.txt`], [Droits du partage : autorisé, refusé],
   [`S04_linux01_stockage-verif.txt`, `_disque-identification.txt`], [Montage persistant, identification de la cible],
@@ -1118,5 +1153,7 @@ Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<ob
   [`S08_ops01_pare-feu-run1/2.txt`, `_simulation.txt`], [Pare-feu : simulation, application, idempotence],
   [`S08_hote_tests-pare-feu.txt`], [Flux autorisés et refusés],
   [`S08_ops01_durcissement-*.txt`, `_controle-sudo-manuel.txt`], [Sécurité complète : sudo protégé, durcissement de WIN-DC01],
-  [`S08_github_actions-validation.txt`], [Exécution réussie du workflow GitHub Actions],
+  [`S08_win-dc01_journal-systeme.png`, `_journal-directory-service.png`], [Journaux Windows relus],
+  [`S08_hote_win-dc01-materiel.txt`], [Matériel virtuel réel de WIN-DC01 (E-06)],
+  [`S08_github_actions-validation*.txt`, `_executions.png`], [Exécutions réussies du workflow GitHub Actions],
 )

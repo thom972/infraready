@@ -47,7 +47,7 @@
   #v(1fr)
   #grid(columns: (1fr,) * 5, gutter: 12pt,
     stat("3", "VM · 1 domaine"), stat("8", "playbooks Ansible"), stat("4", "cibles supervisées"),
-    stat("124", "preuves versionnées"), stat("0", "secret dans Git"))
+    stat("131", "preuves versionnées"), stat("0", "secret dans Git"))
   #v(0.8em)
   #text(size: 11pt, fill: ink3)[Dépôt `thom972/infraready`, branche `Keo` · dossier technique : `docs/dossier-technique.pdf`]
 ]
@@ -79,19 +79,8 @@
 #slide(eyebrow: "Critère 2 · Administration Windows", time: "1 min 30", title: "Active Directory : des droits par groupe")[
   #grid(columns: (1fr, 1fr), gutter: 16pt,
     [
-      #term(title: "S04_win-dc01_ad-structure.txt", size: 9.4pt)[
-        ```
-infraready.test
-└── OU=InfraReady
-    ├── OU=Utilisateurs
-    │     a.martin  b.durand  c.petit  d.invite
-    └── OU=Groupes
-          GG-Admins-Infra      a.martin
-          GG-Utilisateurs-Lab  a.martin b.durand c.petit
-        ```
-      ]
-      #v(0.2em)
-      #small[Créés par `playbooks/windows.yml`. `dcdiag` : Connectivity, Advertising, SysVolCheck, NetLogons, Services, FsmoCheck réussis.]
+      #shot("S04_win-dc01_aduc-utilisateurs.png", caption: [OU `InfraReady` : 4 comptes, 2 groupes, créés par `playbooks/windows.yml`.])
+      #small[`dcdiag` : Connectivity, Advertising, SysVolCheck, NetLogons, Services, FsmoCheck réussis.]
     ],
     [
       #text(size: 12.5pt, weight: 700, [Partage `\\WIN-DC01\Lab` — partage *et* NTFS])
@@ -103,6 +92,8 @@ infraready.test
         [d.invite (aucun groupe)], [refusé], ok(l: "ACCESS_DENIED"),
       )
       #small[Héritage NTFS coupé. Services surveillés : NTDS, DNS, Netlogon, Kdc, WinRM, LanmanServer. WinRM accepté depuis OPS01 seulement.]
+      #v(0.1em)
+      #note([Journaux relus], text(size: 10.5pt)[Observateur d'événements : *Système* (7 145 événements, aucune erreur affichée) et *Directory Service* (catalogue global trouvé). `Get-WinEvent` pour les filtrer par niveau.], kind: "ok")
     ],
   )
 ]
@@ -183,7 +174,7 @@ MONTAGE PERSISTANT OK
       #text(size: 12.5pt)[`maintenance.yml` : vérification → `apt upgrade: safe` *une machine à la fois* → redémarrage seulement si requis *et* autorisé → vérification.]
     ],
     card(inset: 14pt)[
-      #vm("WIN-DC01") #h(1fr) #part(l: "Recherche auto · install. manuelle")
+      #vm("WIN-DC01") #h(1fr) #info("Recherche auto · install. manuelle")
       #v(0.15em)
       #text(size: 12.5pt)[Snapshot, Windows Update, puis `Get-HotFix` et `dcdiag`. 22/10 : KB5126646, KB5126645, KB5127690, KB890830.]
     ],
@@ -257,15 +248,16 @@ sudo nft delete table inet incident
     [
       #set text(size: 11pt)
       #table(columns: (auto, auto),
-        [`validation.yml` (push, PR)], [GitHub 10/11],
+        [`validation.yml` (push, PR)], [10/11],
         [gitleaks, tout l'historique], ok(l: "0 fuite"),
         [3 coffres chiffrés], ok(l: "3/3"),
         [`yamllint --strict`], ok(l: "OK"),
         [`ansible-lint`], ok(l: "production"),
-        [`--syntax-check` ×8], ok(l: "8/8"),
-        [`promtool` config + règles], ok(l: "OK"),
+        [`--syntax-check` ×8, inventaire], ok(l: "8/8"),
+        [shellcheck, PSScriptAnalyzer], ok(l: "0 erreur"),
+        [`promtool` config + règles], ok(l: "4 règles"),
       )
-      #small[Le runner GitHub est sur Internet, sans route vers 192.168.50.0/24 ni secret : il *valide*, il ne *déploie* pas. Exécution réussie : `S08_github_actions-validation.txt`. 40 commits conventionnels.]
+      #small[Le runner GitHub est sur Internet, sans route vers 192.168.50.0/24 ni secret : il *valide*, il ne *déploie* pas. 43 commits conventionnels.]
     ],
     [
       #set text(size: 11pt)
@@ -277,24 +269,27 @@ sudo nft delete table inet incident
         [WIN-DC01], [53 · 445], [labo],
       )
       #small[ufw versionné, flux ouverts *avant* activation, tests autorisé/refusé. `ansible` : sudo *avec* mot de passe, SSH par clé (E-14 résolu). `svc-ansible` : risque accepté, non délégable (E-15). Snapshot et `--check --diff` avant tout changement.]
+      #v(0.1em)
+      // Recadrage de S08_github_actions-executions.png sur la liste des exécutions
+      #figure(block(radius: 8pt, clip: true, stroke: 0.5pt + hair, image("actions-executions-recadre.png", width: 100%)),
+        caption: [Onglet Actions : exécutions vertes sur `Keo` et `thomas`.], supplement: [Capture], kind: "capture")
     ],
   )
 ]
 
 // =====================================================================
 // 10. Limites et questions
-#slide(eyebrow: "Limites · questions", time: "1 min", title: "Ce qui reste à faire, honnêtement")[
+#slide(eyebrow: "Choix · questions", time: "1 min", title: "Des choix assumés, tous justifiés")[
   #grid(columns: (1.15fr, 1fr), gutter: 16pt,
     [
       #set text(size: 12pt)
       #table(columns: (1fr, auto),
-        [Limite], [Statut],
-        [Journaux Windows sans capture versionnée], part(l: "Documenté"),
-        [`svc-ansible` Admin du domaine (E-15)], part(l: "Risque accepté"),
+        [Choix], [Statut],
+        [`svc-ansible` Admin du domaine (E-15) : non délégable, WinRM depuis OPS01 seul], part(l: "Risque accepté"),
         [Mises à jour Windows installées à la main], info("Choix"),
         [Alertes sans notification (pas d'Alertmanager)], info("Assumé"),
       )
-      #small[Écarts assumés : QEMU/KVM au lieu de VMware (E-01), Ubuntu 26.04 donc `sudo.ws` (E-12, E-17).]
+      #small[Écarts justifiés : QEMU/KVM au lieu de VMware (E-01), Ubuntu 26.04 donc `sudo.ws` (E-12, E-17), WIN-DC01 en SATA/e1000e (E-06). En production : délégation sur `OU=InfraReady`, Alertmanager.]
     ],
     [
       #v(0.6em)
