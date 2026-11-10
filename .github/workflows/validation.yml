@@ -48,11 +48,23 @@ jobs:
       - name: ansible-lint
         run: ansible-lint
 
+      - name: Inventaire lisible (groupes et hotes)
+        run: ansible-inventory --graph
+
       - name: Syntaxe des playbooks
         run: |
           for p in playbooks/*.yml; do
             ansible-playbook "$p" --syntax-check
           done
+
+      - name: Scripts shell et Python (shellcheck, py_compile)
+        run: |
+          shellcheck scripts/linux/*.sh
+          python -m py_compile scripts/linux/*.py
+
+      - name: Scripts PowerShell (PSScriptAnalyzer, erreurs bloquantes)
+        shell: pwsh
+        run: Invoke-ScriptAnalyzer -Path scripts/windows -Recurse -Severity Error -EnableExit
 
       - name: Prometheus - configuration et regles d'alerte (promtool)
         run: |
