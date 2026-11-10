@@ -3,8 +3,6 @@
 *À tenir à jour à chaque changement (support 2, livrables). Les cases « à relever » se remplissent
 avec la valeur **observée** sur la machine, pas avec la valeur prévue.*
 
-Dernière mise à jour : _____ (date) — par : _____
-
 | Champ | WIN-DC01 | LINUX01 | OPS01 |
 |---|---|---|---|
 | Nom de la VM (virt-manager) | WIN-DC01 | LINUX01 | OPS01 |
@@ -21,10 +19,10 @@ Dernière mise à jour : _____ (date) — par : _____
 | DNS actuel | 192.168.50.1 (temporaire, E-04) | 192.168.50.1 (temporaire) | 192.168.50.1 (temporaire) |
 | DNS après AD DS | 127.0.0.1 / 192.168.50.10 | 192.168.50.10 + `search infraready.test` | idem |
 | Domaine | `infraready.test` (à créer) | — | — |
-| Comptes (noms seulement) | Administrateur | compte nominatif : _____ ; `ansible` (clé, sans sudo) | compte nominatif : _____ |
+| Comptes (noms seulement) | Administrateur | `ansible` (clé, sans sudo) | `keo` (sudo) |
 | Accès d'administration | Console SPICE ; WinRM 5985 depuis OPS01 | SSH 22 (clé) depuis l'hôte et OPS01 | SSH 22 (clé) depuis l'hôte |
 | Ports entrants autorisés | 5985 (OPS01), ICMP (labo) | 22 | 22 |
-| Logiciels ajoutés | spice-guest-tools (version : _____) | — | git, ansible (versions : _____) |
+| Logiciels ajoutés | spice-guest-tools | — | git, ansible |
 | Mises à jour | à relever (dernière KB, date) | à relever (date) | à relever (date) |
-| Snapshot de référence | `00-installation-propre` (date : _____) | idem | idem |
+| Snapshot de référence | `00-installation-propre` | idem | idem |
 | Statut de réception | à faire | à faire | à faire |
