@@ -1,5 +1,6 @@
 # Regles d'alerte InfraReady - deployees vers /etc/prometheus/alertes.yml sur OPS01.
 # Etat visible dans Prometheus (menu Alerts) et dans le tableau de bord Grafana.
+---
 groups:
   - name: infraready
     rules:

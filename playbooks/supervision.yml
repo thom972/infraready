@@ -14,7 +14,7 @@
         update_cache: true
         cache_valid_time: 3600
 
-    - name: node_exporter actif et active au demarrage
+    - name: Service node_exporter actif et active au demarrage
       ansible.builtin.service:
         name: prometheus-node-exporter
         state: started
@@ -35,7 +35,7 @@
   hosts: windows
   gather_facts: false
   tasks:
-    - name: Installer windows_exporter {{ windows_exporter_version }} (MSI officiel)
+    - name: Installer le MSI officiel de windows_exporter {{ windows_exporter_version }}
       ansible.windows.win_package:
         path: "{{ windows_exporter_url }}"
         creates_path: 'C:\Program Files\windows_exporter\windows_exporter.exe'
@@ -208,6 +208,7 @@
       args:
         creates: /var/lib/grafana/.infraready-mdp-admin
         chdir: /tmp
+      become: true
       become_user: grafana
       no_log: true
 

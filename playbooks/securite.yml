@@ -111,7 +111,7 @@
         update_password: always
       no_log: true
 
-    - name: sudo avec mot de passe pour le compte ansible (remplace NOPASSWD, regle validee par visudo)
+    - name: Sudo avec mot de passe pour le compte ansible (remplace NOPASSWD, regle validee par visudo)
       ansible.builtin.copy:
         dest: /etc/sudoers.d/90-ansible
         content: |
@@ -137,7 +137,9 @@
       failed_when: identite.stdout != 'root'
 
     - name: Controle - la connexion SSH par mot de passe est refusee au compte ansible
-      ansible.builtin.shell: sshd -T -C user=ansible,host=ops01,addr=192.168.50.30 | grep -i '^passwordauthentication'
+      ansible.builtin.shell: set -o pipefail && sshd -T -C user=ansible,host=ops01,addr=192.168.50.30 | grep -i '^passwordauthentication'
+      args:
+        executable: /bin/bash
       register: ssh_mdp
       changed_when: false
       failed_when: "'no' not in ssh_mdp.stdout"

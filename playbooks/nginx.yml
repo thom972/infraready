@@ -9,7 +9,7 @@
         state: present
         update_cache: true
 
-    - name: S'assurer que {{ web_service }} est actif et active au demarrage
+    - name: Service web actif et active au demarrage - {{ web_service }}
       ansible.builtin.service:
         name: "{{ web_service }}"
         state: started

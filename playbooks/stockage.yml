@@ -93,11 +93,13 @@
 
     - name: Test positif - keo (membre du groupe) peut ecrire
       ansible.builtin.shell: touch {{ data_mount }}/.test-ecriture && rm -f {{ data_mount }}/.test-ecriture
+      become: true
       become_user: keo
       changed_when: false
 
     - name: Test negatif - ansible (hors groupe) ne peut pas ecrire
       ansible.builtin.shell: touch {{ data_mount }}/.test-ecriture && rm -f {{ data_mount }}/.test-ecriture
+      become: true
       become_user: ansible
       register: ecriture_ansible
       changed_when: false

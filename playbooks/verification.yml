@@ -24,7 +24,9 @@
         that:
           - (m.size_available / m.size_total) >= seuil_espace_libre
         success_msg: "{{ m.mount }} : {{ ((m.size_available / m.size_total) * 100) | round(1) }} % libre"
-        fail_msg: "{{ m.mount }} : seulement {{ ((m.size_available / m.size_total) * 100) | round(1) }} % libre (seuil {{ (seuil_espace_libre * 100) | int }} %)"
+        fail_msg: >-
+          {{ m.mount }} : seulement {{ ((m.size_available / m.size_total) * 100) | round(1) }} % libre
+          (seuil {{ (seuil_espace_libre * 100) | int }} %)
       loop: "{{ ansible_mounts | selectattr('mount', 'in', volumes_surveilles) | list }}"
       loop_control:
         loop_var: m

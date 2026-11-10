@@ -1,4 +1,5 @@
 # Source de donnees Grafana provisionnee automatiquement (aucune saisie manuelle).
+---
 apiVersion: 1
 datasources:
   - name: Prometheus InfraReady

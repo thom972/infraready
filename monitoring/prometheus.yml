@@ -1,5 +1,6 @@
 # Configuration Prometheus InfraReady - deployee par playbooks/supervision.yml
 # vers /etc/prometheus/prometheus.yml sur OPS01.
+---
 global:
   scrape_interval: 15s        # frequence de collecte des metriques
   evaluation_interval: 15s    # frequence d'evaluation des regles d'alerte

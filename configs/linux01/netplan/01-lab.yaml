@@ -2,6 +2,7 @@
 # Adresse fixe du plan InfraReady. Remplacer enp1s0 par le nom réel (ip -br link).
 # DNS : 192.168.50.1 (temporaire, avant AD DS) -> 192.168.50.10 + search infraready.test ensuite.
 # Droits attendus : chmod 600. Appliquer avec : sudo netplan generate && sudo netplan try
+---
 network:
   version: 2
   ethernets:

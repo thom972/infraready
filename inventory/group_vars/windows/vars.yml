@@ -11,5 +11,6 @@ services_critiques: [NTDS, DNS, Netlogon, Kdc, WinRM, LanmanServer]
 
 # Supervision
 windows_exporter_version: "0.31.8"
-windows_exporter_url: "https://github.com/prometheus-community/windows_exporter/releases/download/v{{ windows_exporter_version }}/windows_exporter-{{ windows_exporter_version }}-amd64.msi"
+windows_exporter_depot: "https://github.com/prometheus-community/windows_exporter/releases/download"
+windows_exporter_url: "{{ windows_exporter_depot }}/v{{ windows_exporter_version }}/windows_exporter-{{ windows_exporter_version }}-amd64.msi"
 windows_exporter_regle: "InfraReady - windows_exporter depuis OPS01"
