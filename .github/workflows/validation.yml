@@ -1,0 +1,63 @@
+---
+# Validation du depot InfraReady.
+# Portee : controle les FICHIERS du depot uniquement. Le runner heberge par GitHub est sur
+# Internet et n'a aucune route vers le reseau prive du laboratoire (192.168.50.0/24) : il ne
+# deploie rien sur les VM et ne recoit aucun secret. Le deploiement reste fait depuis OPS01.
+name: Validation InfraReady
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot (historique complet pour la detection de secrets)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Installer Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Installer Ansible, ansible-lint et yamllint
+        run: python -m pip install --quiet ansible-core ansible-lint yamllint
+
+      - name: Installer les collections Ansible
+        run: ansible-galaxy collection install -r collections/requirements.yml
+
+      - name: Detection de secrets (gitleaks, tout l'historique)
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest git --redact --no-banner -v /repo
+
+      - name: Les coffres Ansible Vault sont chiffres
+        run: |
+          for f in inventory/group_vars/*/vault.yml; do
+            head -1 "$f" | grep -q '^\$ANSIBLE_VAULT;1.1;AES256' || { echo "::error file=$f::coffre non chiffre"; exit 1; }
+            echo "chiffre : $f"
+          done
+
+      - name: yamllint
+        run: yamllint --strict .
+
+      - name: ansible-lint
+        run: ansible-lint
+
+      - name: Syntaxe des playbooks
+        run: |
+          for p in playbooks/*.yml; do
+            ansible-playbook "$p" --syntax-check
+          done
+
+      - name: Prometheus - configuration et regles d'alerte (promtool)
+        run: |
+          # monitoring/ monte sur /etc/prometheus : rule_files pointe vers /etc/prometheus/alertes.yml, comme sur OPS01
+          docker run --rm -v "$PWD/monitoring:/etc/prometheus:ro" --entrypoint promtool prom/prometheus:latest \
+            check config /etc/prometheus/prometheus.yml
+          docker run --rm -v "$PWD/monitoring:/etc/prometheus:ro" --entrypoint promtool prom/prometheus:latest \
+            check rules /etc/prometheus/alertes.yml

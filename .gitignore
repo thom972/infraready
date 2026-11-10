@@ -27,3 +27,6 @@ secrets/
 *.drawio.bkp
 .$*
 .DS_Store
+
+# Cache local d'ansible-lint (collections installees)
+.ansible/
