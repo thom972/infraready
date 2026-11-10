@@ -759,6 +759,16 @@ Le volume `/srv/infraready` a été rempli volontairement au-delà de 85 %, puis
 ]
 Le seuil de 15 % est le même que celui de `verification.yml` : l'alerte et le contrôle de maintenance concordent. Preuves : `S06_demo-seuil.txt` (1 %, 92 %, 1 %), `S06_ops01_alerte-firing.json` (API Prometheus, état `firing`) et `S06_ops01_chronologie-seuil.txt` (heures reconstituées par `scripts/linux/chronologie-alerte.py`).
 
+=== Interprétation : action attendue pour chaque alerte
+#table(columns: (auto, 1fr),
+  [Alerte], [Action attendue],
+  [`HoteInjoignable`], [Diagnostic du réseau vers le service : ping, port, service, pare-feu (méthode du §11)],
+  [`EspaceDisqueFaibleLinux`], [`du -xh --max-depth=1` sur le volume, purge des fichiers inutiles ou extension LVM (§06)],
+  [`EspaceDisqueFaibleWindows`], [Nettoyage de disque, purge des mises à jour remplacées, contrôle par `verification.yml`],
+  [`ProcesseurSature`], [`top` / `ps --sort=-%cpu` pour identifier le processus, puis journaux du service concerné],
+)
+#note([Portée des alertes], [Les alertes sont consultées dans Prometheus (page *Alerts*) et dans Grafana (table des alertes). Aucune notification externe n'est configurée (pas d'Alertmanager) : les tests portent sur l'*état de l'alerte* dans l'interface, et non sur la réception d'un message, comme le prévoit le support 6 (UC-04). Le sujet demande un seuil ou une alerte démontré et interprété.])
+
 // =====================================================================
 = GitHub et intégration continue
 #crit(6, "GitHub et intégration continue", 10, [organisation du dépôt · commits · workflow · portée et limites · preuve])

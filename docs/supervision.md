@@ -39,15 +39,20 @@ La métrique `up` vaut 1 si la dernière collecte a réussi, 0 sinon : c'est la 
 
 ## Règles d'alerte et seuils
 
-| Alerte | Condition | Durée | Justification |
-|---|---|---|---|
-| `HoteInjoignable` | `up == 0` | 1 min | Une cible qui ne répond plus est une panne ou un service arrêté |
-| `EspaceDisqueFaibleLinux` | moins de 15 % libre (ext4, xfs) | 5 min | Même seuil que `verification.yml` |
-| `EspaceDisqueFaibleWindows` | moins de 15 % libre sur C: | 5 min | Même seuil |
-| `ProcesseurSature` | plus de 90 % de CPU (Linux) | 10 min | Évite les alertes sur des pics brefs |
+| Alerte | Condition | Durée | Justification | Action attendue |
+|---|---|---|---|---|
+| `HoteInjoignable` | `up == 0` | 1 min | Une cible qui ne répond plus est une panne ou un service arrêté | Diagnostic du réseau vers le service : ping, port, service, pare-feu (méthode de `incident.md`) |
+| `EspaceDisqueFaibleLinux` | moins de 15 % libre (ext4, xfs) | 5 min | Même seuil que `verification.yml` | `du -xh --max-depth=1` sur le volume, purge des fichiers inutiles ou extension LVM (`maintenance.md` §6) |
+| `EspaceDisqueFaibleWindows` | moins de 15 % libre sur C: | 5 min | Même seuil | Nettoyage de disque, purge des mises à jour remplacées, puis contrôle par `verification.yml` |
+| `ProcesseurSature` | plus de 90 % de CPU (Linux) | 10 min | Évite les alertes sur des pics brefs | `top` / `ps --sort=-%cpu` pour identifier le processus, puis journaux du service concerné |
 
 La durée (`for`) évite les fausses alertes : la condition doit rester vraie pendant tout ce délai.
 États successifs d'une alerte : `inactive` → `pending` (condition vraie, délai en cours) → `firing`.
+
+**Portée des alertes.** Les alertes sont consultées dans Prometheus (page *Alerts*) et dans le tableau de bord Grafana
+(table des alertes, barres colorées). Aucune notification externe n'est configurée (pas d'Alertmanager ni de courriel) :
+les tests portent sur l'état de l'alerte dans l'interface, non sur la réception d'un message. Le sujet demande un seuil
+ou une alerte démontré et interprété ; une notification par courriel s'ajouterait avec Alertmanager.
 
 ## Démonstration d'un seuil (procédure)
 
@@ -69,7 +74,7 @@ Remplir volontairement le volume de données de LINUX01 au-delà de 85 %, observ
 
 Les heures ci-dessus sont reconstituées depuis l'historique de Prometheus par `scripts/linux/chronologie-alerte.py`
 (`S06_ops01_chronologie-seuil.txt`). La capture `S06_grafana-seuil-disque-depasse.png` montre l'état intermédiaire
-(7,68 % libres, alerte en attente) ; les captures des états `firing` et résolu de cette démonstration n'ont pas été prises.
+(7,68 % libres, alerte en attente) ; les états `firing` et résolu sont prouvés par l'API de Prometheus et la chronologie.
 
 ## Accès et sécurité
 
