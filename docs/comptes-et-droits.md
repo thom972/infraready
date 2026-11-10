@@ -24,7 +24,7 @@
 | `d.invite` | Compte de test | OU=Utilisateurs | *(aucun)* | Témoin pour le test d'accès refusé |
 
 Comptes Linux (hors domaine) : compte nominatif `keo` (sudo) sur LINUX01 et OPS01 ; compte `ansible`
-sur LINUX01 (clé SSH uniquement, sudo sans mot de passe temporaire : E-14).
+sur LINUX01 (clé SSH uniquement, sudo **avec** mot de passe depuis la séance 8 : E-14 résolu, voir [`securite.md`](securite.md)).
 
 ## Groupes
 
@@ -59,6 +59,6 @@ Preuves : `docs/preuves/S04_linux01_test-partage.txt`, `S04_ops01_windows-partag
 
 ## Limites et évolutions
 
-- `svc-ansible` est membre de « Admins du domaine » : à restreindre par délégation sur `OU=InfraReady` (E-15).
+- `svc-ansible` est membre de « Admins du domaine » : risque accepté, compte rendu non délégable (`securite.yml`) ; à restreindre par délégation sur `OU=InfraReady` (E-15).
 - Comptes de test sans changement de mot de passe imposé (E-16).
 - Le partage n'est pas chiffré au niveau SMB : acceptable dans le réseau privé du labo.
