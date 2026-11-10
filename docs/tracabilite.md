@@ -79,7 +79,7 @@ Statut **OK** : exigence réalisée et prouvée.
 | Dépôt GitHub organisé | `README.md` (organisation), `thom972/infraready` branche `Keo` | — | OK |
 | Commits compréhensibles | `CONTRIBUTING.md` | `git log --oneline` (commits conventionnels) | OK |
 | Workflow GitHub Actions sur push et pull request | `.github/workflows/validation.yml`, `.yamllint`, `collections/requirements.yml` | `S08_github_actions-validation.txt` (déclenché par un push), `S08_github_actions-executions.png` | OK |
-| Preuve d'une exécution réussie | — | `S08_github_actions-validation.txt` : exécution 42783406785, 11 étapes réussies | OK |
+| Preuve d'une exécution réussie | — | `S08_github_actions-validation.txt` (exécution 42783406785), `S08_github_actions-validation-scripts.txt` (exécution 42786343692, 14 contrôles) | OK |
 
 ## H. Diagnostic d'incident
 

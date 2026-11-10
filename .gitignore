@@ -30,3 +30,4 @@ secrets/
 
 # Cache local d'ansible-lint (collections installees)
 .ansible/
+__pycache__/

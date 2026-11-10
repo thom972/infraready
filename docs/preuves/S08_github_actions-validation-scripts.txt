@@ -1,0 +1,58 @@
+=== GitHub Actions - workflow Validation InfraReady - branche Keo (14 contrôles) ===
+Exécution : https://github.com/thom972/infraready/actions/runs/42786343692
+Commit : b49ec4cc755c0fc67f687ddd2b74d4f2bd5fb949
+Déclencheur : push
+Résultat : success
+Début : 2026-11-10T08:54:46Z  Fin : 2026-11-10T08:56:00Z
+
+JOBS
+✓ validation (ID 129728389331)
+  ✓ Set up job
+  ✓ Recuperer le depot (historique complet pour la detection de secrets)
+  ✓ Installer Python
+  ✓ Installer Ansible, ansible-lint et yamllint
+  ✓ Installer les collections Ansible
+  ✓ Detection de secrets (gitleaks, tout l'historique)
+  ✓ Les coffres Ansible Vault sont chiffres
+  ✓ yamllint
+  ✓ ansible-lint
+  ✓ Inventaire lisible (groupes et hotes)
+  ✓ Syntaxe des playbooks
+  ✓ Scripts shell et Python (shellcheck, py_compile)
+  ✓ Scripts PowerShell (PSScriptAnalyzer, erreurs bloquantes)
+  ✓ Prometheus - configuration et regles d'alerte (promtool)
+  ✓ Post Installer Python
+  ✓ Post Recuperer le depot (historique complet pour la detection de secrets)
+  ✓ Complete job
+
+=== Extraits du journal ===
+8:55AM INF 46 commits scanned.
+8:55AM INF no leaks found
+chiffre : inventory/group_vars/linux/vault.yml
+chiffre : inventory/group_vars/ops/vault.yml
+chiffre : inventory/group_vars/windows/vault.yml
+Passed: 0 failure(s), 0 warning(s) in 28 files processed of 206 encountered. Last profile that met the validation criteria was 'production'.
+@all:
+  |--@ungrouped:
+  |--@serveurs_linux:
+  |  |--@linux:
+  |  |  |--LINUX01
+  |  |--@ops:
+  |  |  |--OPS01
+  |--@windows:
+  |  |--WIN-DC01
+playbook: playbooks/linux.yml
+playbook: playbooks/maintenance.yml
+playbook: playbooks/nginx.yml
+playbook: playbooks/securite.yml
+playbook: playbooks/stockage.yml
+playbook: playbooks/supervision.yml
+playbook: playbooks/verification.yml
+playbook: playbooks/windows.yml
+Checking /etc/prometheus/prometheus.yml
+  SUCCESS: 1 rule files found
+ SUCCESS: /etc/prometheus/prometheus.yml is valid prometheus config file syntax
+Checking /etc/prometheus/alertes.yml
+  SUCCESS: 4 rules found
+Checking /etc/prometheus/alertes.yml
+(shellcheck, py_compile et Invoke-ScriptAnalyzer -EnableExit : aucune sortie, code de retour 0)

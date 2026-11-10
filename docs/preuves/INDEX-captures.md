@@ -19,6 +19,8 @@
 | `S02_ops01_ansible-ping-linux01.png` | R-15 : ansible linux -m ping -> pong |
 | `S02_winrm-ops01-ok-linux01-refuse.png` | R-16 / R-17 : WinRM accepté depuis OPS01 (405), refusé depuis LINUX01 (timeout) |
 | `S04_win-dc01_test-et-promotion-adds.png` | Test-ADDSForestInstallation réussi puis Install-ADDSForest (avertissements de délégation DNS) |
+| `S04_win-dc01_aduc-groupes.png` | Console « Utilisateurs et ordinateurs AD » : OU InfraReady/Groupes, GG-Admins-Infra et GG-Utilisateurs-Lab |
+| `S04_win-dc01_aduc-utilisateurs.png` | Console AD : OU InfraReady/Utilisateurs, comptes a.martin, b.durand, c.petit, d.invite |
 | `S06_grafana-accueil.png` | Grafana : connexion réussie (mot de passe du coffre), page d'accueil |
 | `S06_prometheus-graph-vide.png` | Prometheus : page Graph sans requête |
 | `S06_prometheus-paquet-sans-interface-moderne.png` | Prometheus : le paquet Ubuntu ne fournit que l'interface classique (limite connue) |
@@ -35,4 +37,7 @@
 | `S07_grafana-retour-normale.png` | Incident : retour à la normale (4 UP), fausse montée du processeur visible |
 | `S07_prometheus-retour-normale.png` | Incident : retour à la normale, 4 règles inactives |
 | `S08_hote_erreur-iso-manquante.png` | WIN-DC01 refuse de démarrer : ISO d'installation introuvable |
-| `S08_hote_win-dc01-lecteur-cdrom.png` | Lecteur CD de WIN-DC01 encore relié à l'ISO (à vider) |
+| `S08_hote_win-dc01-lecteur-cdrom.png` | Lecteur CD de WIN-DC01 encore relié à l'ISO, cause du refus de démarrage |
+| `S08_github_actions-executions.png` | Onglet Actions : exécutions réussies du workflow Validation InfraReady (branches Keo et thomas) |
+| `S08_win-dc01_journal-systeme.png` | Observateur d'événements de WIN-DC01 : journal Système |
+| `S08_win-dc01_journal-directory-service.png` | Observateur d'événements de WIN-DC01 : journal Directory Service |

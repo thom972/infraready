@@ -27,7 +27,7 @@ Les sorties Windows `S02_win-dc01_reception.txt` et `S04_win-dc01_dcdiag.txt` so
 - Aucun mot de passe, jeton, clé privée ni information personnelle.
 - La preuve correspond à un test réellement exécuté ; un test non réalisé n'a pas de fichier.
 
-## Index des preuves (90 sorties, 40 captures)
+## Index des preuves (91 sorties, 40 captures)
 
 Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../tracabilite.md)) ou thème transversal.
 
@@ -186,6 +186,7 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 | Fichier | Partie | Ce qu'il démontre |
 |---|---|---|
 | `S08_github_actions-validation.txt` | G | Exécution réussie du workflow GitHub Actions (11 étapes, gitleaks, lint, promtool) |
+| `S08_github_actions-validation-scripts.txt` | G | Exécution réussie du workflow étendu : 14 contrôles, dont inventaire, shellcheck et PSScriptAnalyzer |
 | `S08_github_actions-executions.png` | G | Onglet *Actions* : exécutions réussies du workflow sur les branches `Keo` et `thomas` |
 | `S08_hote_erreur-iso-manquante.png` | Maintenance | WIN-DC01 ne démarre plus : ISO d'installation introuvable |
 | `S08_hote_tests-pare-feu.txt` | Sécurité | Depuis l'hôte : SSH et Grafana autorisés, node_exporter refusé |
