@@ -62,8 +62,8 @@
     stat("3", "machines virtuelles"),
     stat("8", "playbooks Ansible"),
     stat("4", "cibles supervisées"),
-    stat("104", "preuves versionnées"),
-    stat("37", "commits documentés"),
+    stat("124", "preuves versionnées"),
+    stat("40", "commits documentés"),
   )
   #v(1.4cm)
   #card(inset: 14pt)[
@@ -105,7 +105,7 @@
   [D], [Automatisation Ansible Linux et Windows], ok(), [8 playbooks, 2#super[e] passage `changed=0` (§07)],
   [E], [Maintenance Linux et Windows], ok(), [`maintenance.yml`, 4 KB Windows installées (§06)],
   [F], [Supervision, tableau de bord, alerte], ok(), [4 cibles UP, alerte disque pending → firing (§08)],
-  [G], [GitHub et intégration continue], part(l: "À pousser"), [Workflow en place, contrôles OK en local ; exécution GitHub à capturer (§09)],
+  [G], [GitHub et intégration continue], ok(), [Workflow déclenché par push, exécution réussie le 10/11 (§09)],
   [H], [Diagnostic d'incident], ok(), [Rapport complet, retour à la normale prouvé (§11)],
 )
 #note([Comment lire ce dossier], [Chaque section correspond à un critère des grilles d'évaluation, indiqué en tête de section. L'#link(<annexe-grille>)[annexe A] reprend tous les sous-critères des grilles pairs et formateur, avec la section et la preuve qui y répondent. La traçabilité exigence par exigence est dans `docs/tracabilite.md`.])
@@ -632,6 +632,7 @@ Un playbook *décrit un état*, alors qu'un script enchaîne des actions. Rejou�
   [`windows.yml`], [`changed=4`], [`changed=0`], [0], [`S04_ops01_windows-run1/2.txt`],
   [`windows.yml` (partage)], [—], [`changed=0` (ok=11)], [0], [`S04_ops01_windows-partage-run2.txt`],
   [`stockage.yml`], [corrections (runs 1–4)], [`changed=0` (ok=17)], [0], [`S04_ops01_stockage-run5/6.txt`],
+  [`supervision.yml`], [corrections (runs 1–3)], [`changed=0` (run 6)], [0], [`S06_ops01_supervision-run4…6.txt`],
   [`securite.yml`], [`changed=3` ×2], [`changed=0` ×2], [0], [`S08_ops01_pare-feu-run1/2.txt`],
 )
 
@@ -736,7 +737,7 @@ Le volume `/srv/infraready` a été rempli volontairement au-delà de 85 %, puis
     [09:16:43], [alerte résolue (+15 s)],
   ),
 )
-Le seuil de 15 % est le même que celui de `verification.yml` : l'alerte et le contrôle de maintenance concordent. `S06_demo-seuil.txt` montre le volume à 1 %, 92 %, puis 1 % ; les heures, reconstituées depuis l'historique de Prometheus par `scripts/linux/chronologie-alerte.py`, ne sont pas versionnées.
+Le seuil de 15 % est le même que celui de `verification.yml` : l'alerte et le contrôle de maintenance concordent. Preuves : `S06_demo-seuil.txt` (1 %, 92 %, 1 %), `S06_ops01_alerte-firing.json` (API Prometheus, état `firing`) et `S06_ops01_chronologie-seuil.txt` (heures reconstituées par `scripts/linux/chronologie-alerte.py`).
 
 // =====================================================================
 = GitHub et intégration continue
@@ -760,7 +761,7 @@ infraready/
    ├─ seance-01/ · seance-02/   sécurité, …
    ├─ tracabilite.md · livrables/ (Typst)
    ├─ schemas/     schéma draw.io
-   └─ preuves/     104 preuves S<séance>_<machine>_<objet>
+   └─ preuves/     124 preuves S<séance>_<machine>_<objet>
     ```
   ],
   [
@@ -770,8 +771,8 @@ infraready/
     #table(columns: (auto, auto),
       [Type], [Commits],
       [`feat` (fonctionnalité)], [12],
-      [`docs`], [8],
-      [`test` (preuve, démonstration)], [6],
+      [`docs`], [10],
+      [`test` (preuve, démonstration)], [7],
       [`fix` (correction)], [6],
       [`chore`, `ci`, `style`], [4],
     )
@@ -792,7 +793,7 @@ e2e8a5a feat(ansible): ajouter le volume de données /srv/infraready (disque dé
 == Workflow GitHub Actions `validation.yml`
 Déclenché à chaque `push` et `pull_request`, sur un runner `ubuntu-latest` hébergé par GitHub, avec des droits en lecture seule (`permissions: contents: read`). Les collections sont installées depuis `collections/requirements.yml`.
 #table(columns: (auto, 1fr, auto),
-  [Étape], [Contrôle], [Local 10/11],
+  [Étape], [Contrôle], [GitHub 10/11],
   [gitleaks], [Recherche de secrets dans *tout l'historique Git*], ok(l: "0 fuite"),
   [Coffres], [Chaque `vault.yml` commence par `$ANSIBLE_VAULT;1.1;AES256`], ok(l: "3/3"),
   [yamllint], [`yamllint --strict .` avec `.yamllint` compatible ansible-lint], ok(l: "0 alerte"),
@@ -803,7 +804,7 @@ Déclenché à chaque `push` et `pull_request`, sur un runner `ubuntu-latest` h�
 
 #note([Portée et limite du pipeline], [Le workflow *valide le dépôt*, il ne *déploie* rien. Le runner hébergé par GitHub est une machine d'Internet : il n'a aucune route vers 192.168.50.0/24, réseau privé NATé derrière le poste hôte, et il ne doit pas en avoir (il faudrait exposer WinRM et SSH, ou y placer des secrets). Le déploiement reste manuel depuis OPS01. L'automatiser demanderait un runner auto-hébergé *dans* le labo.])
 
-#note([Preuve de réussite], [Les six contrôles passent en local (10/11). La branche `Keo` n'a encore déclenché aucune exécution sur GitHub : il reste à pousser les commits puis à capturer l'exécution verte (onglet *Actions*).], kind: "part")
+#note([Preuve de réussite], [Exécution `42783406785` du 10/11/2026, déclenchée par un `push` sur la branche `Keo` : 11 étapes réussies en 1 min 11 s, « no leaks found », ansible-lint en profil `production`, 8 playbooks valides, configuration et 4 règles Prometheus valides. Sortie complète et lien : `docs/preuves/S08_github_actions-validation.txt`. Chaque push suivant relance la validation.], kind: "ok")
 
 // =====================================================================
 = Sécurité et gestion des accès
@@ -925,7 +926,7 @@ curl -s http://192.168.50.20:9100/metrics | head -1     # depuis OPS01
   shot("S07_grafana-retour-normale.png", caption: [Retour à la normale : 4 cibles UP.]),
   shot("S07_prometheus-retour-normale.png", caption: [Prometheus : 4 règles inactives.]),
 )
-Première collecte réussie après 09:38:33, alerte résolue à 09:38:48 (évaluation suivante). Les sorties texte des tests 1 à 3 (côté OPS01) et la chronologie reconstituée n'ont pas été versionnées ; les captures font foi.
+Première collecte réussie après 09:38:33, alerte résolue à 09:38:48 (évaluation suivante). Preuves : `S07_ops01_diagnostic.txt` (tests 1 à 3), `S07_ops01_retour-normale.txt`, chronologie `S07_ops01_chronologie-incident.txt`.
 
 == Enseignements
 1. *La supervision a détecté seule l'incident*, dans le délai prévu : cible `DOWN` en 15 s, alerte `firing` en 1 min 15 s.
@@ -955,17 +956,15 @@ Première collecte réussie après 09:38:33, alerte résolue à 09:38:48 (évalu
 == Limites connues
 #table(columns: (1fr, auto, 1.2fr),
   [Limite], [Statut], [Suite prévue],
-  [Workflow GitHub Actions pas encore exécuté sur GitHub pour la branche `Keo`], ko(l: "À faire"), [Pousser les commits, capturer l'exécution verte],
   [Pas de capture de l'Observateur d'événements Windows], part(), [Démonstration en direct, ajout d'une preuve],
   [`svc-ansible` Admin du domaine (E-15)], part(l: "Risque accepté"), [Délégation limitée à `OU=InfraReady`],
   [Alertes visibles dans Prometheus et Grafana, sans notification (pas d'Alertmanager)], info("Assumé"), [Alertmanager + courriel si besoin],
   [Paquet Ubuntu de Prometheus : interface classique seulement], info("Assumé"), [Consultation dans Grafana],
   [Mises à jour Windows installées manuellement], info("Choix"), [Le redémarrage du DC reste une décision humaine],
-  [Sorties produites sur OPS01 non versionnées (chronologies d'alerte, tests de l'incident côté OPS01)], part(), [Les copier dans `docs/preuves/` lors d'une prochaine démonstration],
 )
 
 == Bilan
-Le laboratoire couvre les huit parties du sujet avec des preuves réelles : trois VM interconnectées et un domaine fonctionnel, une configuration entièrement décrite par huit playbooks idempotents, une supervision multiplateforme qui a détecté seule un incident, et un pare-feu versionné. Les compléments restants portent sur la preuve d'exécution du pipeline et la cohérence de la documentation, pas sur l'infrastructure.
+Le laboratoire couvre les huit parties du sujet avec des preuves réelles : trois VM interconnectées et un domaine fonctionnel, une configuration entièrement décrite par huit playbooks idempotents, une supervision multiplateforme qui a détecté seule un incident, et un pare-feu versionné. La validation du dépôt tourne à chaque push. Les compléments restants (capture des journaux Windows, délégation de `svc-ansible`) ne remettent pas en cause l'infrastructure.
 
 // =====================================================================
 #heading(numbering: none)[Annexe A — Correspondance avec les grilles] <annexe-grille>
@@ -1010,10 +1009,10 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [Seuil, alerte, interprétation], [3], [08, 11], [Disque pending → firing → résolue ; action], ok(),
   H[6. GitHub et intégration continue — 10 pts],
   [Organisation du dépôt], [2], [09], [Arborescence commentée], ok(),
-  [Versionnement et commits], [2], [09], [37 commits conventionnels], ok(),
-  [Workflow GitHub Actions], [3], [09], [`validation.yml` : gitleaks, yamllint, ansible-lint, syntax-check, promtool], part(l: "À pousser"),
+  [Versionnement et commits], [2], [09], [40 commits conventionnels], ok(),
+  [Workflow GitHub Actions], [3], [09], [`validation.yml` : gitleaks, yamllint, ansible-lint, syntax-check, promtool], ok(),
   [Portée et limites], [2], [09], [Valide sans déployer ; runner sans accès au /24], ok(),
-  [Preuve de réussite], [1], [09], [Exécution locale OK ; capture GitHub à produire], ko(l: "À faire"),
+  [Preuve de réussite], [1], [09], [`S08_github_actions-validation.txt`, exécution 42783406785], ok(),
   H[7. Sécurité et gestion des accès — 5 pts],
   [Moindre privilège et accès], [2], [10], [Matrice ufw, sudo protégé, tests refus], ok(),
   [Protection des secrets], [1], [10], [3 coffres AES256, `no_log`, contrôle CI], ok(),
@@ -1021,7 +1020,7 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [Périmètre et limites], [1], [01, 10], [Labo /24 uniquement, incident réversible], ok(),
   H[8. Documentation, preuves et diagnostic — 10 pts],
   [Dossier technique et architecture], [2], [01–02], [Ce dossier], ok(),
-  [Preuves de fonctionnement], [2], [toutes, C], [104 preuves nommées par séance], ok(),
+  [Preuves de fonctionnement], [2], [toutes, C], [124 preuves nommées par séance], ok(),
   [Méthode de diagnostic], [2], [11], [8 tests ordonnés, hypothèses discriminées], ok(),
   [Correction et retour à la normale], [2], [11], [Commande ciblée, captures 4 UP], ok(),
   [Limites et communication], [2], [12], [Limites et écarts listés], ok(),
@@ -1098,7 +1097,7 @@ ansible-lint
 
 // =====================================================================
 #heading(numbering: none)[Annexe C — Index des preuves]
-Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<objet>`. L'index complet des 104 preuves est `docs/preuves/README.md` ; la correspondance exigence par exigence est `docs/tracabilite.md`. Sélection des preuves citées dans ce dossier :
+Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<objet>`. L'index complet des 124 preuves est `docs/preuves/README.md` ; la correspondance exigence par exigence est `docs/tracabilite.md`. Sélection des preuves citées dans ce dossier :
 #set text(size: 8.4pt)
 #table(columns: (auto, 1fr),
   [Fichier], [Ce qu'il démontre],
@@ -1114,7 +1113,10 @@ Toutes les preuves sont dans `docs/preuves/`, nommées `S<séance>_<machine>_<ob
   [`S05_ops01_maintenance*.txt`, `_verification.txt`], [Maintenance et contrôles des 3 hôtes],
   [`S05_win-dc01_historique-wu.png`], [Mises à jour Windows installées],
   [`S06_demo-seuil.txt`, `S06_grafana-*.png`, `S06_prometheus-*.png`], [Supervision, cibles, seuil disque],
-  [`S07_*.txt`, `S07_grafana-*.png`, `S07_prometheus-*.png`], [Incident : état initial, pending, firing, retour à la normale],
+  [`S06_ops01_alerte-firing.json`, `_chronologie-seuil.txt`], [Seuil disque : état firing et chronologie],
+  [`S07_*.txt`, `S07_grafana-*.png`, `S07_prometheus-*.png`], [Incident : état initial, diagnostic, chronologie, retour à la normale],
   [`S08_ops01_pare-feu-run1/2.txt`, `_simulation.txt`], [Pare-feu : simulation, application, idempotence],
   [`S08_hote_tests-pare-feu.txt`], [Flux autorisés et refusés],
+  [`S08_ops01_durcissement-*.txt`, `_controle-sudo-manuel.txt`], [Sécurité complète : sudo protégé, durcissement de WIN-DC01],
+  [`S08_github_actions-validation.txt`], [Exécution réussie du workflow GitHub Actions],
 )

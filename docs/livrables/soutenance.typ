@@ -47,7 +47,7 @@
   #v(1fr)
   #grid(columns: (1fr,) * 5, gutter: 12pt,
     stat("3", "VM · 1 domaine"), stat("8", "playbooks Ansible"), stat("4", "cibles supervisées"),
-    stat("104", "preuves versionnées"), stat("0", "secret dans Git"))
+    stat("124", "preuves versionnées"), stat("0", "secret dans Git"))
   #v(0.8em)
   #text(size: 11pt, fill: ink3)[Dépôt `thom972/infraready`, branche `Keo` · dossier technique : `docs/dossier-technique.pdf`]
 ]
@@ -215,7 +215,7 @@ MONTAGE PERSISTANT OK
       )
       #v(0.2em)
       #text(weight: 700, "Seuil disque démontré") \
-      #small[`/srv/infraready` 1 % → *92 %* → 1 % (`S06_demo-seuil.txt`) : pending après 15 s, firing après 5 min, résolue 15 s après le nettoyage.]
+      #small[`/srv/infraready` 1 % → *92 %* → 1 % : pending 09:07:13, firing 09:12:13 (+5 min), résolue 09:16:43 (`S06_ops01_chronologie-seuil.txt`).]
     ],
   )
 ]
@@ -257,7 +257,7 @@ sudo nft delete table inet incident
     [
       #set text(size: 11pt)
       #table(columns: (auto, auto),
-        [`validation.yml` (push, PR)], [Local 10/11],
+        [`validation.yml` (push, PR)], [GitHub 10/11],
         [gitleaks, tout l'historique], ok(l: "0 fuite"),
         [3 coffres chiffrés], ok(l: "3/3"),
         [`yamllint --strict`], ok(l: "OK"),
@@ -265,7 +265,7 @@ sudo nft delete table inet incident
         [`--syntax-check` ×8], ok(l: "8/8"),
         [`promtool` config + règles], ok(l: "OK"),
       )
-      #small[Le runner GitHub est sur Internet, sans route vers 192.168.50.0/24 ni secret : il *valide*, il ne *déploie* pas. 37 commits conventionnels.]
+      #small[Le runner GitHub est sur Internet, sans route vers 192.168.50.0/24 ni secret : il *valide*, il ne *déploie* pas. Exécution réussie : `S08_github_actions-validation.txt`. 40 commits conventionnels.]
     ],
     [
       #set text(size: 11pt)
@@ -289,10 +289,9 @@ sudo nft delete table inet incident
       #set text(size: 12pt)
       #table(columns: (1fr, auto),
         [Limite], [Statut],
-        [Exécution du workflow sur GitHub à capturer], ko(l: "À pousser"),
         [Journaux Windows sans capture versionnée], part(l: "Documenté"),
         [`svc-ansible` Admin du domaine (E-15)], part(l: "Risque accepté"),
-        [Sorties OPS01 (chronologies) non versionnées], part(l: "Signalé"),
+        [Mises à jour Windows installées à la main], info("Choix"),
         [Alertes sans notification (pas d'Alertmanager)], info("Assumé"),
       )
       #small[Écarts assumés : QEMU/KVM au lieu de VMware (E-01), Ubuntu 26.04 donc `sudo.ws` (E-12, E-17).]
