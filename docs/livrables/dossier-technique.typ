@@ -63,7 +63,7 @@
     stat("8", "playbooks Ansible"),
     stat("4", "cibles supervisées"),
     stat("131", "preuves versionnées"),
-    stat("47", "commits documentés"),
+    stat("49", "commits documentés"),
   )
   #v(1.4cm)
   #card(inset: 14pt)[
@@ -808,7 +808,7 @@ infraready/
     #table(columns: (auto, auto),
       [Type], [Commits],
       [`feat` (fonctionnalité)], [12],
-      [`docs`], [16],
+      [`docs`], [18],
       [`test` (preuve, démonstration)], [7],
       [`fix` (correction)], [6],
       [`chore`, `ci`, `style`], [5],
@@ -817,9 +817,9 @@ infraready/
 )
 #term(title: "git log --oneline (extrait)", size: 6.6pt)[
   ```
-e25bddf ci: contrôler l'inventaire et les scripts shell, Python et PowerShell
-b49ec4c docs(preuves): journaux Windows, console AD, exécutions GitHub Actions et matériel de WIN-DC01
-8376f72 ci: valider le dépôt avec yamllint, ansible-lint, syntax-check, promtool et gitleaks
+4feb11b ci: contrôler l'inventaire et les scripts shell, Python et PowerShell
+0db41eb docs(preuves): journaux Windows, console AD, exécutions GitHub Actions et matériel de WIN-DC01
+840c4ff ci: valider le dépôt avec yamllint, ansible-lint, syntax-check, promtool et gitleaks
 c95cb74 fix(securite): exécuter les contrôles sans élévation (ansible_become prime sur become)
 5e6edd2 test(securite): appliquer le pare-feu ufw, prouver les flux autorisés et refusés, et l'idempotence
 07f52d4 test(supervision): démontrer l'alerte de seuil disque (chronologie pending/firing/résolue)

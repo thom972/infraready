@@ -211,3 +211,8 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
   les sorties `S02_*_reception.txt` les remplacent.
 - Les captures des états `firing` et résolu de la démonstration du seuil disque n'ont pas été prises ;
   `S06_ops01_alerte-firing.json` et `S06_ops01_chronologie-seuil.txt` en tiennent lieu.
+- Les messages des commits `20aa5fd` à `af3050b` ont été réécrits le 10/11/2026 (suppression d'une ligne
+  `Co-Authored-By`), sans changer leur contenu : leurs identifiants ont changé. Les sorties brutes de GitHub Actions
+  citent les anciens : `312d266` → `65caf13` (`S08_github_actions-validation.txt`),
+  `b49ec4c` → `0db41eb` (`S08_github_actions-validation-scripts.txt`). Les exécutions restent consultables
+  dans l'onglet Actions sous leur numéro.
