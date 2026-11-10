@@ -22,10 +22,17 @@ Prometheus fonctionne en mode **pull** : c'est lui qui interroge chaque exporter
     OPS01 (Prometheus) --HTTP GET /metrics--> LINUX01:9100   (node_exporter)
                        --HTTP GET /metrics--> OPS01:9100     (node_exporter local)
                        --HTTP GET /metrics--> WIN-DC01:9182  (windows_exporter, pare-feu limité à OPS01)
+                       --HTTP GET /metrics--> localhost:9090 (Prometheus lui-même)
     Grafana (OPS01) --requêtes PromQL--> Prometheus (localhost:9090)
 
 Chaque cible porte une étiquette `hote` (LINUX01, OPS01, WIN-DC01) utilisée dans les légendes du tableau de bord.
 La métrique `up` vaut 1 si la dernière collecte a réussi, 0 sinon : c'est la base de l'indicateur de disponibilité.
+
+**Quatre cibles pour trois serveurs.** La quatrième cible est Prometheus lui-même (job `prometheus`, `localhost:9090`),
+comme dans la configuration fournie par le projet Prometheus. Elle expose l'état de la supervision : échecs d'évaluation
+des règles (`prometheus_rule_evaluation_failures_total`), durée des collectes (`scrape_duration_seconds`), volume stocké
+(`prometheus_tsdb_storage_blocks_bytes`). Limite : un Prometheus arrêté ne peut pas signaler sa propre panne ; elle se
+voit dans Grafana (source de données en erreur, panneaux sans données).
 
 ## Tableau de bord « InfraReady - Supervision »
 
@@ -83,4 +90,4 @@ Les heures ci-dessus sont reconstituées depuis l'historique de Prometheus par `
 - Prometheus : http://192.168.50.30:9090 - Grafana : http://192.168.50.30:3000 (depuis le poste du binôme, réseau du labo).
 - Mot de passe administrateur Grafana : défini par le playbook depuis Ansible Vault (`inventory/group_vars/ops/vault.yml`), jamais en clair.
 - Port 9182 de WIN-DC01 limité à OPS01 ; toute autre règle ouvrant ce port est désactivée par le playbook.
-- **À faire (sécurité transversale)** : limiter 9100 (LINUX01, OPS01), 9090 et 3000 (OPS01) par pare-feu aux seules sources nécessaires.
+- Ports 9100 (LINUX01 : OPS01 seul), 9090 et 3000 (OPS01 : poste hôte seul) filtrés par ufw depuis la séance 8 (`playbooks/securite.yml`, matrice dans `securite.md`).

@@ -63,7 +63,7 @@
     stat("8", "playbooks Ansible"),
     stat("4", "cibles supervisées"),
     stat("131", "preuves versionnées"),
-    stat("46", "commits documentés"),
+    stat("47", "commits documentés"),
   )
   #v(1.4cm)
   #card(inset: 14pt)[
@@ -694,6 +694,10 @@ global:
   evaluation_interval: 15s
 rule_files: [/etc/prometheus/alertes.yml]
 scrape_configs:
+  - job_name: prometheus      # lui-même
+    static_configs:
+      - targets: ['localhost:9090']
+        labels: { hote: OPS01 }
   - job_name: linux
     static_configs:
       - targets: ['192.168.50.20:9100']
@@ -710,6 +714,8 @@ scrape_configs:
     Prometheus fonctionne en *pull* : c'est lui qui interroge `GET /metrics` sur chaque exporter, toutes les 15 s. Chaque cible porte une étiquette `hote` (LINUX01, OPS01, WIN-DC01) utilisée dans les légendes.
 
     La métrique `up` vaut 1 si la dernière collecte a réussi, 0 sinon : c'est la base de l'indicateur de disponibilité et de l'alerte `HoteInjoignable`.
+
+    *Quatre cibles pour trois serveurs* : la quatrième est Prometheus lui-même. Elle expose l'état de la supervision (échecs d'évaluation des règles, durée des collectes, volume stocké). Un Prometheus arrêté ne peut pas signaler sa propre panne : elle se voit dans Grafana (source de données en erreur, panneaux sans données).
 
     Les règles d'alerte sont évaluées toutes les 15 s ; le `for` impose une durée minimale avant le passage en `firing`, ce qui évite d'alerter sur un pic isolé.
   ],
@@ -802,7 +808,7 @@ infraready/
     #table(columns: (auto, auto),
       [Type], [Commits],
       [`feat` (fonctionnalité)], [12],
-      [`docs`], [15],
+      [`docs`], [16],
       [`test` (preuve, démonstration)], [7],
       [`fix` (correction)], [6],
       [`chore`, `ci`, `style`], [5],
@@ -1048,7 +1054,7 @@ Grille des pairs (soutenance, /100) et grille du formateur (dépôt et livrables
   [Seuil, alerte, interprétation], [3], [08, 11], [Disque pending → firing → résolue ; action], ok(),
   H[6. GitHub et intégration continue — 10 pts],
   [Organisation du dépôt], [2], [09], [Arborescence commentée], ok(),
-  [Versionnement et commits], [2], [09], [45 commits conventionnels], ok(),
+  [Versionnement et commits], [2], [09], [46 commits conventionnels], ok(),
   [Workflow GitHub Actions], [3], [09], [`validation.yml` : 14 contrôles, du secret au script], ok(),
   [Portée et limites], [2], [09], [Valide sans déployer ; runner sans accès au /24], ok(),
   [Preuve de réussite], [1], [09], [Exécution 42786343692, onglet Actions], ok(),
