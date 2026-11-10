@@ -98,4 +98,4 @@ Statut **OK** : exigence réalisée et prouvée.
 | Aucun secret commité ; secrets fournis à l'exécution | `inventory/group_vars/*/vault.yml` (chiffrés), `docs/securite.md`, `.gitignore` | gitleaks sur tout l'historique : aucun secret (`S08_github_actions-validation.txt`) ; contrôle du chiffrement en CI | OK |
 | Moindre privilège, ports justifiés | `playbooks/securite.yml`, `docs/securite.md` | `S08_hote_tests-pare-feu.txt`, `S08_ops01_pare-feu-run1.txt`, `S08_ops01_durcissement-run3.txt`, `S08_ops01_controle-sudo-manuel.txt` | OK |
 | Écarts documentés | `docs/ecarts-et-decisions.md` | — | OK |
-| Dossier technique PDF | `docs/dossier-technique.pdf` (sources : `docs/livrables/`) | — | OK |
+| Dossier technique PDF | `docs/dossier-technique.pdf`, `docs/soutenance.pdf` | — | OK |

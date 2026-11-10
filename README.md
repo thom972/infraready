@@ -68,7 +68,7 @@ infraready/
     ├── architecture.md · adressage-ip.md · securite.md · comptes-et-droits.md
     ├── ansible.md · stockage.md · maintenance.md · supervision.md · incident.md
     ├── ecarts-et-decisions.md · tracabilite.md
-    ├── dossier-technique.pdf · soutenance.pdf · livrables/ (sources Typst)
+    ├── dossier-technique.pdf · soutenance.pdf
     ├── seance-01/ · seance-02/        livrables de conception et d'installation
     ├── schemas/                       schéma draw.io
     └── preuves/                       sorties et captures S<séance>_<machine>_<objet> (index : README.md)
