@@ -1,0 +1,26 @@
+{
+    "status": "success",
+    "data": {
+        "alerts": [
+            {
+                "labels": {
+                    "alertname": "EspaceDisqueFaibleLinux",
+                    "device": "/dev/vdb1",
+                    "fstype": "ext4",
+                    "hote": "LINUX01",
+                    "instance": "192.168.50.20:9100",
+                    "job": "linux",
+                    "mountpoint": "/srv/infraready",
+                    "severite": "attention"
+                },
+                "annotations": {
+                    "description": "Espace libre : 7.681% (seuil 15 %, comme verification.yml).",
+                    "resume": "LINUX01 : moins de 15 % d'espace libre sur /srv/infraready"
+                },
+                "state": "firing",
+                "activeAt": "2026-10-23T09:07:09.896427151Z",
+                "value": "7.680800797390816e-02"
+            }
+        ]
+    }
+}

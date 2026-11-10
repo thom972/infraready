@@ -1,0 +1,1 @@
+# HELP apt_autoremove_pending Apt packages pending autoremoval.

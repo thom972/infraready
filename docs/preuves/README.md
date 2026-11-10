@@ -27,7 +27,7 @@ Les sorties Windows `S02_win-dc01_reception.txt` et `S04_win-dc01_dcdiag.txt` so
 - Aucun mot de passe, jeton, clé privée ni information personnelle.
 - La preuve correspond à un test réellement exécuté ; un test non réalisé n'a pas de fichier.
 
-## Index des preuves (69 sorties, 35 captures)
+## Index des preuves (89 sorties, 35 captures)
 
 Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../tracabilite.md)) ou thème transversal.
 
@@ -134,6 +134,9 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 | `S05_ops01_extension-lv.txt` | E | Extension à chaud du volume racine d'OPS01 (10 → 18,22 Gio) |
 | `S05_ops01_maintenance-apres-windows.txt` | E | Maintenance après mises à jour Windows : 0 restante, `failed=0` |
 | `S05_ops01_maintenance.txt` | E | Playbook maintenance sur les 3 hôtes, `failed=0` |
+| `S05_ops01_reorg-linux.txt` | D | Après réorganisation du dépôt : `linux.yml`, `changed=0` |
+| `S05_ops01_reorg-verification.txt` | D, E | Après réorganisation : `verification.yml` sur les 3 hôtes, `failed=0` |
+| `S05_ops01_reorg-windows.txt` | D | Après réorganisation : `windows.yml`, `changed=0` |
 | `S05_ops01_verification.txt` | E | Playbook vérification : services, disques, HTTP, `failed=0` |
 | `S05_win-dc01_historique-wu.png` | E | Historique Windows Update de WIN-DC01 |
 
@@ -145,6 +148,14 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 | `S06_grafana-accueil.png` | F | Connexion à Grafana |
 | `S06_grafana-seuil-disque-depasse.png` | F | Seuil dépassé : 7,68 % libres, barre rouge |
 | `S06_grafana-tableau-de-bord-4-cibles-up.png` | F | Tableau de bord : 4 cibles UP |
+| `S06_ops01_alerte-firing.json` | F | API Prometheus : `EspaceDisqueFaibleLinux` en `firing`, 7,68 % libres |
+| `S06_ops01_chronologie-seuil.txt` | F | Chronologie du seuil disque : pending 09:07:13, firing 09:12:13, résolue 09:16:43 UTC |
+| `S06_ops01_supervision-run1.txt` | F, D | Playbook supervision, 1er passage : échec du mot de passe Grafana (corrigé) |
+| `S06_ops01_supervision-run2.txt` | F, D | Même échec, avant correction |
+| `S06_ops01_supervision-run3.txt` | F, D | Même échec, avant correction |
+| `S06_ops01_supervision-run4.txt` | F, D | Playbook supervision corrigé : `failed=0`, 4 cibles UP |
+| `S06_ops01_supervision-run5.txt` | F, D | Rejeu après modification des alertes : `changed=1` |
+| `S06_ops01_supervision-run6.txt` | F, D | Second passage : `changed=0` (idempotence) |
 | `S06_prometheus-cibles.png` | F | Cibles Prometheus du job linux UP |
 | `S06_prometheus-classic-graph.png` | F | Interface classique de Prometheus |
 | `S06_prometheus-graph-vide.png` | F | Page Graph de Prometheus |
@@ -161,6 +172,9 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 | `S07_grafana-pending.png` | H | LINUX01 DOWN, alerte pending |
 | `S07_grafana-retour-normale.png` | H | Retour à la normale : 4 UP |
 | `S07_linux01_diagnostic.txt` | H | Diagnostic sur LINUX01 : service actif, écoute, journaux, règle `drop 9100` |
+| `S07_ops01_chronologie-incident.txt` | H | Chronologie de l'incident : DOWN 09:34:03, firing 09:35:18, résolue 09:38:48 UTC |
+| `S07_ops01_diagnostic.txt` | H | Tests depuis OPS01 : ping OK, `curl :9100` délai dépassé, erreur Prometheus |
+| `S07_ops01_retour-normale.txt` | H | Retour à la normale : métriques de LINUX01 de nouveau reçues |
 | `S07_prometheus-firing.png` | H | Prometheus : alerte FIRING |
 | `S07_prometheus-pending.png` | H | Prometheus : alerte PENDING depuis 09:34:09 UTC |
 | `S07_prometheus-retour-normale.png` | H | Prometheus : 4 règles inactives |
@@ -169,17 +183,24 @@ Colonne *Partie* : exigence du sujet (A à H, voir [`../tracabilite.md`](../trac
 
 | Fichier | Partie | Ce qu'il démontre |
 |---|---|---|
+| `S08_github_actions-validation.txt` | G | Exécution réussie du workflow GitHub Actions (11 étapes, gitleaks, lint, promtool) |
 | `S08_hote_erreur-iso-manquante.png` | Maintenance | WIN-DC01 ne démarre plus : ISO d'installation introuvable |
 | `S08_hote_tests-pare-feu.txt` | Sécurité | Depuis l'hôte : SSH et Grafana autorisés, node_exporter refusé |
 | `S08_hote_win-dc01-lecteur-cdrom.png` | Maintenance | Lecteur CD de WIN-DC01 encore relié à l'ISO (cause du point précédent) |
+| `S08_ops01_controle-sudo-manuel.txt` | Sécurité | `sudo -n` refusé au compte `ansible` (authentification exigée) |
+| `S08_ops01_durcissement-run1.txt` | Sécurité, D | 1er passage : contrôle `sudo -n` en échec (élévation non désactivée, corrigé) |
+| `S08_ops01_durcissement-run2.txt` | Sécurité, D | Même échec, avant correction |
+| `S08_ops01_durcissement-run3.txt` | Sécurité, D | Playbook sécurité complet : `failed=0` sur les 3 hôtes |
+| `S08_ops01_durcissement-simulation.txt` | Sécurité, D | Simulation `--check --diff` de `securite.yml` (sudo, SSH, WIN-DC01) |
 | `S08_ops01_pare-feu-run1.txt` | Sécurité, D | Playbook sécurité, 1er passage : `changed=3` par hôte |
 | `S08_ops01_pare-feu-run2.txt` | Sécurité, D | 2e passage : `changed=0` |
 | `S08_ops01_pare-feu-simulation.txt` | Sécurité, D | Simulation `--check --diff` avant application |
 
-## Preuves citées mais non versionnées
+## Remarques
 
-Les sorties suivantes ont été produites sur OPS01 mais pas copiées dans le dépôt ; les documents qui les citaient
-le signalent : chronologies reconstituées par `scripts/linux/chronologie-alerte.py` (seuil disque, incident),
-captures des états `firing` et résolu de la démonstration du seuil, tests de l'incident lancés depuis OPS01.
-Plusieurs fichiers prévus en séance 2 (`S02_*_ip.png`, `S02_reception_tableau.png`…) sont remplacés par les sorties
-`S02_*_reception.txt`.
+- Les sorties produites sur OPS01 (chronologies d'alerte, exécutions de `supervision.yml` et `securite.yml`) ont été
+  récupérées et versionnées le 10/11/2026.
+- Plusieurs fichiers prévus en séance 2 (`S02_*_ip.png`, `S02_reception_tableau.png`…) n'ont pas été produits :
+  les sorties `S02_*_reception.txt` les remplacent.
+- Les captures des états `firing` et résolu de la démonstration du seuil disque n'ont pas été prises ;
+  `S06_ops01_alerte-firing.json` et `S06_ops01_chronologie-seuil.txt` en tiennent lieu.

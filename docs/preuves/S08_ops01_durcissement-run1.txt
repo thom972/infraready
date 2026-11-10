@@ -1,0 +1,136 @@
+
+PLAY [Prerequis du controleur Ansible] *****************************************
+
+TASK [Bibliotheque passlib (hachage du mot de passe, Python 3.13+ n'ayant plus le module crypt)] ***
+ok: [OPS01]
+
+PLAY [Pare-feu ufw des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Installer ufw] ***********************************************************
+ok: [LINUX01]
+
+TASK [Autoriser les flux necessaires (avant toute activation)] *****************
+ok: [LINUX01] => (item=22 depuis 192.168.50.1)
+ok: [LINUX01] => (item=22 depuis 192.168.50.30)
+ok: [LINUX01] => (item=80 depuis 192.168.50.0/24)
+ok: [LINUX01] => (item=9100 depuis 192.168.50.30)
+
+TASK [Refuser par defaut les connexions entrantes] *****************************
+ok: [LINUX01]
+
+TASK [Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)] ***
+ok: [LINUX01]
+
+TASK [Journaliser les connexions refusees (niveau bas)] ************************
+ok: [LINUX01]
+
+TASK [Activer le pare-feu] *****************************************************
+ok: [LINUX01]
+
+TASK [Lire l'etat du pare-feu] *************************************************
+ok: [LINUX01]
+
+TASK [Etat du pare-feu] ********************************************************
+ok: [LINUX01] => {
+    "etat_ufw.stdout_lines": [
+        "Status: active",
+        "Logging: on (low)",
+        "Default: deny (incoming), allow (outgoing), disabled (routed)",
+        "New profiles: skip",
+        "",
+        "To                         Action      From",
+        "--                         ------      ----",
+        "22/tcp                     ALLOW IN    192.168.50.1               # SSH administration depuis le poste hote",
+        "22/tcp                     ALLOW IN    192.168.50.30              # SSH Ansible depuis OPS01",
+        "80/tcp                     ALLOW IN    192.168.50.0/24            # Nginx depuis le labo",
+        "9100/tcp                   ALLOW IN    192.168.50.30              # node_exporter collecte par Prometheus (OPS01)"
+    ]
+}
+
+PLAY [Pare-feu ufw des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [OPS01]
+
+TASK [Installer ufw] ***********************************************************
+ok: [OPS01]
+
+TASK [Autoriser les flux necessaires (avant toute activation)] *****************
+ok: [OPS01] => (item=22 depuis 192.168.50.1)
+ok: [OPS01] => (item=3000 depuis 192.168.50.1)
+ok: [OPS01] => (item=9090 depuis 192.168.50.1)
+
+TASK [Refuser par defaut les connexions entrantes] *****************************
+ok: [OPS01]
+
+TASK [Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)] ***
+ok: [OPS01]
+
+TASK [Journaliser les connexions refusees (niveau bas)] ************************
+ok: [OPS01]
+
+TASK [Activer le pare-feu] *****************************************************
+ok: [OPS01]
+
+TASK [Lire l'etat du pare-feu] *************************************************
+ok: [OPS01]
+
+TASK [Etat du pare-feu] ********************************************************
+ok: [OPS01] => {
+    "etat_ufw.stdout_lines": [
+        "Status: active",
+        "Logging: on (low)",
+        "Default: deny (incoming), allow (outgoing), disabled (routed)",
+        "New profiles: skip",
+        "",
+        "To                         Action      From",
+        "--                         ------      ----",
+        "22/tcp                     ALLOW IN    192.168.50.1               # SSH administration depuis le poste hote",
+        "3000/tcp                   ALLOW IN    192.168.50.1               # Grafana depuis le poste hote",
+        "9090/tcp                   ALLOW IN    192.168.50.1               # Prometheus depuis le poste hote"
+    ]
+}
+
+PLAY [Compte ansible de LINUX01 - sudo avec mot de passe, SSH par cle uniquement] ***
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Le mot de passe sudo doit etre defini dans le coffre (inventory/group_vars/linux/vault.yml)] ***
+ok: [LINUX01]
+
+TASK [Interdire la connexion SSH par mot de passe au compte ansible (cle uniquement)] ***
+changed: [LINUX01]
+
+TASK [Valider la configuration SSH avant tout rechargement] ********************
+ok: [LINUX01]
+
+TASK [Appliquer le rechargement de SSH maintenant] *****************************
+
+RUNNING HANDLER [Recharger ssh] ************************************************
+changed: [LINUX01]
+
+TASK [Definir le mot de passe du compte ansible (depuis le coffre)] ************
+changed: [LINUX01]
+
+TASK [sudo avec mot de passe pour le compte ansible (remplace NOPASSWD, regle validee par visudo)] ***
+changed: [LINUX01]
+
+TASK [Controle - sudo sans mot de passe est maintenant refuse au compte ansible] ***
+[ERROR]: Task failed: Action failed.
+Origin: /home/keo/infraready/playbooks/securite.yml:125:7
+
+123         validate: visudo -cf %s
+124
+125     - name: Controle - sudo sans mot de passe est maintenant refuse au compte ansible
+          ^ column 7
+
+fatal: [LINUX01]: FAILED! => {"changed": false, "cmd": ["sudo", "-n", "true"], "delta": "0:00:00.009650", "end": "2026-11-09 09:31:30.429555", "failed_when_result": true, "msg": "", "rc": 0, "start": "2026-11-09 09:31:30.419905", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=16   changed=4    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+OPS01                      : ok=10   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

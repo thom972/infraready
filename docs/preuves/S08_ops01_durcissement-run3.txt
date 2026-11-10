@@ -1,0 +1,192 @@
+
+PLAY [Prerequis du controleur Ansible] *****************************************
+
+TASK [Bibliotheque passlib (hachage du mot de passe, Python 3.13+ n'ayant plus le module crypt)] ***
+ok: [OPS01]
+
+PLAY [Pare-feu ufw des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Installer ufw] ***********************************************************
+ok: [LINUX01]
+
+TASK [Autoriser les flux necessaires (avant toute activation)] *****************
+ok: [LINUX01] => (item=22 depuis 192.168.50.1)
+ok: [LINUX01] => (item=22 depuis 192.168.50.30)
+ok: [LINUX01] => (item=80 depuis 192.168.50.0/24)
+ok: [LINUX01] => (item=9100 depuis 192.168.50.30)
+
+TASK [Refuser par defaut les connexions entrantes] *****************************
+ok: [LINUX01]
+
+TASK [Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)] ***
+ok: [LINUX01]
+
+TASK [Journaliser les connexions refusees (niveau bas)] ************************
+ok: [LINUX01]
+
+TASK [Activer le pare-feu] *****************************************************
+ok: [LINUX01]
+
+TASK [Lire l'etat du pare-feu] *************************************************
+ok: [LINUX01]
+
+TASK [Etat du pare-feu] ********************************************************
+ok: [LINUX01] => {
+    "etat_ufw.stdout_lines": [
+        "Status: active",
+        "Logging: on (low)",
+        "Default: deny (incoming), allow (outgoing), disabled (routed)",
+        "New profiles: skip",
+        "",
+        "To                         Action      From",
+        "--                         ------      ----",
+        "22/tcp                     ALLOW IN    192.168.50.1               # SSH administration depuis le poste hote",
+        "22/tcp                     ALLOW IN    192.168.50.30              # SSH Ansible depuis OPS01",
+        "80/tcp                     ALLOW IN    192.168.50.0/24            # Nginx depuis le labo",
+        "9100/tcp                   ALLOW IN    192.168.50.30              # node_exporter collecte par Prometheus (OPS01)"
+    ]
+}
+
+PLAY [Pare-feu ufw des serveurs Linux] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [OPS01]
+
+TASK [Installer ufw] ***********************************************************
+ok: [OPS01]
+
+TASK [Autoriser les flux necessaires (avant toute activation)] *****************
+ok: [OPS01] => (item=22 depuis 192.168.50.1)
+ok: [OPS01] => (item=3000 depuis 192.168.50.1)
+ok: [OPS01] => (item=9090 depuis 192.168.50.1)
+
+TASK [Refuser par defaut les connexions entrantes] *****************************
+ok: [OPS01]
+
+TASK [Autoriser par defaut les connexions sortantes (mises a jour, DNS, WinRM, collecte)] ***
+ok: [OPS01]
+
+TASK [Journaliser les connexions refusees (niveau bas)] ************************
+ok: [OPS01]
+
+TASK [Activer le pare-feu] *****************************************************
+ok: [OPS01]
+
+TASK [Lire l'etat du pare-feu] *************************************************
+ok: [OPS01]
+
+TASK [Etat du pare-feu] ********************************************************
+ok: [OPS01] => {
+    "etat_ufw.stdout_lines": [
+        "Status: active",
+        "Logging: on (low)",
+        "Default: deny (incoming), allow (outgoing), disabled (routed)",
+        "New profiles: skip",
+        "",
+        "To                         Action      From",
+        "--                         ------      ----",
+        "22/tcp                     ALLOW IN    192.168.50.1               # SSH administration depuis le poste hote",
+        "3000/tcp                   ALLOW IN    192.168.50.1               # Grafana depuis le poste hote",
+        "9090/tcp                   ALLOW IN    192.168.50.1               # Prometheus depuis le poste hote"
+    ]
+}
+
+PLAY [Compte ansible de LINUX01 - sudo avec mot de passe, SSH par cle uniquement] ***
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+
+TASK [Le mot de passe sudo doit etre defini dans le coffre (inventory/group_vars/linux/vault.yml)] ***
+ok: [LINUX01]
+
+TASK [Interdire la connexion SSH par mot de passe au compte ansible (cle uniquement)] ***
+ok: [LINUX01]
+
+TASK [Valider la configuration SSH avant tout rechargement] ********************
+ok: [LINUX01]
+
+TASK [Appliquer le rechargement de SSH maintenant] *****************************
+
+TASK [Definir le mot de passe du compte ansible (depuis le coffre)] ************
+ok: [LINUX01]
+
+TASK [sudo avec mot de passe pour le compte ansible (remplace NOPASSWD, regle validee par visudo)] ***
+ok: [LINUX01]
+
+TASK [Controle - sudo sans mot de passe est maintenant refuse au compte ansible] ***
+ok: [LINUX01]
+
+TASK [Controle - l'elevation avec le mot de passe du coffre fonctionne] ********
+ok: [LINUX01]
+
+TASK [Controle - la connexion SSH par mot de passe est refusee au compte ansible] ***
+ok: [LINUX01]
+
+PLAY [Durcissement de WIN-DC01] ************************************************
+
+TASK [Limiter les regles entrantes SMB (445) et DNS (53) au reseau du labo] ****
+changed: [WIN-DC01]
+
+TASK [Compte svc-ansible sensible et non delegable (mesure compensatoire de E-15)] ***
+changed: [WIN-DC01]
+
+TASK [Lire l'etat obtenu] ******************************************************
+ok: [WIN-DC01]
+
+TASK [Etat de WIN-DC01] ********************************************************
+ok: [WIN-DC01] => {
+    "etat_dc.output": [
+        "Partage de fichiers et d’imprimantes (SMB-Entrée) <- 192.168.50.0/255.255.255.0",
+        "Contrôleur de domaine Active Directory - SAM/LSA (NP-TCP-In) <- 192.168.50.0/255.255.255.0",
+        "Gestion du système de fichiers distribués DFS (SMB-entrant) <- 192.168.50.0/255.255.255.0",
+        "Partage de fichiers et d’imprimantes (restrictif) (SMB-entrée) <- 192.168.50.0/255.255.255.0",
+        "Contrôleur de domaine Active Directory - SAM/LSA (NP-UDP-entrant) <- 192.168.50.0/255.255.255.0",
+        "Administration à distance du serveur de fichiers (SMB-In) <- 192.168.50.0/255.255.255.0",
+        "Partage de fichiers et d’imprimantes (restrictif) (SMB-entrée) <- 192.168.50.0/255.255.255.0",
+        "DNS (UDP, entrant) <- 192.168.50.0/255.255.255.0",
+        "DNS (TCP, entrant) <- 192.168.50.0/255.255.255.0",
+        "svc-ansible non delegable : True"
+    ]
+}
+
+PLAY [Verifier que les flux autorises fonctionnent toujours (depuis OPS01)] ****
+
+TASK [Nginx de LINUX01 joignable (port 80)] ************************************
+ok: [OPS01]
+
+TASK [Port SSH de LINUX01 joignable depuis OPS01] ******************************
+ok: [OPS01]
+
+TASK [SMB de WIN-DC01 joignable depuis le labo (port 445)] *********************
+ok: [OPS01]
+
+TASK [Toutes les cibles de collecte sont UP (node_exporter LINUX01 compris)] ***
+ok: [OPS01]
+
+PLAY [Verifier la resolution DNS du domaine depuis les serveurs Linux] *********
+
+TASK [WIN-DC01.infraready.test se resout via le DNS du domaine] ****************
+ok: [OPS01]
+ok: [LINUX01]
+
+PLAY [Verifier que les flux non autorises sont bloques (depuis LINUX01)] *******
+
+TASK [Prometheus d'OPS01 (9090) doit etre refuse depuis LINUX01] ***************
+ok: [LINUX01]
+
+TASK [Grafana d'OPS01 (3000) doit etre refuse depuis LINUX01] ******************
+ok: [LINUX01]
+
+TASK [Bilan] *******************************************************************
+ok: [LINUX01] => {
+    "msg": "Flux autorises OK, flux non autorises refuses, sudo du compte ansible protege par mot de passe."
+}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=22   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+OPS01                      : ok=15   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+WIN-DC01                   : ok=4    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

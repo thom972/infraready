@@ -1,0 +1,8 @@
+== Couche IP
+2 packets transmitted, 2 received, 0% packet loss, time 1005ms
+rtt min/avg/max/mdev = 0.334/0.356/0.378/0.022 ms
+== Port 9100 depuis OPS01
+curl: (28) Connection timed out after 5002 milliseconds
+code curl : 0
+== Erreur vue par Prometheus
+LINUX01 down Get "http://192.168.50.20:9100/metrics": context deadline exceeded

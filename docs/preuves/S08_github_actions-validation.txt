@@ -1,0 +1,43 @@
+=== GitHub Actions - workflow Validation InfraReady - branche Keo ===
+Exécution : https://github.com/thom972/infraready/actions/runs/42783406785
+Commit : 312d266887903c5c61243d06e7a1d3b627636b41
+Déclencheur : push
+Résultat : success
+Début : 2026-11-10T08:32:13Z  Fin : 2026-11-10T08:33:28Z
+
+JOBS
+✓ validation in 1m11s (ID 129718636168)
+  ✓ Set up job
+  ✓ Recuperer le depot (historique complet pour la detection de secrets)
+  ✓ Installer Python
+  ✓ Installer Ansible, ansible-lint et yamllint
+  ✓ Installer les collections Ansible
+  ✓ Detection de secrets (gitleaks, tout l'historique)
+  ✓ Les coffres Ansible Vault sont chiffres
+  ✓ yamllint
+  ✓ ansible-lint
+  ✓ Syntaxe des playbooks
+  ✓ Prometheus - configuration et regles d'alerte (promtool)
+  ✓ Post Installer Python
+  ✓ Post Recuperer le depot (historique complet pour la detection de secrets)
+  ✓ Complete job
+
+=== Extraits du journal ===
+8:33AM INF 41 commits scanned.
+8:33AM INF no leaks found
+chiffre : inventory/group_vars/linux/vault.yml
+chiffre : inventory/group_vars/ops/vault.yml
+chiffre : inventory/group_vars/windows/vault.yml
+Passed: 0 failure(s), 0 warning(s) in 28 files processed of 180 encountered. Last profile that met the validation criteria was 'production'.
+playbook: playbooks/linux.yml
+playbook: playbooks/maintenance.yml
+playbook: playbooks/nginx.yml
+playbook: playbooks/securite.yml
+playbook: playbooks/stockage.yml
+playbook: playbooks/supervision.yml
+playbook: playbooks/verification.yml
+playbook: playbooks/windows.yml
+  SUCCESS: 1 rule files found
+ SUCCESS: /etc/prometheus/prometheus.yml is valid prometheus config file syntax
+  SUCCESS: 4 rules found
+  SUCCESS: 4 rules found

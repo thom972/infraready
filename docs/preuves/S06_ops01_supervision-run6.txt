@@ -1,0 +1,108 @@
+
+PLAY [Collecteur de metriques Linux (node_exporter)] ***************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [LINUX01]
+ok: [OPS01]
+
+TASK [Installer node_exporter (paquet Ubuntu, mis a jour par maintenance.yml)] ***
+ok: [LINUX01]
+ok: [OPS01]
+
+TASK [node_exporter actif et active au demarrage] ******************************
+ok: [LINUX01]
+ok: [OPS01]
+
+TASK [Verifier que les metriques sont publiees (port 9100)] ********************
+ok: [LINUX01]
+ok: [OPS01]
+
+PLAY [Collecteur de metriques Windows (windows_exporter)] **********************
+
+TASK [Installer windows_exporter 0.31.8 (MSI officiel)] ************************
+ok: [WIN-DC01]
+
+TASK [Service windows_exporter actif et automatique] ***************************
+ok: [WIN-DC01]
+
+TASK [Regle de pare-feu limitee a OPS01 (port 9182)] ***************************
+ok: [WIN-DC01]
+
+TASK [Desactiver toute autre regle ouvrant le port 9182 (ex. regle creee par l'installeur)] ***
+ok: [WIN-DC01]
+
+TASK [Verifier que les metriques sont publiees (port 9182)] ********************
+ok: [WIN-DC01]
+
+PLAY [Prometheus et Grafana sur OPS01] *****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [OPS01]
+
+TASK [Installer Prometheus (paquet Ubuntu) et la bibliotheque python3-debian] ***
+ok: [OPS01]
+
+TASK [Deployer les regles d'alerte (validees par promtool avant mise en place)] ***
+ok: [OPS01]
+
+TASK [Deployer la configuration de collecte (validee par promtool avant mise en place)] ***
+ok: [OPS01]
+
+TASK [Prometheus actif et active au demarrage] *********************************
+ok: [OPS01]
+
+TASK [Depot APT officiel de Grafana (cle de signature verifiee)] ***************
+ok: [OPS01]
+
+TASK [Installer Grafana] *******************************************************
+ok: [OPS01]
+
+TASK [Provisionner la source de donnees Prometheus] ****************************
+ok: [OPS01]
+
+TASK [Provisionner le fournisseur de tableaux de bord] *************************
+ok: [OPS01]
+
+TASK [Dossier des tableaux de bord] ********************************************
+ok: [OPS01]
+
+TASK [Deployer le tableau de bord InfraReady] **********************************
+ok: [OPS01]
+
+TASK [Grafana actif et active au demarrage] ************************************
+ok: [OPS01]
+
+TASK [Appliquer les redemarrages en attente avant les verifications] ***********
+
+TASK [Attendre que Grafana reponde] ********************************************
+ok: [OPS01]
+
+TASK [Definir le mot de passe administrateur de Grafana (une seule fois, depuis le coffre)] ***
+ok: [OPS01]
+
+TASK [Prometheus est pret] *****************************************************
+ok: [OPS01]
+
+TASK [Toutes les cibles de collecte sont UP (Linux, Windows, Prometheus)] ******
+ok: [OPS01]
+
+TASK [Les regles d'alerte sont chargees] ***************************************
+ok: [OPS01]
+
+TASK [Grafana interroge bien Prometheus (sante de la source de donnees)] *******
+ok: [OPS01]
+
+TASK [Bilan de la supervision] *************************************************
+ok: [OPS01] => {
+    "msg": [
+        "Cibles UP : LINUX01, OPS01, OPS01, WIN-DC01",
+        "Regles d'alerte chargees : 4",
+        "Prometheus : http://192.168.50.30:9090 - Grafana : http://192.168.50.30:3000 (tableau de bord InfraReady)"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+LINUX01                    : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+OPS01                      : ok=23   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+WIN-DC01                   : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

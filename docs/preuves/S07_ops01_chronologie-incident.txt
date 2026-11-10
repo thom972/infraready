@@ -1,0 +1,16 @@
+Chronologie de l'alerte HoteInjoignable - 2 dernieres heures, pas de 15 s
+
+Anomalie observee (condition vraie)
+  debut : 23/10 09:34:03 UTC  (11:34:03 heure de Paris)
+  fin   : 23/10 09:38:33 UTC  (11:38:33 heure de Paris)
+
+Alerte en attente (pending)
+  debut : 23/10 09:34:18 UTC  (11:34:18 heure de Paris)
+  fin   : 23/10 09:35:03 UTC  (11:35:03 heure de Paris)
+
+Alerte declenchee (firing)
+  debut : 23/10 09:35:18 UTC  (11:35:18 heure de Paris)
+  fin   : 23/10 09:38:48 UTC  (11:38:48 heure de Paris)
+
+Lecture : la fin de l'anomalie correspond au retour a la normale (fichier supprime,
+service relance) ; la fin de l'etat firing correspond a la resolution de l'alerte.
